@@ -13,26 +13,11 @@
         "alt": "Irmãos orando juntos, de mãos estendidas, durante o culto de oração",
         "posicao": "50% 35%"
       },
-      "mock": true
-    },
-    {
-      "id": "domingo-plenitude",
-      "ordem": 4,
-      "dia": "Domingo",
-      "diaSemana": "0",
-      "hora": "18:00",
-      "nome": "Culto da Plenitude do Amor de Deus",
-      "descricao": "Louvor, Palavra e comunhão para toda a família. O nosso encontro principal.",
-      "foto": {
-        "id": "cultos-louvor/cultos-louvor-06",
-        "alt": "Pregador ministrando com a banda ao fundo, durante o culto de domingo",
-        "posicao": "50% 40%"
-      },
-      "mock": true
+      "mock": false
     },
     {
       "id": "domingo-estudo",
-      "ordem": 3,
+      "ordem": 2,
       "dia": "Domingo",
       "diaSemana": "0",
       "hora": "09:00",
@@ -43,7 +28,22 @@
         "alt": "Pregador no púlpito com um versículo de Provérbios projetado no telão",
         "posicao": "50% 40%"
       },
-      "mock": true
+      "mock": false
+    },
+    {
+      "id": "domingo-plenitude",
+      "ordem": 3,
+      "dia": "Domingo",
+      "diaSemana": "0",
+      "hora": "18:00",
+      "nome": "Culto da Plenitude do Amor de Deus",
+      "descricao": "Louvor, Palavra e comunhão para toda a família. O nosso encontro principal.",
+      "foto": {
+        "id": "cultos-louvor/cultos-louvor-06",
+        "alt": "Pregador ministrando com a banda ao fundo, durante o culto de domingo",
+        "posicao": "50% 40%"
+      },
+      "mock": false
     }
   ]
 }
