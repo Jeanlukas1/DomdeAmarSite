@@ -9,9 +9,16 @@ import Ornamento from '@/components/ui/Ornamento.astro';
 import { getPrincipal } from '@/lib/igreja';
 
 const a = await getPrincipal('alianca');
-// borda rasgada (tecido): picos irregulares ao longo da altura, desenhados para a borda interna
-const rasgo =
-  'M0 0 L10 0 L4 6 L12 13 L3 21 L9 28 L2 37 L11 45 L5 52 L13 61 L4 69 L10 77 L3 86 L12 93 L6 100 L0 100 Z';
+// borda rasgada (tecido): picos irregulares e densos ao longo da altura (viewBox 14×100, esticado).
+// `fio` é a faixa vermelha (do véu até os dentes); `vao` é o creme além dos dentes, que recorta a
+// borda da metade — assim cada metade tem a própria borda rasgada, sem depender da outra.
+const dentes = [
+  6, 11, 4, 12, 7, 10, 3, 13, 8, 5, 11, 4, 12, 6, 10, 3, 9, 13, 5, 11, 7, 12, 4, 10, 6, 13, 8, 5,
+];
+const passo = 100 / dentes.length;
+const borda = dentes.map((x, i) => `L${x} ${(i * passo + passo / 2).toFixed(2)}`).join(' ');
+const fio = `M0 0 L9 0 ${borda} L7 100 L0 100 Z`;
+const vao = `M14 0 L9 0 ${borda} L7 100 L14 100 Z`;
 ---
 
 <section
@@ -30,12 +37,14 @@ const rasgo =
   <!-- 1. o véu: duas metades que nascem do centro e depois se rasgam -->
   <div data-alianca-veu="esq" aria-hidden="true" class="alianca__metade alianca__metade--esq">
     <svg viewBox="0 0 14 100" preserveAspectRatio="none" class="alianca__rasgo">
-      <path d={rasgo} fill="var(--color-red-600)"></path>
+      <path d={fio} fill="var(--color-red-600)"></path>
+      <path d={vao} fill="var(--color-cream)"></path>
     </svg>
   </div>
   <div data-alianca-veu="dir" aria-hidden="true" class="alianca__metade alianca__metade--dir">
     <svg viewBox="0 0 14 100" preserveAspectRatio="none" class="alianca__rasgo">
-      <path d={rasgo} fill="var(--color-red-600)"></path>
+      <path d={fio} fill="var(--color-red-600)"></path>
+      <path d={vao} fill="var(--color-cream)"></path>
     </svg>
   </div>
 
@@ -51,7 +60,7 @@ const rasgo =
       d="M5 0 C 4 20, 6 45, 5 62 C 4 78, 6 90, 5 100"
       fill="none"
       stroke="var(--color-cream)"
-      stroke-width="1.6"
+      stroke-width="2.6"
     ></path>
   </svg>
 
@@ -90,7 +99,7 @@ const rasgo =
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 51%;
+    width: calc(50% + 1px); /* 1px de sobra: sem fresta entre as metades fechadas */
     z-index: 2;
     background: linear-gradient(
       to bottom,
@@ -105,19 +114,19 @@ const rasgo =
   .alianca__metade--dir {
     right: 0;
   }
-  /* borda rasgada: só aparece quando o rasgo começa (o JS acende) */
+  /* borda rasgada, dentro da borda interna de cada metade: só aparece quando o rasgo começa */
   .alianca__rasgo {
     position: absolute;
     top: 0;
-    right: -0.6rem;
-    width: 0.9rem;
+    right: 0;
+    width: clamp(0.55rem, 1vw, 0.9rem);
     height: 100%;
     opacity: 0;
   }
   .alianca__metade--dir .alianca__rasgo {
     right: auto;
-    left: -0.6rem;
-    scale: -1 1; /* espelhada: os picos apontam para o centro */
+    left: 0;
+    scale: -1 1; /* espelhada: os dentes apontam para o centro */
   }
   .alianca__noite {
     z-index: 1;
@@ -145,28 +154,40 @@ const rasgo =
     color: inherit;
   }
 
-  /* com movimento (.js-anim): o versículo mora no creme, ATRÁS do véu, e é revelado pelo rasgo */
-  :global(.js-anim) .alianca__verso {
+  /* com movimento (.js-anim): o versículo mora no creme, ATRÁS do véu, e é revelado pelo rasgo.
+     .alianca--estatica (o módulo não carregou a tempo) devolve o estado estático. */
+  :global(.js-anim) .alianca:not(.alianca--estatica) .alianca__verso {
     z-index: 0;
     color: var(--color-wine-900);
   }
-  :global(.js-anim) .alianca :global(.alianca__ornamento) {
+  :global(.js-anim) .alianca:not(.alianca--estatica) :global(.alianca__ornamento) {
     color: var(--color-red-600);
   }
-  :global(.js-anim) .alianca__metade {
+  :global(.js-anim) .alianca:not(.alianca--estatica) .alianca__metade {
     transform: scaleX(0);
   }
-  :global(.js-anim) [data-alianca-onda] {
+  :global(.js-anim) .alianca:not(.alianca--estatica) [data-alianca-onda] {
     display: none;
   }
   /* sem movimento: a noite fica escondida sob o véu assentado */
-  :global(html:not(.js-anim)) .alianca__noite {
+  :global(html:not(.js-anim)) .alianca__noite,
+  .alianca--estatica .alianca__noite {
     display: none;
   }
 </style>
 
 <script>
   import { depoisDaPintura, reduceMotion } from '@/lib/agendar';
-  // logo abaixo do hero: carrega depois da primeira pintura, antes de a pessoa rolar até aqui
-  if (!reduceMotion()) depoisDaPintura(() => import('@/lib/animations/alianca'));
+
+  const secao = document.querySelector<HTMLElement>('[data-alianca]');
+  // se o módulo falhar ou não chegar a tempo (dados móveis fracos), volta ao estado estático:
+  // a seção nunca fica uma tela escura e vazia. O módulo marca data-pronto ao começar.
+  const desistir = () => {
+    if (secao && !secao.hasAttribute('data-pronto')) secao.classList.add('alianca--estatica');
+  };
+  if (secao && !reduceMotion()) {
+    // logo abaixo do hero: carrega depois da primeira pintura, antes de a pessoa rolar até aqui
+    depoisDaPintura(() => import('@/lib/animations/alianca').catch(desistir));
+    setTimeout(desistir, 6000);
+  }
 </script>

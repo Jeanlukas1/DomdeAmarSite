@@ -55,10 +55,14 @@ Timeline de ~4,5s sobre o SVG inline (`Hero.astro`), usando os ids de camada do 
 
 Transição entre o hero e o Quem somos, variante "o véu que se rasga" (Mt 27.51); o versículo é Mt 26.28 (`alianca.json`).
 
-- **Chegada (scrub):** o véu vinho se fecha a partir do centro enquanto a seção sobe (duas metades com `scaleX`).
-- **Pin de 1 tela (scrub):** a noite sai de trás do véu → uma linha de luz desce pelo meio → o véu se rasga de alto a baixo (giro pelos cantos de baixo) e as metades saem para os lados, revelando o versículo no creme.
-- **Reduced-motion / sem JS:** o HTML já é o estado final: véu assentado, versículo legível e uma onda creme ligando ao Quem somos. O módulo nem carrega com reduced-motion.
-- Carrega com `depoisDaPintura` (logo abaixo do hero). Depois do pin: `ScrollTrigger.sort()` + `refresh()`.
+- **Chegada (scrub, top 80% → top):** o véu vinho se fecha a partir do centro (duas metades com `scaleX`) e a linha de luz já se desenha pelo meio.
+- **Pin de 0,65 tela (scrub):** a noite sai de trás → a borda rasgada acende no lugar da linha e o véu abre primeiro no alto (giro pelos cantos de baixo) → as metades saem para os lados → o versículo fica sozinho no creme.
+- **Borda rasgada:** fica dentro da borda interna de cada metade: faixa vermelha + creme além dos dentes (`fio` e `vao` no frontmatter), então as duas bordas aparecem mesmo com as metades sobrepostas.
+- **Header:** recebe `data-sobre-veu` (transparente) no início do pin, para o rasgo nascer na borda de cima.
+- **Reduced-motion / sem JS:** o HTML já é o estado final (véu assentado, versículo legível, onda creme). O módulo nem carrega com reduced-motion.
+- **Fallback:** se o `import()` falhar ou não marcar `data-pronto` em 6 s, a seção ganha `.alianca--estatica` e volta ao estado estático (nunca fica uma tela escura vazia).
+- A linha de luz não usa `vector-effect: non-scaling-stroke`: com ele o tracejado do DrawSVG é medido em pixels de tela e a linha sai com falhas.
+- Carrega com `depoisDaPintura`. Depois do pin: `ScrollTrigger.sort()` + `refresh()`.
 
 ## Nossa história (`src/lib/animations/historia.ts`)
 
