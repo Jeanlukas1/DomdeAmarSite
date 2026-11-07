@@ -255,12 +255,12 @@
     "shadows": [
       {
         "name": "selo-flutuante",
-        "value": "0 30px 80px -20px rgb(0 0 0 / .6)",
+        "value": "0 30px 80px -20px color-mix(in srgb, var(--color-night) 75%, transparent)",
         "purpose": "O selo sobre fundo escuro."
       },
       {
         "name": "header-solido",
-        "value": "0 1px 0 rgb(0 0 0 / .06), 0 8px 30px -12px rgb(42 5 5 / .25)",
+        "value": "0 1px 0 color-mix(in srgb, var(--color-wine-950) 8%, transparent), 0 8px 30px -12px color-mix(in srgb, var(--color-wine-950) 25%, transparent)",
         "purpose": "Separação do header ao rolar."
       }
     ],

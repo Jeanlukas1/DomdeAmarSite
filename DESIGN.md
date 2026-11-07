@@ -173,8 +173,8 @@ Profundidade **quente e difusa**: sombras grandes, macias e tingidas (vinho ou v
 
 ### Shadow Vocabulary
 
-- **Selo flutuante** (`box-shadow: 0 30px 80px -20px rgb(0 0 0 / .6)`): o selo sobre o fundo escuro.
-- **Header sólido** (`box-shadow: 0 1px 0 rgb(0 0 0 / .06), 0 8px 30px -12px rgb(42 5 5 / .25)`): separação do header ao rolar.
+- **Selo flutuante** (`box-shadow: 0 30px 80px -20px` em Noite a 75%): o selo sobre o fundo escuro.
+- **Header sólido** (`box-shadow: 0 1px 0` + `0 8px 30px -12px`, ambas em Vinho Noturno): separação do header ao rolar.
 - **Halo do selo** (gradiente radial vermelho → vinho → transparente, com blur): luz atrás do selo que pulsa na batida.
 
 ### Named Rules

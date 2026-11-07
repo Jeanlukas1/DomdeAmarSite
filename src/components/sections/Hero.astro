@@ -18,7 +18,7 @@ const PARTICULAS = 14;
   <!-- fundo: brilho vinho + vinheta -->
   <div aria-hidden="true" class="absolute inset-0 -z-10">
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_70%_at_70%_40%,var(--color-wine-900)_0%,var(--color-wine-950)_45%,var(--color-night)_80%)] max-lg:bg-[radial-gradient(ellipse_120%_60%_at_50%_25%,var(--color-wine-900)_0%,var(--color-wine-950)_50%,var(--color-night)_85%)]"></div>
-    <div class="absolute inset-0 opacity-[.07] mix-blend-overlay [background-image:radial-gradient(rgb(255_255_255)_1px,transparent_1px)] [background-size:3px_3px]"></div>
+    <div class="absolute inset-0 opacity-[.07] mix-blend-overlay [background-image:radial-gradient(var(--color-white)_1px,transparent_1px)] [background-size:3px_3px]"></div>
   </div>
 
   <div class="container-site grid items-center gap-8 pt-24 pb-20 lg:grid-cols-[1.1fr_1fr] lg:gap-12 lg:pt-28">
@@ -54,10 +54,13 @@ const PARTICULAS = 14;
       <div
         aria-hidden="true"
         data-hero-glow
-        class="absolute inset-[-18%] -z-10 rounded-full bg-[radial-gradient(circle,rgb(222_1_1/.55)_0%,rgb(111_1_1/.25)_40%,transparent_68%)] blur-2xl"
+        class="absolute inset-[-18%] -z-10 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--color-red-600)_55%,transparent)_0%,color-mix(in_srgb,var(--color-wine-900)_25%,transparent)_40%,transparent_68%)] blur-2xl"
       ></div>
       <div data-hero-seal class="relative [perspective:900px]">
-        <div data-hero-tilt class="rounded-full shadow-[0_30px_80px_-20px_rgb(0_0_0/.6)]">
+        <div
+          data-hero-tilt
+          class="rounded-full shadow-[0_30px_80px_-20px_color-mix(in_srgb,var(--color-night)_75%,transparent)]"
+        >
           <Fragment set:html={logo} />
         </div>
       </div>
@@ -65,7 +68,7 @@ const PARTICULAS = 14;
         {Array.from({ length: PARTICULAS }, () => (
           <span
             data-particula
-            class="absolute top-1/2 left-1/2 size-1.5 rounded-full bg-blush opacity-0 shadow-[0_0_10px_2px_rgb(255_120_120/.7)]"
+            class="absolute top-1/2 left-1/2 size-1.5 rounded-full bg-blush opacity-0 shadow-[0_0_10px_2px_color-mix(in_srgb,var(--color-blush)_70%,transparent)]"
           />
         ))}
       </div>
