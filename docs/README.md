@@ -24,3 +24,5 @@
 ## Sessões
 
 <!-- /registrar-sessao adiciona linhas aqui -->
+
+- [2026-11-06 — sessão 01](sessoes/2026-11-06-sessao-01.md) — planejamento + F1
