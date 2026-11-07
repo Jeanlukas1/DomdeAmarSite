@@ -70,9 +70,15 @@
 
 /* Estado inicial das animações — só com JS ativo (classe js-anim no <html>) */
 .js-anim [data-reveal],
-.js-anim [data-split] {
+.js-anim [data-split],
+.js-anim [data-brush] {
   opacity: 0;
 }
 .js-anim [data-header-logo][data-aguarda-hero] {
   opacity: 0;
+}
+
+/* Tratamento consistente das fotos reais (celular, luz variada): leve aquecimento */
+.foto {
+  filter: saturate(0.94) contrast(1.04) sepia(0.06);
 }

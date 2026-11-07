@@ -1,0 +1,15 @@
+---
+// Mini-coração entre dois traços — a pontuação que fecha o selo.
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<span aria-hidden="true" class:list={['flex items-center gap-3 text-red-600', className]}>
+  <span class="h-px w-10 bg-current opacity-60"></span>
+  <svg viewBox="0 0 24 24" class="size-3.5 fill-current">
+    <path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z"></path>
+  </svg>
+  <span class="h-px w-10 bg-current opacity-60"></span>
+</span>

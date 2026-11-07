@@ -1,0 +1,32 @@
+{
+  "principal": {
+    "mock": true,
+    "titulo": "Uma família que nasceu da Graça",
+    "destaque": "Graça",
+    "carta": [
+      "Ninguém chega aqui merecendo. Chegamos todos do mesmo jeito: alcançados por um amor que não pedia nada em troca. Foi na cruz que Jesus firmou uma nova aliança, e é nela que a gente vive.",
+      "Por isso a porta está sempre aberta: para quem caminha com Deus há anos e para quem ainda tem perguntas. Venha como está."
+    ],
+    "missao": {
+      "titulo": "Missão",
+      "texto": "Anunciar a Graça de Deus revelada em Jesus e acolher cada pessoa como parte da família."
+    },
+    "visao": {
+      "titulo": "Visão",
+      "texto": "Ser em Jaconé uma casa de amor e de cura, onde vidas são transformadas pelo Poder da Graça."
+    },
+    "fotos": [
+      {
+        "id": "comunhao/comunhao-16",
+        "alt": "Irmãos da igreja reunidos e sorrindo no salão, depois do culto",
+        "posicao": "50% 88%"
+      },
+      {
+        "id": "comunhao/comunhao-15",
+        "alt": "Três irmãs abraçadas, sorrindo, em uma celebração da igreja",
+        "posicao": "45% 30%"
+      }
+    ],
+    "liderancaTitulo": "Quem cuida da casa"
+  }
+}

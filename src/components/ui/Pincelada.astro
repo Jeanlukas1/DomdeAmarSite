@@ -1,0 +1,32 @@
+---
+// Pincelada vermelha orgânica (motivo do selo). Desenha-se no scroll via data-brush.
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<svg
+  viewBox="0 0 220 24"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+  focusable="false"
+  data-brush
+  class:list={['pointer-events-none overflow-visible', className]}
+>
+  <path
+    d="M4 15 C 46 8, 104 5, 216 10"
+    fill="none"
+    stroke="var(--color-red-600)"
+    stroke-width="7"
+    stroke-linecap="round"
+  ></path>
+  <path
+    d="M22 19 C 70 14, 128 12, 196 15"
+    fill="none"
+    stroke="var(--color-red-600)"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    opacity=".55"
+  ></path>
+</svg>

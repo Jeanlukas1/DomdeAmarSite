@@ -5,6 +5,7 @@ import { initReveal } from './reveal';
 import { initParallax } from './parallax';
 import { initSplit } from './split';
 import { initSmoothScroll } from './smooth';
+import { initBrush } from './brush';
 
 declare global {
   interface Window {
@@ -20,4 +21,5 @@ if (!reduceMotion()) {
   initReveal();
   initParallax();
   initSplit();
+  initBrush();
 }

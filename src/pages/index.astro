@@ -2,15 +2,11 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/sections/Header.astro';
 import Hero from '@/components/sections/Hero.astro';
+import QuemSomos from '@/components/sections/QuemSomos.astro';
 ---
 
 <BaseLayout>
   <Header slot="header" aguardaHero />
   <Hero />
-  <!-- TEMPORÁRIO (F2): espaço para testar o scroll do hero; as seções reais entram na F3. -->
-  <section class="container-site min-h-[120vh] py-24">
-    <h2 class="text-4xl" data-split>
-      As próximas seções chegam na fase 3.
-    </h2>
-  </section>
+  <QuemSomos />
 </BaseLayout>

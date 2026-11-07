@@ -1,6 +1,6 @@
 import { gsap, ScrollTrigger } from './motion';
 
-// data-reveal="up|left|right|scale|clip"  data-reveal-delay="0.2"
+// data-reveal="up|left|right|scale|clip|circle"  data-reveal-delay="0.2"
 // data-reveal-group (+ data-stagger="0.08") anima os filhos [data-reveal] em sequência.
 const FROM: Record<string, gsap.TweenVars> = {
   up: { y: 40 },
@@ -8,6 +8,8 @@ const FROM: Record<string, gsap.TweenVars> = {
   right: { x: 48 },
   scale: { scale: 0.92 },
   clip: { clipPath: 'inset(0 0 100% 0)' },
+  // abre num círculo a partir do centro — a forma do selo
+  circle: { clipPath: 'circle(0% at 50% 50%)', opacity: 1 },
 };
 const TO: Record<string, gsap.TweenVars> = {
   up: { y: 0 },
@@ -15,6 +17,12 @@ const TO: Record<string, gsap.TweenVars> = {
   right: { x: 0 },
   scale: { scale: 1 },
   clip: { clipPath: 'inset(0 0 0% 0)', clearProps: 'clipPath' },
+  circle: {
+    clipPath: 'circle(75% at 50% 50%)',
+    duration: 1.3,
+    ease: 'power3.inOut',
+    clearProps: 'clipPath',
+  },
 };
 
 function tween(el: HTMLElement, trigger: Element, delay: number, start: string) {

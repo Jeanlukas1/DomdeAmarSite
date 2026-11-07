@@ -1,0 +1,50 @@
+---
+// Abertura padrão de seção (DESIGN.md: The Heading Speaks Rule) — título serifado sozinho,
+// com a palavra-chave sublinhada pela pincelada, e um parágrafo de apoio opcional (slot).
+import Pincelada from './Pincelada.astro';
+
+interface Props {
+  id: string;
+  titulo: string;
+  /** trecho do título que recebe a pincelada (precisa existir no título) */
+  destaque?: string;
+  tom?: 'claro' | 'escuro';
+  centro?: boolean;
+  class?: string;
+}
+
+const { id, titulo, destaque, tom = 'claro', centro = false, class: className } = Astro.props;
+const i = destaque ? titulo.indexOf(destaque) : -1;
+const [antes, depois] =
+  i >= 0 ? [titulo.slice(0, i), titulo.slice(i + destaque!.length)] : [titulo, ''];
+---
+
+<header class:list={['max-w-3xl', centro && 'mx-auto text-center', className]}>
+  <h2
+    id={id}
+    class:list={[
+      'text-[clamp(2.1rem,4.6vw,3.6rem)] font-normal tracking-[-0.015em] [font-variation-settings:"opsz"_96]',
+      tom === 'escuro' ? 'text-cream' : 'text-ink',
+    ]}
+  >
+    {antes}
+    {i >= 0 && (
+      <span class="relative inline-block whitespace-nowrap">
+        {destaque}
+        <Pincelada class="absolute inset-x-[-2%] -bottom-[0.18em] h-[0.32em] w-[104%]" />
+      </span>
+    )}
+    {depois}
+  </h2>
+  {Astro.slots.has('default') && (
+    <div
+      class:list={[
+        'mt-5 text-[1.0625rem] leading-relaxed sm:text-lg',
+        tom === 'escuro' ? 'text-blush-100/85' : 'text-ink-soft',
+        centro ? 'mx-auto max-w-2xl' : 'max-w-2xl',
+      ]}
+    >
+      <slot />
+    </div>
+  )}
+</header>

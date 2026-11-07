@@ -1,0 +1,39 @@
+---
+// Foto real da igreja: AVIF/WebP responsivo, recorte por object-position (CSS — o sharp
+// não aceita porcentagem em position, e assim a mesma imagem serve a qualquer proporção) e tratamento de cor
+// consistente (leve aquecimento). Preenche o contêiner — quem chama define o tamanho/proporção.
+import { Picture } from 'astro:assets';
+import { foto } from '@/lib/fotos';
+
+interface Props {
+  id: string;
+  alt: string;
+  /** object-position, ex.: "50% 30%" para fotos verticais com rosto no alto */
+  posicao?: string;
+  sizes?: string;
+  eager?: boolean;
+  class?: string;
+}
+
+const {
+  id,
+  alt,
+  posicao = '50% 50%',
+  sizes = '100vw',
+  eager = false,
+  class: className,
+} = Astro.props;
+---
+
+<Picture
+  src={foto(id)}
+  alt={alt}
+  formats={['avif', 'webp']}
+  widths={[360, 540, 720, 960, 1280]}
+  sizes={sizes}
+  layout="full-width"
+  loading={eager ? 'eager' : 'lazy'}
+  decoding="async"
+  class:list={['foto block h-full w-full object-cover', className]}
+  style={`object-position: ${posicao}`}
+/>

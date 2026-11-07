@@ -10,6 +10,7 @@ export default defineConfig({
   site: SITE,
   integrations: [sitemap()],
   vite: { plugins: [tailwindcss()] },
-  image: { layout: 'constrained', responsiveStyles: true },
+  // sem estilos responsivos do Astro: são CSS fora de camada e venceriam os utilitários do Tailwind
+  image: { responsiveStyles: false },
   build: { inlineStylesheets: 'always' },
 });

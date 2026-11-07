@@ -1,0 +1,23 @@
+[
+  {
+    "id": "pastor-presidente",
+    "ordem": 1,
+    "nome": "Pr. Marcelo",
+    "funcao": "Pastor presidente",
+    "mock": true
+  },
+  {
+    "id": "acolhimento",
+    "ordem": 2,
+    "nome": "Ministério de Acolhimento",
+    "funcao": "Recepção e cuidado de quem chega",
+    "mock": true
+  },
+  {
+    "id": "louvor",
+    "ordem": 3,
+    "nome": "Ministério de Louvor",
+    "funcao": "Música nos cultos",
+    "mock": true
+  }
+]

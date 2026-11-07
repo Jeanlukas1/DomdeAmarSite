@@ -36,6 +36,13 @@ const igreja = defineCollection({
 
 const link = z.object({ rotulo: z.string(), href: z.string() });
 
+/** Foto real: id = caminho em src/assets/fotos sem .jpg (ver src/lib/fotos.ts). */
+const foto = z.object({
+  id: z.string(),
+  alt: z.string(),
+  posicao: z.string().default('50% 50%'),
+});
+
 const navegacao = defineCollection({
   loader: file('src/content/navegacao.json'),
   schema: z.object({
@@ -58,4 +65,29 @@ const hero = defineCollection({
   }),
 });
 
-export const collections = { igreja, navegacao, hero };
+const quemSomos = defineCollection({
+  loader: file('src/content/quem-somos.json'),
+  schema: z.object({
+    mock: z.boolean().default(false),
+    titulo: z.string(),
+    destaque: z.string().optional(),
+    carta: z.array(z.string()).min(1),
+    missao: z.object({ titulo: z.string(), texto: z.string() }),
+    visao: z.object({ titulo: z.string(), texto: z.string() }),
+    fotos: z.array(foto).length(2),
+    liderancaTitulo: z.string(),
+  }),
+});
+
+const pastores = defineCollection({
+  loader: file('src/content/pastores.json'),
+  schema: z.object({
+    ordem: z.number(),
+    nome: z.string(),
+    funcao: z.string(),
+    foto: foto.optional(),
+    mock: z.boolean().default(false),
+  }),
+});
+
+export const collections = { igreja, navegacao, hero, quemSomos, pastores };

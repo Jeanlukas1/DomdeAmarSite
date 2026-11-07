@@ -1,0 +1,82 @@
+---
+import Foto from '@/components/ui/Foto.astro';
+import Ornamento from '@/components/ui/Ornamento.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import { getOrdenados, getPrincipal } from '@/lib/igreja';
+
+const s = await getPrincipal('quemSomos');
+const lideranca = await getOrdenados('pastores');
+const [fotoGrande, fotoRedonda] = s.fotos;
+const inicial = (nome: string) =>
+  nome
+    .replace(/^(Pra?\.|Ministério de)\s+/i, '')
+    .trim()
+    .charAt(0);
+---
+
+<section
+  id="quem-somos"
+  aria-labelledby="quem-somos-titulo"
+  class="scroll-mt-20 overflow-hidden bg-cream py-[clamp(5rem,11vw,9rem)]"
+>
+  <div class="container-site grid items-center gap-y-16 gap-x-[clamp(3rem,6vw,6rem)] lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+    <!-- fotos: retrato grande + recorte redondo (o círculo do selo) -->
+    <div class="relative mx-auto aspect-[100/93] w-full max-w-md lg:max-w-none">
+      <div
+        class="absolute top-0 left-0 aspect-[16/11] w-[92%] overflow-hidden rounded-[2rem] bg-sand"
+        data-reveal="circle"
+      >
+        <Foto
+          {...fotoGrande}
+          sizes="(min-width: 1024px) 40vw, 84vw"
+          class="transition-transform duration-[1.2s] ease-out hover:scale-[1.03]"
+        />
+      </div>
+      <div
+        class="absolute right-0 bottom-0 aspect-square w-[46%] overflow-hidden rounded-full border-[6px] border-cream bg-sand shadow-[0_24px_50px_-24px_color-mix(in_srgb,var(--color-wine-900)_45%,transparent)]"
+        data-reveal="circle"
+        data-reveal-delay="0.35"
+      >
+        <Foto {...fotoRedonda} sizes="(min-width: 1024px) 26vw, 50vw" />
+      </div>
+      <Ornamento class="absolute bottom-[6%] left-0 hidden sm:flex" />
+    </div>
+
+    <div>
+      <SecaoTitulo id="quem-somos-titulo" titulo={s.titulo} destaque={s.destaque}>
+        {s.carta.map((p) => (
+          <p class="mt-4 first:mt-0">{p}</p>
+        ))}
+      </SecaoTitulo>
+
+      <dl class="mt-12 grid gap-8 border-t border-sand pt-10 sm:grid-cols-2" data-reveal-group>
+        {[s.missao, s.visao].map((item) => (
+          <div data-reveal>
+            <dt class="font-display text-2xl text-wine-900">{item.titulo}</dt>
+            <dd class="mt-2 leading-relaxed text-ink-soft">{item.texto}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <div class="mt-12">
+        <h3 class="font-display text-lg font-semibold text-ink">{s.liderancaTitulo}</h3>
+        <ul class="mt-5 flex flex-wrap gap-x-8 gap-y-5" data-reveal-group>
+          {lideranca.map((p) => (
+            <li class="flex items-center gap-3" data-reveal>
+              <span
+                aria-hidden="true"
+                class="grid size-12 shrink-0 place-items-center rounded-full bg-wine-900 font-display text-xl text-cream ring-2 ring-red-600 ring-offset-2 ring-offset-cream"
+              >
+                {inicial(p.nome)}
+              </span>
+              <span class="leading-tight">
+                <span class="block font-semibold text-ink">{p.nome}</span>
+                <span class="block text-sm text-muted">{p.funcao}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
