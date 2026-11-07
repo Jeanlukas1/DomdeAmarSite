@@ -6,3 +6,4 @@ node_modules/
 package-lock.json
 src/styles/tokens.css
 docs/prompt-planejamento.md
+.impeccable/hook.cache.json
