@@ -41,6 +41,15 @@ const ogImage = new URL(image, Astro.site);
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      // Esconde elementos animáveis só se o JS de animação for rodar; se falhar, mostra tudo em 3s.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('js-anim');
+        setTimeout(function () {
+          if (!window.__animReady) document.documentElement.classList.remove('js-anim');
+        }, 3000);
+      }
+    </script>
     <slot name="head" />
   </head>
   <body class="min-h-dvh antialiased">
@@ -50,8 +59,13 @@ const ogImage = new URL(image, Astro.site);
     >
       Pular para o conteúdo
     </a>
+    <slot name="header" />
     <main id="conteudo">
       <slot />
     </main>
+    <slot name="footer" />
+    <script>
+      import '@/lib/animations/init';
+    </script>
   </body>
 </html>

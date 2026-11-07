@@ -1,6 +1,6 @@
 # Animações
 
-> Os helpers são implementados na F2. Este documento define o contrato.
+> Implementação: `src/lib/animations/` (`motion.ts` registra GSAP/ScrollTrigger; `smooth.ts` = Lenis). Bundle global ≈ 52 KB gzip (GSAP + ScrollTrigger + SplitText + Lenis).
 
 ## Atributos
 

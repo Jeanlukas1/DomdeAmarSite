@@ -54,3 +54,9 @@
   margin-inline: auto;
   padding-inline: clamp(1rem, 4vw, 2.5rem);
 }
+
+/* Estado inicial das animações — só com JS ativo (classe js-anim no <html>) */
+.js-anim [data-reveal],
+.js-anim [data-split] {
+  opacity: 0;
+}
