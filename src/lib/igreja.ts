@@ -13,6 +13,17 @@ export async function getIgreja() {
   return entry.data;
 }
 
+/** Redes sociais com link real, na ordem de exibição (as que estão null ficam de fora). */
+export async function getRedes() {
+  const { redes } = await getIgreja();
+  const todas = [
+    { nome: 'Facebook', href: redes.facebook, icon: 'facebook' },
+    { nome: 'Instagram', href: redes.instagram, icon: 'instagram' },
+    { nome: 'YouTube', href: redes.youtube, icon: 'youtube' },
+  ] as const;
+  return todas.filter((r): r is (typeof todas)[number] & { href: string } => Boolean(r.href));
+}
+
 /** Itens do menu principal, na ordem definida em src/content/navegacao.json. */
 export async function getNavegacao() {
   const itens = await getCollection('navegacao');

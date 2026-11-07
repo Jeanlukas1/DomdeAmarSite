@@ -31,6 +31,10 @@ const { titulo, descricao, youtubeId, poster, rotuloAssistir, emBreve, rotuloFac
 >
   <div data-video-poster class="absolute inset-0 -z-10">
     <Foto {...poster} sizes="(min-width: 1280px) 1200px, 100vw" />
+    <!-- as fotos dos cultos têm parede branca e lâmpadas no teto: o tom vinho (multiply) segura
+         os brancos estourados e o topo escurece onde ficam as luzes -->
+    <div class="absolute inset-0 bg-wine-900/45 mix-blend-multiply"></div>
+    <div class="absolute inset-x-0 top-0 h-2/5 bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--color-night)_70%,transparent),transparent)]"></div>
     <div class="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--color-night)_96%,transparent)_15%,color-mix(in_srgb,var(--color-night)_55%,transparent)_45%,color-mix(in_srgb,var(--color-night)_10%,transparent)_75%,transparent)]"></div>
   </div>
 

@@ -6,7 +6,7 @@ Cada item abaixo está marcado no arquivo com `mock: true` (ou `// MOCK`). Quand
 | ------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `src/content/igreja.json`       | `contato.telefone`, `contato.whatsapp`    | telefone/WhatsApp oficial                                                                                                   |
 | `src/content/igreja.json`       | `contato.email`                           | e-mail oficial                                                                                                              |
-| `src/content/igreja.json`       | `redes.instagram`, `redes.youtube`        | links do Instagram e YouTube (se existirem)                                                                                 |
+| `src/content/igreja.json`       | `redes.instagram`, `redes.youtube`        | links do Instagram e YouTube, se existirem (hoje `null`: o ícone não aparece até ter o link)                                |
 | `src/content/igreja.json`       | `fundacao`                                | data exata de fundação (estimada: 25/07/2018, pelos 8 anos)                                                                 |
 | `src/content/quem-somos.json`   | `carta`, `missao`, `visao`                | texto real de apresentação, missão e visão                                                                                  |
 | `src/content/pastores.json`     | todos                                     | nomes completos, funções e fotos da liderança (confirmar "Pr. Marcelo")                                                     |

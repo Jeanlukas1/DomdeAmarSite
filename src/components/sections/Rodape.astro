@@ -2,7 +2,7 @@
 // Rodapé: o versículo que dá nome à igreja ("é dom de Deus"), endereço, cultos, navegação e redes.
 import logoUrl from '@/assets/logo/logo.svg?url';
 import Icon from '@/components/ui/Icon.astro';
-import { getIgreja, getNavegacao, getOrdenados, getPrincipal } from '@/lib/igreja';
+import { getIgreja, getNavegacao, getRedes, getOrdenados, getPrincipal } from '@/lib/igreja';
 
 const r = await getPrincipal('rodape');
 const igreja = await getIgreja();
@@ -12,15 +12,11 @@ const { rua, bairro, cidade, uf, cep } = igreja.endereco;
 const enderecoCompleto = `${rua}, ${bairro}, ${cidade} - ${uf}, ${cep}`;
 const mapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoCompleto)}`;
 const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
-const redes = [
-  { nome: 'Facebook', href: igreja.redes.facebook, icon: 'facebook' },
-  { nome: 'Instagram', href: igreja.redes.instagram, icon: 'instagram' },
-  { nome: 'YouTube', href: igreja.redes.youtube, icon: 'youtube' },
-] as const;
+const redes = await getRedes();
 const ano = new Date().getFullYear();
 ---
 
-<footer class="rodape relative overflow-hidden bg-night text-blush-100/80">
+<footer class="rodape superficie-escura relative overflow-hidden bg-night text-blush-100/80">
   <div
     aria-hidden="true"
     class="pointer-events-none absolute inset-x-0 top-0 h-[60%] bg-[radial-gradient(ellipse_60%_80%_at_50%_0%,color-mix(in_srgb,var(--color-wine-900)_70%,transparent),transparent_70%)]"

@@ -27,9 +27,9 @@ const igreja = defineCollection({
     }),
     redes: z.object({
       facebook: z.url(),
-      instagram: z.url(),
-      youtube: z.url(),
-      mockInstagramYoutube: z.boolean().default(false),
+      /** null enquanto a igreja não tiver o perfil: o ícone simplesmente não aparece */
+      instagram: z.url().nullable(),
+      youtube: z.url().nullable(),
     }),
   }),
 });

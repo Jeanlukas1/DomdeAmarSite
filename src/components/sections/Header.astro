@@ -1,7 +1,7 @@
 ---
 import logoUrl from '@/assets/logo/logo.svg?url';
 import Icon from '@/components/ui/Icon.astro';
-import { getIgreja, getNavegacao } from '@/lib/igreja';
+import { getNavegacao, getRedes } from '@/lib/igreja';
 
 interface Props {
   /** Na home, o selo do hero "voa" até o header; o logo do header só aparece depois. */
@@ -9,18 +9,13 @@ interface Props {
 }
 
 const { aguardaHero = false } = Astro.props;
-const igreja = await getIgreja();
 const nav = await getNavegacao();
-const redes = [
-  { nome: 'Facebook', href: igreja.redes.facebook, icon: 'facebook' },
-  { nome: 'Instagram', href: igreja.redes.instagram, icon: 'instagram' },
-  { nome: 'YouTube', href: igreja.redes.youtube, icon: 'youtube' },
-] as const;
+const redes = await getRedes();
 ---
 
 <header
   data-header
-  class="group/header fixed inset-x-0 top-0 z-40 text-cream transition-[background-color,color,box-shadow] duration-base ease-out data-[solid]:bg-cream/90 data-[solid]:text-ink data-[solid]:shadow-[0_1px_0_color-mix(in_srgb,var(--color-wine-950)_8%,transparent),0_8px_30px_-12px_color-mix(in_srgb,var(--color-wine-950)_25%,transparent)] data-[solid]:backdrop-blur-md"
+  class="group/header superficie-escura fixed inset-x-0 top-0 z-40 text-cream data-[solid]:[--foco:var(--color-red-600)] transition-[background-color,color,box-shadow] duration-base ease-out data-[solid]:bg-cream/90 data-[solid]:text-ink data-[solid]:shadow-[0_1px_0_color-mix(in_srgb,var(--color-wine-950)_8%,transparent),0_8px_30px_-12px_color-mix(in_srgb,var(--color-wine-950)_25%,transparent)] data-[solid]:backdrop-blur-md"
 >
   <div class="container-site flex h-[4.5rem] items-center gap-4">
     <a href="/#inicio" class="flex items-center gap-3">
@@ -97,7 +92,7 @@ const redes = [
   id="menu-mobile"
   data-menu
   hidden
-  class="fixed inset-0 z-50 flex flex-col bg-wine-950 text-cream lg:hidden"
+  class="superficie-escura fixed inset-0 z-50 flex flex-col bg-wine-950 text-cream lg:hidden"
   role="dialog"
   aria-modal="true"
   aria-label="Menu"

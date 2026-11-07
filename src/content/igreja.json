@@ -20,9 +20,8 @@
     },
     "redes": {
       "facebook": "https://www.facebook.com/profile.php?id=61591387636497",
-      "instagram": "https://instagram.com/",
-      "youtube": "https://youtube.com/",
-      "mockInstagramYoutube": true
+      "instagram": null,
+      "youtube": null
     }
   }
 }
