@@ -1,0 +1,13 @@
+# Conteúdo pendente (mockups)
+
+Cada item abaixo está marcado no arquivo com `mock: true` (ou `// MOCK`). Quando a igreja fornecer o dado: substitua, remova a marcação e risque a linha aqui.
+
+| Arquivo                   | Campo                                  | O que precisamos                                                      |
+| ------------------------- | -------------------------------------- | --------------------------------------------------------------------- |
+| `src/content/igreja.json` | `contato.telefone`, `contato.whatsapp` | telefone/WhatsApp oficial                                             |
+| `src/content/igreja.json` | `contato.email`                        | e-mail oficial                                                        |
+| `src/content/igreja.json` | `redes.instagram`, `redes.youtube`     | links do Instagram e YouTube (se existirem)                           |
+| `src/content/igreja.json` | `fundacao`                             | data exata de fundação (estimada: 25/07/2018, pelos 8 anos)           |
+| `src/assets/logo/`        | —                                      | **arquivo original da logo** (.ai / .pdf vetorial / .svg com camadas) |
+
+> Próximas fases adicionam: pastores (nomes/fotos), história, missão/visão, ministérios, eventos, mensagens/vídeos, depoimentos e chave PIX.
