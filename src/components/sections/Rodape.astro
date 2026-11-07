@@ -20,6 +20,7 @@ const { rua, bairro, cidade, uf, cep } = endereco;
 const mapa = endereco.googleMaps;
 const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
 const redes = await getRedes();
+const ui = await getPrincipal('ui');
 const ano = new Date().getFullYear();
 ---
 
@@ -106,7 +107,7 @@ const ano = new Date().getFullYear();
       </div>
 
       <div class="grid gap-10 sm:col-span-2 sm:grid-cols-2 lg:col-span-1 lg:grid-cols-1">
-        <nav aria-label="Rodapé">
+        <nav aria-label={ui.a11y.navRodape}>
           <h2 class="font-display text-lg text-cream">{r.navTitulo}</h2>
           <ul class="mt-3 grid grid-cols-2 gap-x-4 lg:grid-cols-1">
             {nav.map((item) => (

@@ -1,0 +1,22 @@
+{
+  "principal": {
+    "marca": { "linha1": "Igreja Evangélica", "linha2": "Dom de Amar" },
+    "seo": {
+      "igrejaEm": "igreja evangélica em",
+      "tituloIgrejaEm": "Igreja em"
+    },
+    "a11y": {
+      "pularConteudo": "Pular para o conteúdo",
+      "navPrincipal": "Principal",
+      "navCelular": "Principal (celular)",
+      "navRodape": "Rodapé",
+      "redes": "Redes sociais",
+      "menu": "Menu",
+      "abrirMenu": "Abrir menu",
+      "fecharMenu": "Fechar menu",
+      "textoBiblico": "Texto bíblico",
+      "pregador": "Pregador",
+      "as": "às"
+    }
+  }
+}

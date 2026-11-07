@@ -10,6 +10,7 @@ import { getOrdenados, getPrincipal } from '@/lib/igreja';
 
 const s = await getPrincipal('cultosSecao');
 const cultos = await getOrdenados('cultos');
+const ui = await getPrincipal('ui');
 // "09:00" → "9h", "19:30" → "19h30"
 const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
 ---
@@ -64,7 +65,7 @@ const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').r
                 {c.dia}
               </span>
               <span class="mt-1.5 block font-display text-lg leading-snug font-semibold lg:mt-2 lg:text-xl">
-                <span class="sr-only">às </span>
+                <span class="sr-only">{ui.a11y.as} </span>
                 <time
                   datetime={c.hora}
                   class="text-red-700 tabular-nums group-data-[proximo]:text-blush-100"
@@ -101,12 +102,12 @@ const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').r
       <dl class="grid shrink-0 grid-cols-2 gap-x-8 gap-y-1 text-sm md:block md:text-right">
         {s.semana.referencia && (
           <div>
-            <dt class="sr-only">Texto bíblico</dt>
+            <dt class="sr-only">{ui.a11y.textoBiblico}</dt>
             <dd class="font-semibold text-ink">{s.semana.referencia}</dd>
           </div>
         )}
         <div>
-          <dt class="sr-only">Pregador</dt>
+          <dt class="sr-only">{ui.a11y.pregador}</dt>
           <dd class="text-muted md:mt-1">{s.semana.pregador}</dd>
         </div>
       </dl>

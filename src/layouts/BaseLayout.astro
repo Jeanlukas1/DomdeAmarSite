@@ -2,7 +2,7 @@
 import '@/styles/global.css';
 import frauncesUrl from '@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url';
 import manropeUrl from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
-import { getIgreja } from '@/lib/igreja';
+import { getIgreja, getPrincipal } from '@/lib/igreja';
 
 interface Props {
   title?: string;
@@ -11,15 +11,16 @@ interface Props {
 }
 
 const igreja = await getIgreja();
+const ui = await getPrincipal('ui');
 const {
   title,
-  description = `${igreja.nome} — igreja evangélica em ${igreja.endereco.bairro}, ${igreja.endereco.cidade} – ${igreja.endereco.uf}. ${igreja.slogan}.`,
+  description = `${igreja.nome} — ${ui.seo.igrejaEm} ${igreja.endereco.bairro}, ${igreja.endereco.cidade} – ${igreja.endereco.uf}. ${igreja.slogan}.`,
   image = '/og-image.jpg',
 } = Astro.props;
 
 const fullTitle = title
   ? `${title} | ${igreja.nome}`
-  : `${igreja.nome} | Igreja em ${igreja.endereco.bairro}, ${igreja.endereco.cidade}`;
+  : `${igreja.nome} | ${ui.seo.tituloIgrejaEm} ${igreja.endereco.bairro}, ${igreja.endereco.cidade}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
 ---
@@ -64,7 +65,7 @@ const ogImage = new URL(image, Astro.site);
       href="#conteudo"
       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2"
     >
-      Pular para o conteúdo
+      {ui.a11y.pularConteudo}
     </a>
     <slot name="header" />
     <main id="conteudo">

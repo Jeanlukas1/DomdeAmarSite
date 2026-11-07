@@ -12,6 +12,7 @@ type Unica =
   | 'galeria'
   | 'contribua'
   | 'faleConosco'
+  | 'ui'
   | 'rodape';
 /** Coleções em lista com campo 'ordem'. */
 type Ordenada = 'pastores' | 'cultos' | 'ministerios';

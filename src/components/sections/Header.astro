@@ -1,7 +1,7 @@
 ---
 import logoUrl from '@/assets/logo/logo.svg?url';
 import Icon from '@/components/ui/Icon.astro';
-import { getNavegacao, getRedes } from '@/lib/igreja';
+import { getNavegacao, getPrincipal, getRedes } from '@/lib/igreja';
 
 interface Props {
   /** Na home, o selo do hero "voa" até o header; o logo do header só aparece depois. */
@@ -10,6 +10,7 @@ interface Props {
 
 const { aguardaHero = false } = Astro.props;
 const nav = await getNavegacao();
+const ui = await getPrincipal('ui');
 const redes = await getRedes();
 ---
 
@@ -29,12 +30,12 @@ const redes = await getRedes();
         class="size-11 rounded-full ring-2 ring-white/15"
       />
       <span class="leading-tight">
-        <span class="block text-xs font-bold tracking-[0.16em] uppercase">Igreja Evangélica</span>
-        <span class="block font-display text-lg font-semibold">Dom de Amar</span>
+        <span class="block text-xs font-bold tracking-[0.16em] uppercase">{ui.marca.linha1}</span>
+        <span class="block font-display text-lg font-semibold">{ui.marca.linha2}</span>
       </span>
     </a>
 
-    <nav aria-label="Principal" class="ml-auto hidden lg:block">
+    <nav aria-label={ui.a11y.navPrincipal} class="ml-auto hidden lg:block">
       <ul class="flex items-center gap-1">
         {nav.map((item) =>
           item.destaque ? (
@@ -60,7 +61,7 @@ const redes = await getRedes();
       </ul>
     </nav>
 
-    <ul class="hidden items-center gap-1 xl:flex" aria-label="Redes sociais">
+    <ul class="hidden items-center gap-1 xl:flex" aria-label={ui.a11y.redes}>
       {redes.map((r) => (
         <li>
           <a
@@ -82,7 +83,7 @@ const redes = await getRedes();
       aria-controls="menu-mobile"
       class="ml-auto grid size-11 place-items-center rounded-full transition-colors hover:bg-current/10 lg:hidden"
     >
-      <Icon name="menu" size={24} label="Abrir menu" />
+      <Icon name="menu" size={24} label={ui.a11y.abrirMenu} />
     </button>
   </div>
 </header>
@@ -95,19 +96,19 @@ const redes = await getRedes();
   class="superficie-escura fixed inset-0 z-50 flex flex-col bg-wine-950 text-cream lg:hidden"
   role="dialog"
   aria-modal="true"
-  aria-label="Menu"
+  aria-label={ui.a11y.menu}
 >
   <div class="container-site flex h-[4.5rem] items-center justify-between">
-    <span class="font-display text-lg font-semibold">Dom de Amar</span>
+    <span class="font-display text-lg font-semibold">{ui.marca.linha2}</span>
     <button
       type="button"
       data-menu-close
       class="grid size-11 place-items-center rounded-full hover:bg-white/10"
     >
-      <Icon name="close" size={24} label="Fechar menu" />
+      <Icon name="close" size={24} label={ui.a11y.fecharMenu} />
     </button>
   </div>
-  <nav aria-label="Principal (celular)" class="container-site flex-1 overflow-y-auto pt-6">
+  <nav aria-label={ui.a11y.navCelular} class="container-site flex-1 overflow-y-auto pt-6">
     <ul class="space-y-1">
       {nav.map((item) => (
         <li data-menu-item>
@@ -125,7 +126,7 @@ const redes = await getRedes();
       ))}
     </ul>
   </nav>
-  <ul class="container-site flex gap-2 py-8" aria-label="Redes sociais">
+  <ul class="container-site flex gap-2 py-8" aria-label={ui.a11y.redes}>
     {redes.map((r) => (
       <li data-menu-item>
         <a

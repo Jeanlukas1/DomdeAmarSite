@@ -352,6 +352,28 @@ const faleConosco = defineCollection({
   }),
 });
 
+/** Rótulos de interface: marca do header, SEO e textos só para leitor de tela. */
+const ui = defineCollection({
+  loader: file('src/content/ui.json'),
+  schema: z.object({
+    marca: z.object({ linha1: z.string(), linha2: z.string() }),
+    seo: z.object({ igrejaEm: z.string(), tituloIgrejaEm: z.string() }),
+    a11y: z.object({
+      pularConteudo: z.string(),
+      navPrincipal: z.string(),
+      navCelular: z.string(),
+      navRodape: z.string(),
+      redes: z.string(),
+      menu: z.string(),
+      abrirMenu: z.string(),
+      fecharMenu: z.string(),
+      textoBiblico: z.string(),
+      pregador: z.string(),
+      as: z.string(),
+    }),
+  }),
+});
+
 const rodape = defineCollection({
   loader: file('src/content/rodape.json'),
   schema: z.object({
@@ -384,5 +406,6 @@ export const collections = {
   galeria,
   contribua,
   faleConosco,
+  ui,
   rodape,
 };
