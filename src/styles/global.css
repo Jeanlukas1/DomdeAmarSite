@@ -35,13 +35,6 @@
     line-height: 1.1;
     text-wrap: balance;
   }
-  /* evita uma palavra sozinha na última linha dos parágrafos */
-  p,
-  li,
-  dd,
-  figcaption {
-    text-wrap: pretty;
-  }
   /* vermelho sobre o claro; sobre vinho/noite o vermelho some (≈2:1), então as superfícies
      escuras trocam o anel para creme com a utilidade `superficie-escura` */
   :focus-visible {

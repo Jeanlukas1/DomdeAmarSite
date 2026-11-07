@@ -39,7 +39,8 @@ const [antes, depois] =
   {Astro.slots.has('default') && (
     <div
       class:list={[
-        'mt-5 text-[1.0625rem] leading-relaxed sm:text-lg',
+        // `pretty` só aqui: aplicado à página toda custava ~500 ms de layout num celular lento
+        'mt-5 text-[1.0625rem] leading-relaxed text-pretty sm:text-lg',
         tom === 'escuro' ? 'text-blush-100/85' : 'text-ink-soft',
         centro ? 'mx-auto max-w-2xl' : 'max-w-2xl',
       ]}
