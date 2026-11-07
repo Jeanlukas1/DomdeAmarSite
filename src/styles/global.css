@@ -60,3 +60,6 @@
 .js-anim [data-split] {
   opacity: 0;
 }
+.js-anim [data-header-logo][data-aguarda-hero] {
+  opacity: 0;
+}

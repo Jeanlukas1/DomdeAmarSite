@@ -1,0 +1,193 @@
+---
+import logoUrl from '@/assets/logo/logo.svg?url';
+import Icon from '@/components/ui/Icon.astro';
+import { getIgreja, getNavegacao } from '@/lib/igreja';
+
+interface Props {
+  /** Na home, o selo do hero "voa" até o header; o logo do header só aparece depois. */
+  aguardaHero?: boolean;
+}
+
+const { aguardaHero = false } = Astro.props;
+const igreja = await getIgreja();
+const nav = await getNavegacao();
+const redes = [
+  { nome: 'Facebook', href: igreja.redes.facebook, icon: 'facebook' },
+  { nome: 'Instagram', href: igreja.redes.instagram, icon: 'instagram' },
+  { nome: 'YouTube', href: igreja.redes.youtube, icon: 'youtube' },
+] as const;
+---
+
+<header
+  data-header
+  class="group/header fixed inset-x-0 top-0 z-40 text-cream transition-[background-color,color,box-shadow] duration-base ease-out data-[solid]:bg-cream/90 data-[solid]:text-ink data-[solid]:shadow-[0_1px_0_rgb(0_0_0/.06),0_8px_30px_-12px_rgb(42_5_5/.25)] data-[solid]:backdrop-blur-md"
+>
+  <div class="container-site flex h-[4.5rem] items-center gap-4">
+    <a href="/#inicio" class="flex items-center gap-3">
+      <img
+        src={logoUrl}
+        alt=""
+        width="44"
+        height="44"
+        data-header-logo
+        data-aguarda-hero={aguardaHero ? '' : undefined}
+        class="size-11 rounded-full shadow-[0_0_0_2px_rgb(255_255_255/.15)]"
+      />
+      <span class="leading-tight">
+        <span class="block text-[0.62rem] font-bold tracking-eyebrow uppercase opacity-70">
+          Igreja Evangélica
+        </span>
+        <span class="block font-display text-lg font-semibold">Dom de Amar</span>
+      </span>
+    </a>
+
+    <nav aria-label="Principal" class="ml-auto hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {nav.map((item) =>
+          item.destaque ? (
+            <li class="ml-2">
+              <a
+                href={item.href}
+                class="inline-flex min-h-10 items-center rounded-full bg-red-600 px-5 text-sm font-semibold text-white transition-colors duration-base hover:bg-red-500"
+              >
+                {item.rotulo}
+              </a>
+            </li>
+          ) : (
+            <li>
+              <a
+                href={item.href}
+                class="relative inline-flex min-h-10 items-center px-3 text-sm font-medium opacity-85 transition-opacity duration-base after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-red-600 after:transition-transform after:duration-base hover:opacity-100 hover:after:scale-x-100"
+              >
+                {item.rotulo}
+              </a>
+            </li>
+          ),
+        )}
+      </ul>
+    </nav>
+
+    <ul class="hidden items-center gap-1 xl:flex" aria-label="Redes sociais">
+      {redes.map((r) => (
+        <li>
+          <a
+            href={r.href}
+            target="_blank"
+            rel="noopener"
+            class="grid size-10 place-items-center rounded-full opacity-75 transition-[opacity,background-color] duration-base hover:bg-current/10 hover:opacity-100"
+          >
+            <Icon name={r.icon} label={r.nome} />
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <button
+      type="button"
+      data-menu-open
+      aria-expanded="false"
+      aria-controls="menu-mobile"
+      class="ml-auto grid size-11 place-items-center rounded-full transition-colors hover:bg-current/10 lg:hidden"
+    >
+      <Icon name="menu" size={24} label="Abrir menu" />
+    </button>
+  </div>
+</header>
+
+<!-- fora do <header>: o backdrop-blur dele prenderia o position:fixed do menu -->
+<div
+  id="menu-mobile"
+  data-menu
+  hidden
+  class="fixed inset-0 z-50 flex flex-col bg-wine-950 text-cream lg:hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Menu"
+>
+  <div class="container-site flex h-[4.5rem] items-center justify-between">
+    <span class="font-display text-lg font-semibold">Dom de Amar</span>
+    <button
+      type="button"
+      data-menu-close
+      class="grid size-11 place-items-center rounded-full hover:bg-white/10"
+    >
+      <Icon name="close" size={24} label="Fechar menu" />
+    </button>
+  </div>
+  <nav aria-label="Principal (celular)" class="container-site flex-1 overflow-y-auto pt-6">
+    <ul class="space-y-1">
+      {nav.map((item) => (
+        <li data-menu-item>
+          <a
+            href={item.href}
+            class:list={[
+              'flex items-center justify-between border-b border-white/10 py-4 font-display text-3xl',
+              item.destaque && 'text-blush',
+            ]}
+          >
+            {item.rotulo}
+            <Icon name="arrow" class="opacity-50" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <ul class="container-site flex gap-2 py-8" aria-label="Redes sociais">
+    {redes.map((r) => (
+      <li data-menu-item>
+        <a
+          href={r.href}
+          target="_blank"
+          rel="noopener"
+          class="grid size-12 place-items-center rounded-full bg-white/10"
+        >
+          <Icon name={r.icon} label={r.nome} />
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')!;
+  const menu = document.querySelector<HTMLElement>('[data-menu]')!;
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]')!;
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]')!;
+
+  // fundo sólido depois de rolar um pouco
+  const onScroll = () => header.toggleAttribute('data-solid', window.scrollY > 40);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  function setOpen(open: boolean) {
+    menu.hidden = !open;
+    openBtn.setAttribute('aria-expanded', String(open));
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+    if (open) {
+      closeBtn.focus();
+      menu.querySelectorAll<HTMLElement>('[data-menu-item]').forEach((el, i) => {
+        el.animate(
+          [
+            { opacity: 0, transform: 'translateY(16px)' },
+            { opacity: 1, transform: 'none' },
+          ],
+          {
+            duration: 420,
+            delay: 40 * i,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'backwards',
+          },
+        );
+      });
+    } else openBtn.focus();
+  }
+
+  openBtn.addEventListener('click', () => setOpen(true));
+  closeBtn.addEventListener('click', () => setOpen(false));
+  menu.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) setOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu.hidden) setOpen(false);
+  });
+</script>

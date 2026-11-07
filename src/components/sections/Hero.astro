@@ -1,0 +1,105 @@
+---
+import logoRaw from '@/assets/logo/logo.svg?raw';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { getHero } from '@/lib/igreja';
+
+const hero = await getHero();
+// SVG inline para poder animar cada camada (ids: borda, coracao, fita-esq, fita-dir, nome, dom, de, amar, arco-texto, slogan, mini-coracao)
+const logo = logoRaw.replace('<svg ', '<svg class="block h-auto w-full overflow-visible" ');
+const PARTICULAS = 14;
+---
+
+<section
+  id="inicio"
+  data-hero
+  class="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-night text-cream"
+>
+  <!-- fundo: brilho vinho + vinheta -->
+  <div aria-hidden="true" class="absolute inset-0 -z-10">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_70%_at_70%_40%,var(--color-wine-900)_0%,var(--color-wine-950)_45%,var(--color-night)_80%)] max-lg:bg-[radial-gradient(ellipse_120%_60%_at_50%_25%,var(--color-wine-900)_0%,var(--color-wine-950)_50%,var(--color-night)_85%)]"></div>
+    <div class="absolute inset-0 opacity-[.07] mix-blend-overlay [background-image:radial-gradient(rgb(255_255_255)_1px,transparent_1px)] [background-size:3px_3px]"></div>
+  </div>
+
+  <div class="container-site grid items-center gap-8 pt-24 pb-20 lg:grid-cols-[1.1fr_1fr] lg:gap-12 lg:pt-28">
+    <div class="order-2 text-center lg:order-1 lg:text-left">
+      <p class="hero-in eyebrow text-blush" style="--d: 0.15s">
+        {hero.saudacao}
+      </p>
+      <h1 class="mt-4 text-[clamp(2.4rem,6.4vw,5.4rem)] font-medium tracking-[-0.02em] [font-variation-settings:'opsz'_144]">
+        {hero.titulo}
+      </h1>
+      <p
+        class="hero-in mx-auto mt-6 max-w-xl text-[clamp(1rem,1.6vw,1.2rem)] text-blush-100/85 lg:mx-0"
+        style="--d: 0.3s"
+      >
+        {hero.texto}
+      </p>
+      <div
+        class="hero-in mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start"
+        style="--d: 0.45s"
+      >
+        <Button href={hero.ctaPrimario.href}>
+          {hero.ctaPrimario.rotulo}
+          <Icon name="arrow" class="transition-transform duration-base group-hover:translate-x-1" />
+        </Button>
+        <Button href={hero.ctaSecundario.href} variant="ghost">
+          <Icon name="heart" />
+          {hero.ctaSecundario.rotulo}
+        </Button>
+      </div>
+    </div>
+
+    <div class="relative order-1 mx-auto w-[min(78vw,22rem)] lg:order-2 lg:w-[min(40vw,34rem)]">
+      <div
+        aria-hidden="true"
+        data-hero-glow
+        class="absolute inset-[-18%] -z-10 rounded-full bg-[radial-gradient(circle,rgb(222_1_1/.55)_0%,rgb(111_1_1/.25)_40%,transparent_68%)] blur-2xl"
+      ></div>
+      <div data-hero-seal class="relative [perspective:900px]">
+        <div data-hero-tilt class="rounded-full shadow-[0_30px_80px_-20px_rgb(0_0_0/.6)]">
+          <Fragment set:html={logo} />
+        </div>
+      </div>
+      <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+        {Array.from({ length: PARTICULAS }, () => (
+          <span
+            data-particula
+            class="absolute top-1/2 left-1/2 size-1.5 rounded-full bg-blush opacity-0 shadow-[0_0_10px_2px_rgb(255_120_120/.7)]"
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <a
+    href="#conteudo-inicio"
+    class="hero-in absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-xs font-semibold tracking-eyebrow text-blush-100/70 uppercase transition-colors hover:text-cream sm:flex"
+    style="--d: 1.2s"
+  >
+    {hero.rolar}
+    <Icon name="down" class="animate-bounce" />
+  </a>
+</section>
+<div id="conteudo-inicio"></div>
+
+<style>
+  /* entrada do texto em CSS (não espera JS, protege o LCP) */
+  .hero-in {
+    animation: hero-in 0.9s var(--ease-out) var(--d, 0s) both;
+  }
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+  /* camadas do selo começam ocultas só quando a animação vai rodar */
+  :global(.js-anim) [data-hero-seal] :global(svg > :not(#fundo)) {
+    opacity: 0;
+  }
+</style>
+
+<script>
+  import '@/lib/animations/hero';
+</script>

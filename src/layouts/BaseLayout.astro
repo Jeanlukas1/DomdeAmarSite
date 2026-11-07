@@ -1,5 +1,7 @@
 ---
 import '@/styles/global.css';
+import frauncesUrl from '@fontsource-variable/fraunces/files/fraunces-latin-opsz-normal.woff2?url';
+import manropeUrl from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
 import { getIgreja } from '@/lib/igreja';
 
 interface Props {
@@ -27,6 +29,8 @@ const ogImage = new URL(image, Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" href={frauncesUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={manropeUrl} as="font" type="font/woff2" crossorigin />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />

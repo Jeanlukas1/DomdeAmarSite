@@ -11,4 +11,5 @@ export default defineConfig({
   integrations: [sitemap()],
   vite: { plugins: [tailwindcss()] },
   image: { layout: 'constrained', responsiveStyles: true },
+  build: { inlineStylesheets: 'always' },
 });

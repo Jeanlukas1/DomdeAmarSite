@@ -34,4 +34,28 @@ const igreja = defineCollection({
   }),
 });
 
-export const collections = { igreja };
+const link = z.object({ rotulo: z.string(), href: z.string() });
+
+const navegacao = defineCollection({
+  loader: file('src/content/navegacao.json'),
+  schema: z.object({
+    ordem: z.number(),
+    rotulo: z.string(),
+    href: z.string(),
+    destaque: z.boolean().default(false),
+  }),
+});
+
+const hero = defineCollection({
+  loader: file('src/content/hero.json'),
+  schema: z.object({
+    saudacao: z.string(),
+    titulo: z.string(),
+    texto: z.string(),
+    ctaPrimario: link,
+    ctaSecundario: link,
+    rolar: z.string(),
+  }),
+});
+
+export const collections = { igreja, navegacao, hero };
