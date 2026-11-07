@@ -3,7 +3,9 @@
     "mock": true,
     "titulo": "Oito anos levantando uma casa de Graça",
     "destaque": "casa de Graça",
-    "intro": "Uma história escrita por gente simples, com fé e as próprias mãos. Role para caminhar com a gente.",
+    "intro": "Uma história escrita por gente simples, com fé e as próprias mãos.",
+    "dica": "Role para caminhar com a gente",
+    "rotuloCapitulos": "Capítulos da história",
     "capitulos": [
       {
         "marco": "2018",

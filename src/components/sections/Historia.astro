@@ -53,10 +53,29 @@ const giro = ['-rotate-3', 'rotate-[4deg]'];
       <SecaoTitulo id="historia-titulo" titulo={h.titulo} destaque={h.destaque} tom="escuro">
         <p>{h.intro}</p>
       </SecaoTitulo>
+      <p class="historia__dica mt-8 hidden items-center gap-2 text-sm font-semibold text-blush-100">
+        {h.dica}
+        <svg
+          viewBox="0 0 24 24"
+          class="size-4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M5 12h14M13 6l6 6-6 6"></path>
+        </svg>
+      </p>
     </div>
 
     {h.capitulos.map((c, i) => (
-      <article class="historia__painel historia__capitulo" aria-labelledby={`historia-cap-${i}`}>
+      <article
+        class="historia__painel historia__capitulo"
+        data-capitulo={c.marco}
+        aria-labelledby={`historia-cap-${i}`}
+      >
         <div class="historia__texto">
           <p
             aria-hidden="true"
@@ -92,7 +111,7 @@ const giro = ['-rotate-3', 'rotate-[4deg]'];
       </article>
     ))}
 
-    <div class="historia__painel historia__comparar">
+    <div class="historia__painel historia__comparar" data-capitulo={h.antesDepois.titulo}>
       <h3 class="font-display text-[clamp(1.75rem,3vw,2.5rem)]">{h.antesDepois.titulo}</h3>
       <AntesDepois
         class="mt-6"
@@ -113,6 +132,22 @@ const giro = ['-rotate-3', 'rotate-[4deg]'];
       </Button>
     </div>
   </div>
+  <nav
+    aria-label={h.rotuloCapitulos}
+    data-historia-indicador
+    class="historia__indicador pointer-events-none absolute bottom-[4vh] left-[8vw] z-10 hidden"
+  >
+    <ol class="flex items-center gap-2 text-sm font-semibold">
+      {[...h.capitulos.map((c) => c.marco), h.antesDepois.titulo].map((m) => (
+        <li
+          data-indicador={m}
+          class="rounded-full px-3 py-1 text-blush-100/80 transition-colors duration-base data-[ativo]:bg-cream data-[ativo]:text-wine-900"
+        >
+          {m}
+        </li>
+      ))}
+    </ol>
+  </nav>
 </section>
 
 <style>
@@ -159,7 +194,7 @@ const giro = ['-rotate-3', 'rotate-[4deg]'];
   :global(.historia.is-horizontal) .historia__trilha {
     display: flex;
     align-items: center;
-    gap: 8vw;
+    gap: 14vw;
     width: max-content;
     max-width: none;
     height: 100svh;
@@ -173,7 +208,7 @@ const giro = ['-rotate-3', 'rotate-[4deg]'];
     width: min(36vw, 34rem);
   }
   :global(.historia.is-horizontal) .historia__capitulo {
-    width: min(66vw, 64rem);
+    width: min(78vw, 76rem);
   }
   :global(.historia.is-horizontal) .historia__comparar {
     width: min(46vw, 44rem);
@@ -186,6 +221,10 @@ const giro = ['-rotate-3', 'rotate-[4deg]'];
     display: block;
     bottom: 9vh;
     height: 40px;
+  }
+  :global(.historia.is-horizontal) .historia__dica,
+  :global(.historia.is-horizontal) .historia__indicador {
+    display: flex;
   }
   :global(.historia.is-horizontal) .historia__vertical {
     display: none;

@@ -20,6 +20,16 @@ function iniciar(secao: HTMLElement) {
   mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
     secao.classList.add('is-horizontal');
     const distancia = () => trilha.scrollWidth - window.innerWidth;
+    const paineis = [...secao.querySelectorAll<HTMLElement>('[data-capitulo]')];
+    const marcas = [...secao.querySelectorAll<HTMLElement>('[data-indicador]')];
+    // ativo = último painel cuja borda esquerda já passou do meio da tela
+    const marcarCapitulo = (x: number) => {
+      let ativo = -1;
+      paineis.forEach((p, i) => {
+        if (p.offsetLeft - x < window.innerWidth * 0.55) ativo = i;
+      });
+      marcas.forEach((m, i) => m.toggleAttribute('data-ativo', i === ativo));
+    };
 
     const corrida = gsap.to(trilha, {
       x: () => -distancia(),
@@ -30,6 +40,7 @@ function iniciar(secao: HTMLElement) {
         scrub: 0.8,
         end: () => `+=${distancia()}`,
         invalidateOnRefresh: true,
+        onUpdate: (self) => marcarCapitulo(self.progress * distancia()),
       },
     });
 

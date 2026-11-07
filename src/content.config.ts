@@ -98,6 +98,9 @@ const historia = defineCollection({
     titulo: z.string(),
     destaque: z.string().optional(),
     intro: z.string(),
+    /** só aparece no modo horizontal (desktop) */
+    dica: z.string(),
+    rotuloCapitulos: z.string(),
     capitulos: z
       .array(
         z.object({
