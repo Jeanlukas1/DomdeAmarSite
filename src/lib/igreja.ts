@@ -2,6 +2,7 @@ import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
 /** Coleções de página única (entrada 'principal'). */
 type Unica =
+  | 'alianca'
   | 'quemSomos'
   | 'historia'
   | 'cultosSecao'
