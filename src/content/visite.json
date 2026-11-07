@@ -1,0 +1,17 @@
+{
+  "principal": {
+    "titulo": "Venha nos visitar",
+    "destaque": "visitar",
+    "texto": "Ficamos em Jaconé, numa esquina fácil de achar. Se for a sua primeira vez, chegue uns minutinhos antes: vai ter alguém na porta esperando você.",
+    "ruas": { "principal": "Rua 94", "transversal": "Rua 19" },
+    "rotulos": {
+      "googleMaps": "Abrir no Google Maps",
+      "waze": "Ir com o Waze",
+      "whatsapp": "Avisar que estou indo",
+      "mostrarMapa": "Mostrar o mapa",
+      "avisoMapa": "O mapa é do Google e só carrega quando você pedir.",
+      "tituloMapa": "Mapa da Igreja Dom de Amar em Jaconé, Saquarema"
+    },
+    "whatsappMensagem": "Graça e Paz! Estou pensando em visitar a igreja. Pode me ajudar a chegar?"
+  }
+}

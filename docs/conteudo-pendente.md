@@ -4,7 +4,7 @@ Cada item abaixo está marcado no arquivo com `mock: true` (ou `// MOCK`). Quand
 
 | Arquivo                         | Campo                                     | O que precisamos                                                                                                            |
 | ------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `src/content/igreja.json`       | `contato.telefone`, `contato.whatsapp`    | telefone/WhatsApp oficial                                                                                                   |
+| `src/content/igreja.json`       | `contato.telefone`, `contato.whatsapp`    | telefone/WhatsApp oficial (enquanto `contato.mock` for `true`, o botão "Avisar que estou indo" não aparece)                 |
 | `src/content/igreja.json`       | `contato.email`                           | e-mail oficial                                                                                                              |
 | `src/content/igreja.json`       | `redes.instagram`, `redes.youtube`        | links do Instagram e YouTube, se existirem (hoje `null`: o ícone não aparece até ter o link)                                |
 | `src/content/igreja.json`       | `fundacao`                                | data exata de fundação (estimada: 25/07/2018, pelos 8 anos)                                                                 |

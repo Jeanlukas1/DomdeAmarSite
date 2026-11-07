@@ -24,13 +24,7 @@ const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').r
       <SecaoTitulo id="cultos-titulo" titulo={s.titulo} destaque={s.destaque}>
         <p>{s.texto}</p>
       </SecaoTitulo>
-      <Button
-        href={s.comoChegar.href}
-        variant="ghost"
-        class="text-wine-900"
-        target="_blank"
-        rel="noopener"
-      >
+      <Button href={s.comoChegar.href} variant="ghost" class="text-wine-900">
         {s.comoChegar.rotulo}
         <Icon name="arrow" class="transition-transform duration-base group-hover:translate-x-1" />
       </Button>

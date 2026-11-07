@@ -2,15 +2,22 @@
 // Rodapé: o versículo que dá nome à igreja ("é dom de Deus"), endereço, cultos, navegação e redes.
 import logoUrl from '@/assets/logo/logo.svg?url';
 import Icon from '@/components/ui/Icon.astro';
-import { getIgreja, getNavegacao, getRedes, getOrdenados, getPrincipal } from '@/lib/igreja';
+import {
+  getEndereco,
+  getIgreja,
+  getNavegacao,
+  getOrdenados,
+  getPrincipal,
+  getRedes,
+} from '@/lib/igreja';
 
 const r = await getPrincipal('rodape');
 const igreja = await getIgreja();
 const nav = await getNavegacao();
 const cultos = await getOrdenados('cultos');
-const { rua, bairro, cidade, uf, cep } = igreja.endereco;
-const enderecoCompleto = `${rua}, ${bairro}, ${cidade} - ${uf}, ${cep}`;
-const mapa = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoCompleto)}`;
+const endereco = await getEndereco();
+const { rua, bairro, cidade, uf, cep } = endereco;
+const mapa = endereco.googleMaps;
 const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
 const redes = await getRedes();
 const ano = new Date().getFullYear();

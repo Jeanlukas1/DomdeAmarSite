@@ -1,0 +1,128 @@
+---
+// Mapa "clique para carregar": antes do clique, um mapinha desenhado da esquina de referência
+// (SVG leve, sem rede); o iframe do Google só entra quando a pessoa pede. Sem JS, o botão vira
+// um link para o Google Maps.
+interface Props {
+  embed: string;
+  link: string;
+  ruaPrincipal: string;
+  ruaTransversal: string;
+  rotulo: string;
+  aviso: string;
+  titulo: string;
+}
+
+const { embed, link, ruaPrincipal, ruaTransversal, rotulo, aviso, titulo } = Astro.props;
+---
+
+<div
+  data-mapa
+  data-embed={embed}
+  data-titulo={titulo}
+  class="overflow-hidden rounded-[2rem] border border-sand bg-cream"
+>
+  <div data-mapa-area class="relative isolate aspect-[16/10] bg-sand">
+    <svg
+      viewBox="0 0 400 300"
+      preserveAspectRatio="xMidYMid slice"
+      class="absolute inset-0 -z-10 h-full w-full"
+      aria-hidden="true"
+    >
+      <!-- quarteirões -->
+      <g fill="var(--color-cream)">
+        <rect x="-10" y="-10" width="232" height="140" rx="18"></rect>
+        <rect x="268" y="-10" width="160" height="140" rx="18"></rect>
+        <rect x="-10" y="176" width="232" height="140" rx="18"></rect>
+        <rect x="268" y="176" width="160" height="140" rx="18"></rect>
+      </g>
+      <!-- eixo das ruas -->
+      <g stroke="var(--color-blush)" stroke-width="1.5" stroke-dasharray="8 10" opacity=".6">
+        <path d="M0 153h400"></path>
+        <path d="M245 0v300"></path>
+      </g>
+      <g
+        fill="var(--color-muted)"
+        font-family="var(--font-sans)"
+        font-size="11"
+        font-weight="700"
+        letter-spacing="2.4"
+      >
+        <text x="28" y="148">
+          {ruaPrincipal.toUpperCase()}
+        </text>
+        <text x="0" y="0" transform="translate(240 270) rotate(-90)">
+          {ruaTransversal.toUpperCase()}
+        </text>
+      </g>
+      <!-- a igreja: o coração do selo na esquina -->
+      <g transform="translate(296 104)">
+        <circle r="30" fill="var(--color-red-600)" opacity=".12" class="mapa__pulso"></circle>
+        <circle
+          r="19"
+          fill="var(--color-white)"
+          stroke="var(--color-red-600)"
+          stroke-width="3"
+        ></circle>
+        <path
+          d="M0 8s-8-4.8-8-10.6a4.4 4.4 0 0 1 8-2.6 4.4 4.4 0 0 1 8 2.6C8 3.2 0 8 0 8z"
+          fill="var(--color-red-600)"
+        ></path>
+      </g>
+    </svg>
+  </div>
+
+  <div
+    data-mapa-capa
+    class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-sand p-5 sm:px-6"
+  >
+    <p class="max-w-[28ch] text-sm text-ink-soft">{aviso}</p>
+    <a
+      href={link}
+      target="_blank"
+      rel="noopener"
+      data-mapa-abrir
+      class="inline-flex min-h-12 items-center gap-2 rounded-full bg-wine-900 px-6 font-semibold text-cream transition-colors duration-base hover:bg-wine-800"
+    >
+      {rotulo}
+    </a>
+  </div>
+</div>
+
+<style>
+  .mapa__pulso {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: mapa-pulso 2.4s var(--ease-out) infinite;
+  }
+  @keyframes mapa-pulso {
+    0% {
+      transform: scale(0.6);
+      opacity: 0.35;
+    }
+    80%,
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-mapa]').forEach((box) => {
+    const abrir = box.querySelector<HTMLAnchorElement>('[data-mapa-abrir]');
+    abrir?.addEventListener('click', (e) => {
+      e.preventDefault();
+      const iframe = document.createElement('iframe');
+      iframe.src = box.dataset.embed!;
+      iframe.title = box.dataset.titulo!;
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      iframe.className = 'absolute inset-0 h-full w-full border-0';
+      const area = box.querySelector<HTMLElement>('[data-mapa-area]')!;
+      area.classList.replace('aspect-[16/10]', 'aspect-[4/3]');
+      area.replaceChildren(iframe);
+      box.querySelector('[data-mapa-capa]')?.remove();
+      iframe.focus();
+    });
+  });
+</script>

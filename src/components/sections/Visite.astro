@@ -1,0 +1,83 @@
+---
+// Visite-nos: o endereço escrito como num convite, a esquina de referência e as rotas
+// (Google Maps, Waze, WhatsApp). O mapa do Google só carrega no clique.
+import MapaSobDemanda from '@/components/islands/MapaSobDemanda.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import { getEndereco, getPrincipal, getWhatsapp } from '@/lib/igreja';
+
+const v = await getPrincipal('visite');
+const end = await getEndereco();
+// enquanto o número for mock, o botão do WhatsApp simplesmente não aparece
+const whatsapp = await getWhatsapp(v.whatsappMensagem);
+---
+
+<section
+  id="visite"
+  aria-labelledby="visite-titulo"
+  class="scroll-mt-20 bg-white py-[clamp(5rem,11vw,9rem)]"
+>
+  <div class="container-site grid items-center gap-12 lg:grid-cols-2 lg:gap-16 [&>*]:min-w-0">
+    <div>
+      <SecaoTitulo id="visite-titulo" titulo={v.titulo} destaque={v.destaque}>
+        <p>{v.texto}</p>
+      </SecaoTitulo>
+
+      <address class="mt-10 not-italic" data-reveal>
+        <p class="font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight text-ink">{end.rua}</p>
+        <p class="mt-1 text-lg text-ink-soft">
+          {end.bairro}, {end.cidade} – {end.uf} · CEP {end.cep}
+        </p>
+        {end.referencia && (
+          <p class="mt-4 inline-flex items-center gap-2 rounded-full bg-blush-100/60 py-1.5 pr-4 pl-2 text-sm font-semibold text-red-700">
+            <span class="grid size-6 place-items-center rounded-full bg-white text-red-600">
+              <Icon name="heart" size={14} />
+            </span>
+            {end.referencia}
+          </p>
+        )}
+      </address>
+
+      <div class="mt-8 flex flex-wrap gap-3" data-reveal data-reveal-delay="0.1">
+        <Button href={end.googleMaps} target="_blank" rel="noopener">
+          {v.rotulos.googleMaps}
+          <Icon name="arrow" class="transition-transform duration-base group-hover:translate-x-1" />
+        </Button>
+        <Button
+          href={end.waze}
+          variant="ghost"
+          class="text-wine-900"
+          target="_blank"
+          rel="noopener"
+        >
+          {v.rotulos.waze}
+        </Button>
+        {whatsapp && (
+          <Button
+            href={whatsapp}
+            variant="ghost"
+            class="text-wine-900"
+            target="_blank"
+            rel="noopener"
+          >
+            <Icon name="whatsapp" />
+            {v.rotulos.whatsapp}
+          </Button>
+        )}
+      </div>
+    </div>
+
+    <div data-reveal="circle">
+      <MapaSobDemanda
+        embed={end.mapaEmbed}
+        link={end.googleMaps}
+        ruaPrincipal={v.ruas.principal}
+        ruaTransversal={v.ruas.transversal}
+        rotulo={v.rotulos.mostrarMapa}
+        aviso={v.rotulos.avisoMapa}
+        titulo={v.rotulos.tituloMapa}
+      />
+    </div>
+  </div>
+</section>

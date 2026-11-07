@@ -18,6 +18,7 @@ Todo o conteúdo fica em `src/content/`. Depois de editar, rode `npm run build`:
 | `ministerios.json`  | ministérios: nome, frase, foto vertical, ordem                                                                                                                                                           |
 | `agenda.json`       | textos da seção Agenda                                                                                                                                                                                   |
 | `eventos.json`      | eventos: título, data (AAAA-MM-DD), hora, local, descrição, foto opcional. **Eventos passados somem sozinhos**                                                                                           |
+| `visite.json`       | Visite-nos: título, texto, nomes das duas ruas da esquina (mapinha desenhado), rótulos das rotas e mensagem pronta do WhatsApp. O endereço vem de `igreja.json`                                          |
 | `galeria.json`      | fotos da galeria (id + alt). Retrato ocupa 2 linhas, paisagem 1: mantenha as 8 primeiras na ordem paisagem, retrato, paisagem, retrato, retrato, retrato, paisagem, paisagem (fecha a grade sem buracos) |
 | `rodape.json`       | versículo do rodapé e títulos das colunas (endereço e cultos vêm de `igreja.json` e `cultos.json`)                                                                                                       |
 

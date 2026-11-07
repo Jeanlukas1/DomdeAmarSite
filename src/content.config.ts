@@ -166,6 +166,26 @@ const youtubeId = z
   .nullable()
   .default(null);
 
+const visite = defineCollection({
+  loader: file('src/content/visite.json'),
+  schema: z.object({
+    titulo: z.string(),
+    destaque: z.string().optional(),
+    texto: z.string(),
+    /** nomes das duas ruas da esquina de referência, para o mapinha desenhado */
+    ruas: z.object({ principal: z.string(), transversal: z.string() }),
+    rotulos: z.object({
+      googleMaps: z.string(),
+      waze: z.string(),
+      whatsapp: z.string(),
+      mostrarMapa: z.string(),
+      avisoMapa: z.string(),
+      tituloMapa: z.string(),
+    }),
+    whatsappMensagem: z.string(),
+  }),
+});
+
 const assista = defineCollection({
   loader: file('src/content/assista.json'),
   schema: z.object({
@@ -294,6 +314,7 @@ export const collections = {
   historia,
   cultos,
   cultosSecao,
+  visite,
   assista,
   mensagens,
   cresca,
