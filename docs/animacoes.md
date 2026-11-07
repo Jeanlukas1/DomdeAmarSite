@@ -43,14 +43,14 @@ Timeline de ~4,5s sobre o SVG inline (`Hero.astro`), usando os ids de camada do 
 - O texto do hero entra por **CSS** (`.hero-in`), sem esperar JS, para proteger o LCP (h1).
 - Se trocar o logo pelo original do designer: manter os ids e reajustar `PINCEL` e o raio do arco.
 
-## Nossa história ()
+## Nossa história (`src/lib/animations/historia.ts`)
 
-- **Desktop + movimento:** a seção é fixada (pin) e a trilha corre na horizontal (scrub). A pincelada vermelha se desenha com o progresso, e as fotos impressas caem girando ().
+- **Desktop + movimento:** a seção é fixada (pin) e a trilha corre na horizontal (scrub). A pincelada vermelha se desenha com o progresso, e as fotos impressas caem girando (`containerAnimation`).
 - **Celular:** a linha vertical vermelha desce com o scroll, e as fotos caem ao entrar.
-- **Reduced-motion / sem JS:** layout empilhado, estático (a classe só é aplicada pelo JS).
-- Depois de criar o pin: + , para os gatilhos das seções seguintes considerarem o espaço do pin.
+- **Reduced-motion / sem JS:** layout empilhado, estático (a classe `is-horizontal` só é aplicada pelo JS).
+- Depois de criar o pin: `ScrollTrigger.sort()` + `refresh()`, para os gatilhos das seções seguintes considerarem o espaço do pin.
 
 ## Helpers novos
 
-- : abre num círculo a partir do centro (a forma do selo).
-- : a pincelada () se desenha ao entrar na tela.
+- `data-reveal="circle"`: abre num círculo a partir do centro (a forma do selo).
+- `data-brush`: a pincelada (`ui/Pincelada.astro`) se desenha ao entrar na tela.
