@@ -1,2 +1,6 @@
+* text=auto eol=lf
+*.jpg binary
+*.png binary
+*.exe binary
 *.sh text eol=lf
 .claude/skills/impeccable/scripts/impeccable text eol=lf
