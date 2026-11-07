@@ -80,9 +80,12 @@ const textoLongo = (label: string, description?: string) =>
 // ---------- painel ----------
 
 export default config({
-  storage: import.meta.env.DEV
-    ? { kind: 'local' }
-    : { kind: 'github', repo: { owner: 'Jeanlukas1', name: 'DomdeAmarSite' } },
+  // dev = arquivos locais; produção = commits no GitHub. Para criar o GitHub App (uma vez só),
+  // rode o dev com PUBLIC_KEYSTATIC_GITHUB=1 e siga o assistente — ver docs/deploy.md.
+  storage:
+    import.meta.env.DEV && import.meta.env.PUBLIC_KEYSTATIC_GITHUB !== '1'
+      ? { kind: 'local' }
+      : { kind: 'github', repo: { owner: 'Jeanlukas1', name: 'DomdeAmarSite' } },
   ui: {
     brand: { name: 'Dom de Amar' },
     navigation: {

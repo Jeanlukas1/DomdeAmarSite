@@ -20,7 +20,7 @@
 - [x] F3 — Seções
 - [x] F4 — Conteúdo, Visite-nos, Contribua, Fale com a gente (WhatsApp), Keystatic
 - [x] F5 — Performance, SEO, acessibilidade
-- [ ] F6 — Deploy
+- [ ] F6 — Deploy (no ar; faltam deploy automático pelo GitHub e o GitHub App do Keystatic)
 
 ## Sessões
 
