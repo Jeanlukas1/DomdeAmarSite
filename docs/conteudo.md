@@ -2,24 +2,24 @@
 
 Todo o conteúdo fica em `src/content/`. Depois de editar, rode `npm run build`: o Zod acusa campos errados.
 
-| Arquivo             | O que é                                                                                                                 |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `igreja.json`       | nome, slogan, endereço, contatos, redes                                                                                 |
-| `navegacao.json`    | itens do menu (`ordem`, `rotulo`, `href`, `destaque` = botão vermelho)                                                  |
-| `hero.json`         | saudação, título, texto e botões do topo da home                                                                        |
-| `quem-somos.json`   | título, carta, missão, visão, fotos (id em `src/assets/fotos` + `alt` + `posicao`)                                      |
-| `pastores.json`     | liderança: nome, função, ordem (foto opcional)                                                                          |
-| `historia.json`     | título, capítulos (marco, título, texto, 1–2 fotos), comparador antes/agora, chamada para ajudar a construir            |
-| `cultos.json`       | cada culto: dia, `diaSemana` (0 = domingo), `hora` (HH:MM), nome, descrição, foto. O site marca sozinho o próximo culto |
-| `cultos-secao.json` | título da seção e o **destaque da semana** (tema, texto bíblico, pregador): troque toda semana                          |
-| `assista.json`      | vídeo em destaque (`youtubeId` = só o id de 11 caracteres; `null` mostra "em breve" + Facebook) e textos da seção       |
-| `mensagens.json`    | pregações: título, referência, data (AAAA-MM-DD), pregador, `youtubeId`. A home mostra as 3 mais recentes               |
-| `cresca.json`       | textos da seção Cresça na fé e do Estudo da Palavra                                                                     |
-| `ministerios.json`  | ministérios: nome, frase, foto vertical, ordem                                                                          |
-| `agenda.json`       | textos da seção Agenda                                                                                                  |
-| `eventos.json`      | eventos: título, data (AAAA-MM-DD), hora, local, descrição, foto opcional. **Eventos passados somem sozinhos**          |
-| `galeria.json`      | fotos da galeria (id + alt), na ordem do mosaico. A proporção de cada foto é respeitada                                 |
-| `rodape.json`       | versículo do rodapé e títulos das colunas (endereço e cultos vêm de `igreja.json` e `cultos.json`)                      |
+| Arquivo             | O que é                                                                                                                                                                                                  |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `igreja.json`       | nome, slogan, endereço, contatos, redes                                                                                                                                                                  |
+| `navegacao.json`    | itens do menu (`ordem`, `rotulo`, `href`, `destaque` = botão vermelho)                                                                                                                                   |
+| `hero.json`         | saudação, título, texto e botões do topo da home                                                                                                                                                         |
+| `quem-somos.json`   | título, carta, missão, visão, fotos (id em `src/assets/fotos` + `alt` + `posicao`)                                                                                                                       |
+| `pastores.json`     | liderança: nome, função, ordem (foto opcional)                                                                                                                                                           |
+| `historia.json`     | título, capítulos (marco, título, texto, 1–2 fotos), comparador antes/agora, chamada para ajudar a construir                                                                                             |
+| `cultos.json`       | cada culto: dia, `diaSemana` (0 = domingo), `hora` (HH:MM), nome, descrição, foto. O site marca sozinho o próximo culto                                                                                  |
+| `cultos-secao.json` | título da seção e o **destaque da semana** (tema, texto bíblico, pregador): troque toda semana                                                                                                           |
+| `assista.json`      | vídeo em destaque (`youtubeId` = só o id de 11 caracteres; `null` mostra "em breve" + Facebook) e textos da seção                                                                                        |
+| `mensagens.json`    | pregações: título, referência, data (AAAA-MM-DD), pregador, `youtubeId`. A home mostra as 3 mais recentes                                                                                                |
+| `cresca.json`       | textos da seção Cresça na fé e do Estudo da Palavra                                                                                                                                                      |
+| `ministerios.json`  | ministérios: nome, frase, foto vertical, ordem                                                                                                                                                           |
+| `agenda.json`       | textos da seção Agenda                                                                                                                                                                                   |
+| `eventos.json`      | eventos: título, data (AAAA-MM-DD), hora, local, descrição, foto opcional. **Eventos passados somem sozinhos**                                                                                           |
+| `galeria.json`      | fotos da galeria (id + alt). Retrato ocupa 2 linhas, paisagem 1: mantenha as 8 primeiras na ordem paisagem, retrato, paisagem, retrato, retrato, retrato, paisagem, paisagem (fecha a grade sem buracos) |
+| `rodape.json`       | versículo do rodapé e títulos das colunas (endereço e cultos vêm de `igreja.json` e `cultos.json`)                                                                                                       |
 
 > **Fotos:** use o id `pasta/arquivo` (sem .jpg), um `alt` que descreva a cena sem nomear pessoas, e `posicao` (object-position, ex.: `50% 30%`) para acertar o recorte.
 

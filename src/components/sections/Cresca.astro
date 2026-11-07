@@ -17,8 +17,8 @@ const ministerios = await getOrdenados('ministerios');
   aria-labelledby="cresca-titulo"
   class="scroll-mt-20 overflow-hidden bg-sand py-[clamp(5rem,11vw,9rem)]"
 >
-  <div class="container-site grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)] lg:items-start lg:gap-16 [&>*]:min-w-0">
-    <div class="lg:sticky lg:top-28">
+  <div class="container-site grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.7fr)] lg:items-center lg:gap-16 [&>*]:min-w-0">
+    <div>
       <SecaoTitulo id="cresca-titulo" titulo={c.titulo} destaque={c.destaque}>
         <p>{c.texto}</p>
       </SecaoTitulo>
@@ -55,10 +55,13 @@ const ministerios = await getOrdenados('ministerios');
         class="[&_[data-faixa-controles]]:px-[var(--faixa-respiro)]"
       >
         {ministerios.map((m) => (
-          <li class="w-[72vw] max-w-[19rem] shrink-0 snap-start sm:w-[17rem]">
-            <figure class="relative aspect-[3/4] overflow-hidden rounded-[1.5rem] bg-wine-950">
+          <li class="w-[72vw] max-w-[19rem] shrink-0 snap-start sm:w-[17rem] lg:w-[clamp(17rem,24vw,21rem)] lg:max-w-none">
+            <figure class="relative aspect-[3/4] overflow-hidden lg:aspect-[2/3] rounded-[1.5rem] bg-wine-950">
               <div data-faixa-parallax class="absolute inset-0">
-                <Foto {...m.foto} sizes="(min-width: 640px) 18rem, 72vw" />
+                <Foto
+                  {...m.foto}
+                  sizes="(min-width: 1024px) 21rem, (min-width: 640px) 17rem, 72vw"
+                />
               </div>
               <div class="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--color-night)_88%,transparent)_10%,transparent_55%)]" />
               <figcaption class="absolute inset-x-0 bottom-0 p-5 text-cream">

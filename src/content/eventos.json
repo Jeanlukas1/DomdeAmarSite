@@ -52,11 +52,6 @@
     "hora": "18:00",
     "local": "Templo Dom de Amar",
     "descricao": "O louvor da igreja conta a história do maior presente: Jesus.",
-    "foto": {
-      "id": "cultos-louvor/cultos-louvor-37",
-      "alt": "Banda e igreja reunidas durante o louvor",
-      "posicao": "50% 50%"
-    },
     "mock": true
   },
   {

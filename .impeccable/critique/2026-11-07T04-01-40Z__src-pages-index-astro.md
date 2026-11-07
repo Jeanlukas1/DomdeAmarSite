@@ -10,6 +10,7 @@ target_fingerprint: 'sha256:443a02d54df7ed40f8dc409389696aedafa81fcbf0b2b2153d4b
 target_path: "C:\\Users\\lukas\\OneDrive\\Documentos\\GitHub\\DomdeAmarSite\\src\\pages\\index.astro"
 timestamp: 2026-11-07T04-01-40Z
 slug: src-pages-index-astro
+closed: true
 ---
 
 Method: dual-agent (A: design review · B: detector + browser)

@@ -1,5 +1,7 @@
 ---
-// Galeria: mosaico em colunas que respeita a proporção real de cada foto (nada é cortado) +
+// Galeria: mosaico em grade — paisagem ocupa 1 linha, retrato 2 (as 8 visíveis fecham um retângulo,
+// sem fim desalinhado; o recorte é leve e a foto inteira abre no lightbox). A ORDEM em galeria.json
+// importa: P = retrato, L = paisagem — as 8 primeiras seguem L P L P P P L L para fechar a grade em 2, 3 e 4 colunas +
 // lightbox com <dialog> nativo (foco preso, Esc fecha), setas do teclado e deslize no toque.
 import { getImage } from 'astro:assets';
 import Foto from '@/components/ui/Foto.astro';
@@ -17,7 +19,7 @@ const fotos = await Promise.all(
     return {
       ...f,
       posicao: f.cortarBase ? '50% 0%' : f.posicao,
-      proporcao: `${meta.width} / ${altura}`,
+      retrato: altura > meta.width,
       grande: grande.src,
     };
   }),
@@ -29,20 +31,21 @@ const fotos = await Promise.all(
   aria-labelledby="galeria-titulo"
   class="scroll-mt-20 bg-white py-[clamp(5rem,11vw,9rem)]"
 >
-  <div class="container-site">
+  <!-- contêiner de consulta: as linhas do mosaico medem 100cqi (a largura útil) -->
+  <div class="container-site [container-type:inline-size]">
     <SecaoTitulo id="galeria-titulo" titulo={g.titulo} destaque={g.destaque} centro>
       <p>{g.texto}</p>
     </SecaoTitulo>
 
     <ul
-      class="mt-14 columns-2 gap-3 sm:gap-4 md:columns-3 lg:columns-4 [&>li]:mb-3 sm:[&>li]:mb-4"
+      class="mosaico mt-14 grid grid-flow-dense grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4"
       data-reveal-group
       data-stagger="0.06"
       data-galeria
     >
       {fotos.map((f, i) => (
         <li
-          class="break-inside-avoid"
+          class:list={[f.retrato && 'row-span-2']}
           data-reveal={i < g.visiveis ? 'clip' : undefined}
           data-galeria-extra={i >= g.visiveis ? '' : undefined}
         >
@@ -51,8 +54,7 @@ const fotos = await Promise.all(
             data-galeria-abrir={i}
             data-grande={f.grande}
             data-alt={f.alt}
-            class="group relative block w-full overflow-hidden rounded-2xl bg-sand"
-            style={`aspect-ratio: ${f.proporcao}`}
+            class="group relative block h-full w-full overflow-hidden rounded-2xl bg-sand"
           >
             <Foto
               {...f}
@@ -170,6 +172,26 @@ const fotos = await Promise.all(
 </section>
 
 <style>
+  /* linha = 3/4 da largura de uma coluna (paisagem 4:3; retrato, com 2 linhas, ≈ 2:3) */
+  .mosaico {
+    --cols: 2;
+    grid-auto-rows: calc((100cqi - (var(--cols) - 1) * 0.75rem) / var(--cols) * 0.75);
+  }
+  @media (min-width: 40rem) {
+    .mosaico {
+      grid-auto-rows: calc((100cqi - (var(--cols) - 1) * 1rem) / var(--cols) * 0.75);
+    }
+  }
+  @media (min-width: 48rem) {
+    .mosaico {
+      --cols: 3;
+    }
+  }
+  @media (min-width: 64rem) {
+    .mosaico {
+      --cols: 4;
+    }
+  }
   .lightbox[open] {
     animation: lightbox-in 0.35s var(--ease-out);
   }

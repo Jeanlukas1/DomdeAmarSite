@@ -115,7 +115,7 @@ Uma paleta de um único matiz, vermelho, extraída da logo, sobre neutros quente
 
 ### Primary
 
-- **Vermelho da Graça** (`graca-red`): o vermelho da borda do selo e das fitas do coração. Botões primários, CTA do menu, pinceladas, foco do teclado, o coração. Em texto, só ≥ 18px ou em negrito.
+- **Vermelho da Graça** (`graca-red`): o vermelho da borda do selo e das fitas do coração. Botões primários, CTA do menu, pinceladas, foco do teclado (sobre vinho/noite o anel vira creme: utilidade `superficie-escura`), o coração. Em texto, só ≥ 18px ou em negrito.
 - **Vermelho Aceso** (`graca-red-bright`): estado de hover do primário. Um passo mais luminoso, como brasa assoprada.
 - **Vermelho Profundo** (`graca-red-deep`): a sombra das fitas na logo. Texto vermelho pequeno (metadados, links sobre claro), por contraste AA.
 

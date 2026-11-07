@@ -26,25 +26,20 @@
         "alt": "Pregador ministrando a Palavra no púlpito de acrílico"
       },
       {
-        "id": "comunhao/comunhao-14",
-        "alt": "Celebração de aniversário com balões verdes no salão"
-      },
-      {
         "id": "oracao/oracao-39",
         "alt": "Momento de oração com imposição de mãos"
-      },
-      {
-        "id": "comunhao/comunhao-23",
-        "alt": "Selfie da igreja reunida e alegre"
       },
       {
         "id": "cultos-louvor/cultos-louvor-10",
         "alt": "Dupla cantando no louvor, com o coração da logo projetado no telão"
       },
       {
-        "id": "comunhao/comunhao-26",
-        "alt": "Duas fotos da igreja reunida e sorrindo, em uma celebração",
-        "cortarBase": true
+        "id": "comunhao/comunhao-14",
+        "alt": "Celebração de aniversário com balões verdes no salão"
+      },
+      {
+        "id": "comunhao/comunhao-23",
+        "alt": "Selfie da igreja reunida e alegre"
       },
       {
         "id": "casais-evento-amor/casais-evento-amor-18",
@@ -64,6 +59,11 @@
       {
         "id": "casais-evento-amor/casais-evento-amor-24",
         "alt": "Casal sentado lado a lado no evento de casais",
+        "cortarBase": true
+      },
+      {
+        "id": "comunhao/comunhao-26",
+        "alt": "Duas fotos da igreja reunida e sorrindo, em uma celebração",
         "cortarBase": true
       },
       {
