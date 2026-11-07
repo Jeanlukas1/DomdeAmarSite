@@ -21,6 +21,14 @@ O init vive em `src/lib/animations/init.ts`, carregado uma vez pelo layout. Com 
 - Durações de 0.6–0.9s, ease `power3.out` (CSS: `--ease-out`).
 - Teste em CPU 4× slowdown antes de commitar animação pesada.
 
+## Carregamento (protege o LCP)
+
+- Nada de GSAP, ScrollTrigger ou Lenis é baixado nem executado antes da primeira pintura. As entradas importam só `src/lib/agendar.ts` (sem dependências) e carregam o resto com `import()`:
+  - `depoisDaPintura(fn)`: um frame depois de pintar (hero, init global, História);
+  - `quandoOcioso(fn)`: depois da pintura e com o navegador ocioso (tudo abaixo da dobra).
+- Menu e lightbox pausam o smooth scroll por `src/lib/rolagem.ts` (`pausarRolagem`/`retomarRolagem`), sem importar o Lenis.
+- No celular, o **parágrafo** do hero é o maior elemento do topo (o LCP): ele e o h1 aparecem sem fade. Só os botões e a linha do próximo culto entram com `.hero-in`.
+
 ## Hero (`src/lib/animations/hero.ts`)
 
 Timeline de ~4,5s sobre o SVG inline (`Hero.astro`), usando os ids de camada do `logo.svg`:
@@ -40,7 +48,7 @@ Timeline de ~4,5s sobre o SVG inline (`Hero.astro`), usando os ids de camada do 
 - **Scroll:** o selo encolhe (power3.out) e voa até `[data-header-logo]`. O logo do header só aparece no fim (`data-aguarda-hero`).
 - **Mouse** (só com ponteiro fino): inclinação 3D leve + brilho segue o cursor.
 - **Sem JS / reduced-motion:** o selo aparece completo e o logo do header fica sempre visível.
-- O texto do hero entra por **CSS** (`.hero-in`), sem esperar JS, para proteger o LCP (h1).
+- Título e parágrafo do hero aparecem prontos (são o LCP); botões e próximo culto entram por **CSS** (`.hero-in`), sem esperar JS.
 - Se trocar o logo pelo original do designer: manter os ids e reajustar `PINCEL` e o raio do arco.
 
 ## Nossa história (`src/lib/animations/historia.ts`)

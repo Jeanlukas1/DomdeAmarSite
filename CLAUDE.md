@@ -19,6 +19,7 @@ npm run preview   # serve o dist/
 npm run lint      # eslint + prettier --check
 npm run format    # prettier --write
 npm run tokens    # src/design/tokens.json -> src/styles/tokens.css
+npm run imagens   # gera public/og-image.jpg e apple-touch-icon.png (Chrome local)
 ```
 
 Não há testes automatizados. A verificação é feita com build, lint e Lighthouse/inspeção no navegador.

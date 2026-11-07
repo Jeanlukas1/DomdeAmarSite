@@ -19,7 +19,7 @@
 - [x] F2 — Logo em camadas + Hero
 - [x] F3 — Seções
 - [x] F4 — Conteúdo, Visite-nos, Contribua, Fale com a gente (WhatsApp), Keystatic
-- [ ] F5 — Performance, SEO, acessibilidade
+- [x] F5 — Performance, SEO, acessibilidade
 - [ ] F6 — Deploy
 
 ## Sessões
