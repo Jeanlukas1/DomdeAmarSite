@@ -1,6 +1,9 @@
 {
   "principal": {
-    "marca": { "linha1": "Igreja Evangélica", "linha2": "Dom de Amar" },
+    "marca": {
+      "linha1": "Igreja Evangélica",
+      "linha2": "Dom de Amar"
+    },
     "seo": {
       "igrejaEm": "igreja evangélica em",
       "tituloIgrejaEm": "Igreja em"
@@ -17,6 +20,12 @@
       "textoBiblico": "Texto bíblico",
       "pregador": "Pregador",
       "as": "às"
+    },
+    "naoEncontrada": {
+      "titulo": "Esta página se perdeu no caminho",
+      "texto": "O endereço pode ter mudado ou não existir mais. Mas a porta da igreja continua aberta.",
+      "voltar": "Voltar ao início",
+      "cultos": "Ver horários dos cultos"
     }
   }
 }

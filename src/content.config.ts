@@ -370,6 +370,12 @@ const ui = defineCollection({
   schema: z.object({
     marca: z.object({ linha1: z.string(), linha2: z.string() }),
     seo: z.object({ igrejaEm: z.string(), tituloIgrejaEm: z.string() }),
+    naoEncontrada: z.object({
+      titulo: z.string(),
+      texto: z.string(),
+      voltar: z.string(),
+      cultos: z.string(),
+    }),
     a11y: z.object({
       pularConteudo: z.string(),
       navPrincipal: z.string(),
