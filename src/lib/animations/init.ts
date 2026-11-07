@@ -1,6 +1,6 @@
 // Ponto único de entrada das animações globais (carregado pelo BaseLayout).
 // Animações específicas (ex.: hero) ficam em módulos próprios importados pela seção.
-import { reduceMotion } from './motion';
+import { quandoOcioso, reduceMotion } from './motion';
 import { initReveal } from './reveal';
 import { initParallax } from './parallax';
 import { initSplit } from './split';
@@ -18,8 +18,11 @@ window.__animReady = true;
 
 if (!reduceMotion()) {
   initSmoothScroll();
-  initReveal();
-  initParallax();
-  initSplit();
-  initBrush();
+  // revelações ficam abaixo da dobra: esperam o navegador ficar ocioso (protege o LCP)
+  quandoOcioso(() => {
+    initReveal();
+    initParallax();
+    initSplit();
+    initBrush();
+  });
 }

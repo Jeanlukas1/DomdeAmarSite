@@ -31,7 +31,7 @@ const { titulo, descricao, youtubeId, poster, rotuloAssistir, emBreve, rotuloFac
 >
   <div data-video-poster class="absolute inset-0 -z-10">
     <Foto {...poster} sizes="(min-width: 1280px) 1200px, 100vw" />
-    <div class="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--color-night)_92%,transparent)_8%,color-mix(in_srgb,var(--color-night)_25%,transparent)_60%,transparent)]"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--color-night)_96%,transparent)_15%,color-mix(in_srgb,var(--color-night)_55%,transparent)_45%,color-mix(in_srgb,var(--color-night)_10%,transparent)_75%,transparent)]"></div>
   </div>
 
   <div class="flex h-full flex-col justify-end gap-5 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-10">
@@ -39,7 +39,7 @@ const { titulo, descricao, youtubeId, poster, rotuloAssistir, emBreve, rotuloFac
       <h3 class="font-display text-[clamp(1.75rem,3.4vw,2.75rem)] leading-tight text-cream">
         {titulo}
       </h3>
-      <p class="mt-2 text-blush-100/85">{youtubeId ? descricao : emBreve}</p>
+      <p class="mt-2 text-blush-100">{youtubeId ? descricao : emBreve}</p>
     </div>
     {youtubeId ? (
       <button

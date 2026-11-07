@@ -1,14 +1,16 @@
 // Nossa história: no desktop a seção fica presa e a trilha corre na horizontal, com a pincelada
 // se desenhando e as "fotos impressas" caindo no lugar. No celular, a linha vermelha desce com o
 // scroll. Com reduced-motion nada disso roda: fica o layout empilhado, estático.
-import { gsap, ScrollTrigger } from './motion';
+import { gsap, quandoOcioso, ScrollTrigger } from './motion';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
 
 gsap.registerPlugin(DrawSVGPlugin);
 
 const secao = document.querySelector<HTMLElement>('[data-historia]');
 
-if (secao) {
+if (secao) quandoOcioso(() => iniciar(secao));
+
+function iniciar(secao: HTMLElement) {
   const trilha = secao.querySelector<HTMLElement>('[data-track]')!;
   const linha = secao.querySelector<SVGPathElement>('[data-historia-linha]')!;
   const vertical = secao.querySelector<HTMLElement>('[data-historia-vertical]')!;
