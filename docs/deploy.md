@@ -5,7 +5,7 @@ Previsto para a F6.
 - **Vercel**, ligada ao repositório GitHub: preview por branch e produção na `main`.
 - Build: `npm run build`. Na Vercel (`VERCEL=1`) o build usa o adapter `@astrojs/vercel` por causa do painel `/keystatic`; o resto continua pré-renderizado.
 - **Site no ar:** https://domdeamar.vercel.app (projeto `domdeamar` no time "Jean Lukas de Marins Costa's projects"). Publicar à mão: `npx vercel deploy --prod`.
-- **Deploy automático a cada push:** em https://github.com/apps/vercel → _Configure_, dê acesso ao repositório `Jeanlukas1/DomdeAmarSite`; depois rode `npx vercel git connect` na pasta do projeto.
+- **Deploy automático:** o repositório `Jeanlukas1/DomdeAmarSite` está ligado ao projeto. Cada push na `main` publica em produção; outras branches geram uma prévia.
 - **Keystatic em produção (GitHub App, uma vez só):**
   1. No PowerShell, na pasta do projeto: `$env:PUBLIC_KEYSTATIC_GITHUB='1'; npm run dev` e abra `http://localhost:4321/keystatic`.
   2. Siga o assistente "Create GitHub App" (nome sugerido: `domdeamar-keystatic`). Ele grava no `.env` local `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, `KEYSTATIC_SECRET` e `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` (o `.env` não vai para o Git).
