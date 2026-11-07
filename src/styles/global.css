@@ -6,6 +6,17 @@
 @layer base {
   :root {
     color-scheme: light;
+    accent-color: var(--color-red-600);
+    caret-color: var(--color-red-600);
+    scrollbar-color: var(--color-wine-900) var(--color-sand);
+  }
+  ::selection {
+    background: var(--color-blush-100);
+    color: var(--color-wine-900);
+  }
+  a {
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: from-font;
   }
   html {
     -webkit-text-size-adjust: 100%;
