@@ -10,21 +10,12 @@
     "rotuloDe": "de",
     "fotos": [
       {
-        "id": "comunhao/comunhao-26",
-        "alt": "Duas fotos da igreja reunida e sorrindo, em uma celebração"
+        "id": "comunhao/comunhao-09",
+        "alt": "Irmãs conversando no salão da igreja"
       },
-      {
-        "id": "casais-evento-amor/casais-evento-amor-18",
-        "alt": "Casal abraçado no evento de casais, segurando um coração de papel"
-      },
-      { "id": "comunhao/comunhao-09", "alt": "Irmãs conversando no salão da igreja" },
       {
         "id": "cultos-louvor/cultos-louvor-08",
         "alt": "Casal ministrando o louvor diante do telão"
-      },
-      {
-        "id": "casais-evento-amor/casais-evento-amor-22",
-        "alt": "Casal sorrindo sob a decoração de corações vermelhos"
       },
       {
         "id": "comunhao/comunhao-11",
@@ -39,23 +30,48 @@
         "alt": "Celebração de aniversário com balões verdes no salão"
       },
       {
-        "id": "casais-evento-amor/casais-evento-amor-33",
-        "alt": "Casal na mesa decorada do evento de casais"
+        "id": "oracao/oracao-39",
+        "alt": "Momento de oração com imposição de mãos"
       },
-      { "id": "oracao/oracao-39", "alt": "Momento de oração com imposição de mãos" },
-      { "id": "comunhao/comunhao-23", "alt": "Selfie da igreja reunida e alegre" },
       {
-        "id": "casais-evento-amor/casais-evento-amor-24",
-        "alt": "Casal sentado lado a lado no evento de casais"
+        "id": "comunhao/comunhao-23",
+        "alt": "Selfie da igreja reunida e alegre"
       },
       {
         "id": "cultos-louvor/cultos-louvor-10",
         "alt": "Dupla cantando no louvor, com o coração da logo projetado no telão"
       },
       {
+        "id": "comunhao/comunhao-26",
+        "alt": "Duas fotos da igreja reunida e sorrindo, em uma celebração",
+        "cortarBase": true
+      },
+      {
+        "id": "casais-evento-amor/casais-evento-amor-18",
+        "alt": "Casal abraçado no evento de casais, segurando um coração de papel",
+        "cortarBase": true
+      },
+      {
+        "id": "casais-evento-amor/casais-evento-amor-22",
+        "alt": "Casal sorrindo sob a decoração de corações vermelhos",
+        "cortarBase": true
+      },
+      {
+        "id": "casais-evento-amor/casais-evento-amor-33",
+        "alt": "Casal na mesa decorada do evento de casais",
+        "cortarBase": true
+      },
+      {
+        "id": "casais-evento-amor/casais-evento-amor-24",
+        "alt": "Casal sentado lado a lado no evento de casais",
+        "cortarBase": true
+      },
+      {
         "id": "templo-novo/templo-novo-48",
         "alt": "Irmãos em pé, louvando no salão do templo novo"
       }
-    ]
+    ],
+    "visiveis": 8,
+    "rotuloVerMais": "Ver mais fotos"
   }
 }

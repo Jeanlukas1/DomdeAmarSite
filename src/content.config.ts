@@ -203,7 +203,7 @@ const cresca = defineCollection({
     titulo: z.string(),
     destaque: z.string().optional(),
     texto: z.string(),
-    estudo: z.object({ titulo: z.string(), quando: z.string(), texto: z.string() }),
+    primeiroDomingo: z.object({ titulo: z.string(), passos: z.array(z.string()).min(1).max(4) }),
     participar: link,
     rotuloAnterior: z.string(),
     rotuloProximo: z.string(),
@@ -261,7 +261,11 @@ const galeria = defineCollection({
     rotuloAnterior: z.string(),
     rotuloProximo: z.string(),
     rotuloDe: z.string(),
-    fotos: z.array(foto).min(1),
+    rotuloVerMais: z.string(),
+    /** quantas fotos aparecem antes do "ver mais" */
+    visiveis: z.number().int().min(1).default(8),
+    /** cortarBase: esconde a marca d'água do celular no rodapé da foto */
+    fotos: z.array(foto.extend({ cortarBase: z.boolean().default(false) })).min(1),
   }),
 });
 

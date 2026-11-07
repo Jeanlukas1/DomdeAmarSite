@@ -12,7 +12,14 @@ const fotos = await Promise.all(
   g.fotos.map(async (f) => {
     const meta = foto(f.id);
     const grande = await getImage({ src: meta, width: 1600, format: 'webp' });
-    return { ...f, proporcao: `${meta.width} / ${meta.height}`, grande: grande.src };
+    // cortarBase: recorta ~8% de baixo (marca d'água do celular) ancorando a foto no topo
+    const altura = f.cortarBase ? Math.round(meta.height * 0.92) : meta.height;
+    return {
+      ...f,
+      posicao: f.cortarBase ? '50% 0%' : f.posicao,
+      proporcao: `${meta.width} / ${altura}`,
+      grande: grande.src,
+    };
   }),
 );
 ---
@@ -34,7 +41,11 @@ const fotos = await Promise.all(
       data-galeria
     >
       {fotos.map((f, i) => (
-        <li class="break-inside-avoid" data-reveal="clip">
+        <li
+          class="break-inside-avoid"
+          data-reveal={i < g.visiveis ? 'clip' : undefined}
+          data-galeria-extra={i >= g.visiveis ? '' : undefined}
+        >
           <button
             type="button"
             data-galeria-abrir={i}
@@ -59,6 +70,18 @@ const fotos = await Promise.all(
         </li>
       ))}
     </ul>
+    {fotos.length > g.visiveis && (
+      <div class="mt-10 hidden justify-center" data-galeria-mais-wrap>
+        <button
+          type="button"
+          data-galeria-mais
+          class="inline-flex min-h-12 items-center gap-2 rounded-full border border-wine-900/25 px-6 font-semibold text-wine-900 transition-colors duration-base hover:border-wine-900 hover:bg-wine-900 hover:text-cream"
+        >
+          {g.rotuloVerMais}{' '}
+          <span class="text-sm font-normal opacity-70">(+{fotos.length - g.visiveis})</span>
+        </button>
+      </div>
+    )}
   </div>
 
   <dialog
@@ -162,6 +185,19 @@ const fotos = await Promise.all(
 
 <script>
   import { getLenis } from '@/lib/animations/smooth';
+
+  // sem JS todas as fotos aparecem; com JS, as extras esperam o 'ver mais'
+  const extras = [...document.querySelectorAll<HTMLElement>('[data-galeria-extra]')];
+  const maisWrap = document.querySelector<HTMLElement>('[data-galeria-mais-wrap]');
+  if (extras.length && maisWrap) {
+    extras.forEach((li) => (li.hidden = true));
+    maisWrap.classList.replace('hidden', 'flex');
+    maisWrap.querySelector('button')!.addEventListener('click', () => {
+      extras.forEach((li) => (li.hidden = false));
+      maisWrap.remove();
+      extras[0].querySelector('button')?.focus();
+    });
+  }
 
   const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
   const botoes = [...document.querySelectorAll<HTMLButtonElement>('[data-galeria-abrir]')];

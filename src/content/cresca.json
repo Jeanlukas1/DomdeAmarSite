@@ -4,12 +4,18 @@
     "titulo": "Lugares para crescer na fé",
     "destaque": "crescer",
     "texto": "A Graça não para na porta da igreja. Ela continua nos estudos, nos ministérios e nas amizades que nascem ao longo da semana.",
-    "estudo": {
-      "titulo": "Estudo da Palavra",
-      "quando": "Domingo, 9h",
-      "texto": "Um passo de cada vez pela Bíblia, com espaço para perguntas. Ideal para quem está chegando agora."
+    "primeiroDomingo": {
+      "titulo": "Seu primeiro domingo",
+      "passos": [
+        "Chegue às 9h para o Estudo da Palavra ou às 18h para o culto. Não precisa avisar.",
+        "Alguém do acolhimento recebe você na porta e mostra onde sentar.",
+        "Depois do culto tem café, e uma família inteira para conhecer."
+      ]
     },
-    "participar": { "rotulo": "Quero participar", "href": "/#participe" },
+    "participar": {
+      "rotulo": "Quero participar",
+      "href": "/#participe"
+    },
     "rotuloAnterior": "Ministério anterior",
     "rotuloProximo": "Próximo ministério",
     "rotuloLista": "Ministérios da igreja"

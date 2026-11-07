@@ -1,9 +1,7 @@
 ---
-// Agenda: eventos em faixa horizontal (reusa a ilha Faixa). Cada cartão tem uma "folhinha" de
-// calendário. Eventos passados são escondidos no navegador (fuso de São Paulo).
-import Faixa from '@/components/islands/Faixa.astro';
+// Agenda: lista vertical de eventos sobre faixa vinho — cada linha com a "folhinha" de calendário.
+// Lê-se de cima para baixo no celular (sem carrossel). Eventos passados somem no navegador.
 import Foto from '@/components/ui/Foto.astro';
-import Ornamento from '@/components/ui/Ornamento.astro';
 import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
 import { getEventos, getPrincipal } from '@/lib/igreja';
 
@@ -20,63 +18,59 @@ const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').r
 <section
   id="agenda"
   aria-labelledby="agenda-titulo"
-  class="scroll-mt-20 overflow-hidden bg-cream py-[clamp(5rem,11vw,9rem)]"
+  class="relative scroll-mt-20 overflow-hidden bg-wine-900 py-[clamp(5rem,11vw,9rem)] text-cream"
 >
-  <div class="container-site">
-    <SecaoTitulo id="agenda-titulo" titulo={a.titulo} destaque={a.destaque}>
-      <p>{a.texto}</p>
-    </SecaoTitulo>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_70%_at_100%_0%,color-mix(in_srgb,var(--color-red-700)_45%,transparent),transparent_70%)]"
+  ></div>
 
-    <div
-      class="mt-12 -mx-[clamp(1rem,4vw,2.5rem)] [--faixa-respiro:clamp(1rem,4vw,2.5rem)]"
-      data-reveal-group
-      data-stagger="0.1"
-    >
-      <Faixa
-        rotulo={a.rotuloLista}
-        rotuloAnterior={a.rotuloAnterior}
-        rotuloProximo={a.rotuloProximo}
-        class="[&_[data-faixa-controles]]:px-[var(--faixa-respiro)]"
+  <div class="container-site relative grid gap-12 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.6fr)] lg:gap-16 [&>*]:min-w-0">
+    <div class="lg:sticky lg:top-28 lg:self-start">
+      <SecaoTitulo id="agenda-titulo" titulo={a.titulo} destaque={a.destaque} tom="escuro">
+        <p>{a.texto}</p>
+      </SecaoTitulo>
+    </div>
+
+    <div>
+      <ol
+        class="divide-y divide-white/12 border-y border-white/12"
+        data-reveal-group
+        data-stagger="0.08"
       >
         {eventos.map((e) => (
-          <li
-            data-evento={e.data}
-            data-reveal
-            class="w-[80vw] max-w-[22rem] shrink-0 snap-start sm:w-[20rem]"
-          >
-            <article class="flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-sand bg-white">
-              <div class="relative aspect-[16/10] overflow-hidden bg-wine-900">
-                {e.foto ? (
-                  <Foto {...e.foto} sizes="(min-width: 640px) 20rem, 80vw" />
-                ) : (
-                  <div class="grid h-full place-items-center bg-[radial-gradient(circle_at_50%_40%,var(--color-wine-800),var(--color-wine-950))]">
-                    <Ornamento class="text-blush [&_span]:w-14" />
-                  </div>
-                )}
-                <p class="absolute top-4 left-4 grid min-w-16 place-items-center rounded-2xl bg-cream px-3 py-2 text-center leading-none text-ink shadow-[0_12px_24px_-14px_color-mix(in_srgb,var(--color-night)_70%,transparent)]">
-                  <span class="font-display text-3xl tabular-nums">
-                    {emData(e.data, { day: 'numeric' })}
-                  </span>
-                  <span class="mt-1 text-xs font-bold tracking-[0.16em] text-red-700 uppercase">
-                    {emData(e.data, { month: 'short' })}
-                  </span>
-                </p>
-              </div>
-              <div class="flex flex-1 flex-col p-6">
-                <h3 class="font-display text-2xl leading-tight">{e.titulo}</h3>
-                <p class="mt-2 text-sm font-semibold text-red-700">
+          <li data-evento={e.data} data-reveal class="group py-6 sm:py-8">
+            <article class="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-5 gap-y-4 sm:grid-cols-[auto_minmax(0,1fr)_9rem] sm:gap-x-8">
+              <p class="grid w-16 place-items-center rounded-2xl bg-cream px-2 py-2.5 text-center leading-none text-ink shadow-[0_14px_28px_-16px_color-mix(in_srgb,var(--color-night)_80%,transparent)] transition-transform duration-base group-hover:-rotate-3 sm:w-[4.5rem]">
+                <span class="font-display text-3xl tabular-nums sm:text-4xl">
+                  {emData(e.data, { day: 'numeric' })}
+                </span>
+                <span class="mt-1 text-xs font-bold tracking-[0.16em] text-red-700 uppercase">
+                  {emData(e.data, { month: 'short' })}
+                </span>
+              </p>
+              <div>
+                <h3 class="font-display text-[clamp(1.4rem,2.4vw,1.9rem)] leading-tight">
+                  {e.titulo}
+                </h3>
+                <p class="mt-1.5 text-sm font-semibold text-blush-100">
                   <time datetime={`${e.data}T${e.hora}`}>
                     {emData(e.data, { weekday: 'long' })}, {horaCurta(e.hora)}
                   </time>
-                  <span class="text-muted"> · {e.local}</span>
+                  <span class="font-normal text-blush-100/80"> · {e.local}</span>
                 </p>
-                <p class="mt-3 leading-relaxed text-ink-soft">{e.descricao}</p>
+                <p class="mt-3 max-w-xl leading-relaxed text-blush-100/90">{e.descricao}</p>
               </div>
+              {e.foto && (
+                <div class="col-span-2 aspect-[16/10] overflow-hidden rounded-xl bg-wine-950 sm:col-span-1 sm:row-span-1 sm:aspect-[4/3]">
+                  <Foto {...e.foto} sizes="(min-width: 640px) 9rem, 90vw" />
+                </div>
+              )}
             </article>
           </li>
         ))}
-      </Faixa>
-      <p data-agenda-vazia hidden class="px-[var(--faixa-respiro)] text-lg text-ink-soft">
+      </ol>
+      <p data-agenda-vazia hidden class="text-lg text-blush-100">
         {a.semEventos}
       </p>
     </div>
@@ -97,6 +91,6 @@ const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').r
   }
   if (itens.length && visiveis === 0) {
     document.querySelector<HTMLElement>('[data-agenda-vazia]')?.removeAttribute('hidden');
-    itens[0].closest<HTMLElement>('[data-faixa]')?.setAttribute('hidden', '');
+    itens[0].closest('ol')?.setAttribute('hidden', '');
   }
 </script>
