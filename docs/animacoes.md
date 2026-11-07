@@ -51,6 +51,15 @@ Timeline de ~4,5s sobre o SVG inline (`Hero.astro`), usando os ids de camada do 
 - Título e parágrafo do hero aparecem prontos (são o LCP); botões e próximo culto entram por **CSS** (`.hero-in`), sem esperar JS.
 - Se trocar o logo pelo original do designer: manter os ids e reajustar `PINCEL` e o raio do arco.
 
+## A nova aliança (`src/lib/animations/alianca.ts`)
+
+Transição entre o hero e o Quem somos, variante "o véu que se rasga" (Mt 27.51); o versículo é Mt 26.28 (`alianca.json`).
+
+- **Chegada (scrub):** o véu vinho se fecha a partir do centro enquanto a seção sobe (duas metades com `scaleX`).
+- **Pin de 1 tela (scrub):** a noite sai de trás do véu → uma linha de luz desce pelo meio → o véu se rasga de alto a baixo (giro pelos cantos de baixo) e as metades saem para os lados, revelando o versículo no creme.
+- **Reduced-motion / sem JS:** o HTML já é o estado final: véu assentado, versículo legível e uma onda creme ligando ao Quem somos. O módulo nem carrega com reduced-motion.
+- Carrega com `depoisDaPintura` (logo abaixo do hero). Depois do pin: `ScrollTrigger.sort()` + `refresh()`.
+
 ## Nossa história (`src/lib/animations/historia.ts`)
 
 - **Desktop + movimento:** a seção é fixada (pin) e a trilha corre na horizontal (scrub). A pincelada vermelha se desenha com o progresso, e as fotos impressas caem girando (`containerAnimation`).

@@ -1,0 +1,172 @@
+---
+// Nova aliança: a travessia entre o hero e o Quem somos — variante "o véu que se rasga"
+// (Mt 27.51: "o véu do santuário se rasgou em duas partes, de alto a baixo"). Com movimento:
+// o véu vinho se fecha a partir do centro → uma linha de luz marca o meio → o véu se rasga de
+// alto a baixo e se abre, revelando o creme com o versículo.
+// Sem JS ou com prefers-reduced-motion, este HTML já é o estado final: o véu assentado e o
+// versículo legível, com uma onda creme ligando ao Quem somos. Ver docs/animacoes.md.
+import Ornamento from '@/components/ui/Ornamento.astro';
+import { getPrincipal } from '@/lib/igreja';
+
+const a = await getPrincipal('alianca');
+// borda rasgada (tecido): picos irregulares ao longo da altura, desenhados para a borda interna
+const rasgo =
+  'M0 0 L10 0 L4 6 L12 13 L3 21 L9 28 L2 37 L11 45 L5 52 L13 61 L4 69 L10 77 L3 86 L12 93 L6 100 L0 100 Z';
+---
+
+<section
+  id="alianca"
+  data-alianca
+  aria-labelledby="alianca-titulo"
+  class="alianca superficie-escura relative isolate h-[100svh] min-h-[36rem] overflow-hidden bg-cream text-cream"
+>
+  <h2 id="alianca-titulo" class="sr-only">
+    {a.titulo}
+  </h2>
+
+  <!-- 0. a noite do hero (some quando o véu cobre a tela; atrás dela já está o creme) -->
+  <div data-alianca-noite aria-hidden="true" class="alianca__noite absolute inset-0 bg-night"></div>
+
+  <!-- 1. o véu: duas metades que nascem do centro e depois se rasgam -->
+  <div data-alianca-veu="esq" aria-hidden="true" class="alianca__metade alianca__metade--esq">
+    <svg viewBox="0 0 14 100" preserveAspectRatio="none" class="alianca__rasgo">
+      <path d={rasgo} fill="var(--color-red-600)"></path>
+    </svg>
+  </div>
+  <div data-alianca-veu="dir" aria-hidden="true" class="alianca__metade alianca__metade--dir">
+    <svg viewBox="0 0 14 100" preserveAspectRatio="none" class="alianca__rasgo">
+      <path d={rasgo} fill="var(--color-red-600)"></path>
+    </svg>
+  </div>
+
+  <!-- 2. a linha de luz que marca onde o véu vai se rasgar (de alto a baixo) -->
+  <svg
+    data-alianca-linha
+    viewBox="0 0 10 100"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    class="alianca__linha"
+  >
+    <path
+      d="M5 0 C 4 20, 6 45, 5 62 C 4 78, 6 90, 5 100"
+      fill="none"
+      stroke="var(--color-cream)"
+      stroke-width="1.6"
+    ></path>
+  </svg>
+
+  <!-- 3. onda creme (só no estado estático): liga o vinho ao Quem somos sem corte seco -->
+  <svg
+    data-alianca-onda
+    viewBox="0 0 1440 80"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    class="absolute inset-x-0 bottom-0 h-[clamp(2rem,6vw,4.5rem)] w-full"
+  >
+    <path
+      d="M0 80 H1440 V34 C 1190 -2, 960 70, 720 38 C 480 6, 240 74, 0 30 Z"
+      fill="var(--color-cream)"
+    ></path>
+  </svg>
+
+  <!-- 4. o versículo: no estático, sobre o véu; com movimento, no creme por trás dele -->
+  <figure data-alianca-verso class="alianca__verso container-site absolute inset-x-0 text-center">
+    <blockquote>
+      <p class="mx-auto max-w-[30ch] font-display text-[clamp(1.35rem,3.4vw,2.1rem)] leading-snug text-balance italic">
+        “{a.versiculo.texto}”
+      </p>
+    </blockquote>
+    <figcaption class="mt-4 flex items-center justify-center gap-3 text-base font-semibold">
+      <Ornamento class="alianca__ornamento" />
+      <span class="sr-only">— </span>
+      {a.versiculo.referencia}
+    </figcaption>
+  </figure>
+</section>
+
+<style>
+  /* corpo do véu em vinho (Ember Rule): o vermelho da Graça fica só na borda rasgada */
+  .alianca__metade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 51%;
+    z-index: 2;
+    background: linear-gradient(
+      to bottom,
+      var(--color-wine-950) 0%,
+      var(--color-wine-900) 45%,
+      var(--color-wine-800) 100%
+    );
+  }
+  .alianca__metade--esq {
+    left: 0;
+  }
+  .alianca__metade--dir {
+    right: 0;
+  }
+  /* borda rasgada: só aparece quando o rasgo começa (o JS acende) */
+  .alianca__rasgo {
+    position: absolute;
+    top: 0;
+    right: -0.6rem;
+    width: 0.9rem;
+    height: 100%;
+    opacity: 0;
+  }
+  .alianca__metade--dir .alianca__rasgo {
+    right: auto;
+    left: -0.6rem;
+    scale: -1 1; /* espelhada: os picos apontam para o centro */
+  }
+  .alianca__noite {
+    z-index: 1;
+  }
+  .alianca__linha {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 0.6rem;
+    height: 100%;
+    translate: -50% 0;
+    z-index: 3;
+    overflow: visible;
+    opacity: 0;
+  }
+  .alianca__verso {
+    z-index: 4;
+    top: 50%;
+    translate: 0 -50%;
+  }
+  [data-alianca-onda] {
+    z-index: 4;
+  }
+  .alianca :global(.alianca__ornamento) {
+    color: inherit;
+  }
+
+  /* com movimento (.js-anim): o versículo mora no creme, ATRÁS do véu, e é revelado pelo rasgo */
+  :global(.js-anim) .alianca__verso {
+    z-index: 0;
+    color: var(--color-wine-900);
+  }
+  :global(.js-anim) .alianca :global(.alianca__ornamento) {
+    color: var(--color-red-600);
+  }
+  :global(.js-anim) .alianca__metade {
+    transform: scaleX(0);
+  }
+  :global(.js-anim) [data-alianca-onda] {
+    display: none;
+  }
+  /* sem movimento: a noite fica escondida sob o véu assentado */
+  :global(html:not(.js-anim)) .alianca__noite {
+    display: none;
+  }
+</style>
+
+<script>
+  import { depoisDaPintura, reduceMotion } from '@/lib/agendar';
+  // logo abaixo do hero: carrega depois da primeira pintura, antes de a pessoa rolar até aqui
+  if (!reduceMotion()) depoisDaPintura(() => import('@/lib/animations/alianca'));
+</script>
