@@ -1,25 +1,18 @@
 {
   "itens": [
     {
-      "id": "pastor-presidente",
+      "id": "marcelo-roque",
       "ordem": 1,
-      "nome": "Pr. Marcelo",
-      "funcao": "Pastor presidente",
-      "mock": true
+      "nome": "Pr. Marcelo Roque",
+      "funcao": "Pastor líder",
+      "mock": false
     },
     {
-      "id": "acolhimento",
+      "id": "karen-costa",
       "ordem": 2,
-      "nome": "Ministério de Acolhimento",
-      "funcao": "Recepção e cuidado de quem chega",
-      "mock": true
-    },
-    {
-      "id": "louvor",
-      "ordem": 3,
-      "nome": "Ministério de Louvor",
-      "funcao": "Música nos cultos",
-      "mock": true
+      "nome": "Karen Costa",
+      "funcao": "Lidera a igreja ao lado do Pr. Marcelo",
+      "mock": false
     }
   ]
 }

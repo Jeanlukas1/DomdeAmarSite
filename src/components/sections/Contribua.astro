@@ -6,9 +6,12 @@ import Foto from '@/components/ui/Foto.astro';
 import Icon from '@/components/ui/Icon.astro';
 import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
 import { getPrincipal } from '@/lib/igreja';
+import { formatarChavePix } from '@/lib/pix';
 
 const c = await getPrincipal('contribua');
 const { pix } = c;
+// na tela com pontuação; o botão copia a chave crua (aceita por todos os bancos)
+const chaveNaTela = pix.chave ? formatarChavePix(pix.chave, pix.tipo) : null;
 ---
 
 <section
@@ -47,7 +50,7 @@ const { pix } = c;
         {pix.chave ? (
           <>
             <p class="mt-3 text-sm text-muted">{pix.tipo}</p>
-            <p class="mt-1 font-display text-2xl break-all text-ink tabular-nums">{pix.chave}</p>
+            <p class="mt-1 font-display text-2xl break-all text-ink tabular-nums">{chaveNaTela}</p>
             <p class="mt-1 text-sm text-ink-soft">{pix.titular}</p>
             <button
               type="button"

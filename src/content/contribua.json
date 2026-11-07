@@ -14,9 +14,9 @@
     },
     "legenda": "O novo templo, levantado em mutirão",
     "pix": {
-      "mock": true,
-      "chave": null,
-      "tipo": "Chave PIX",
+      "mock": false,
+      "chave": "42753605000101",
+      "tipo": "CNPJ",
       "titular": "Igreja Evangélica Dom de Amar",
       "titulo": "Oferta por PIX",
       "emBreve": "Chave em breve",
@@ -27,8 +27,14 @@
     "outrasFormas": {
       "titulo": "Outras formas de ajudar",
       "itens": [
-        { "rotulo": "Venha para o mutirão da obra", "href": "/#agenda" },
-        { "rotulo": "Ore pela construção do templo", "href": "/#oracao" }
+        {
+          "rotulo": "Venha para o mutirão da obra",
+          "href": "/#agenda"
+        },
+        {
+          "rotulo": "Ore pela construção do templo",
+          "href": "/#oracao"
+        }
       ]
     }
   }
