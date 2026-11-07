@@ -1,0 +1,153 @@
+---
+// Faixa horizontal reutilizável (ministérios, agenda): rolagem nativa com snap — funciona com
+// toque, trackpad, teclado e sem JS. O JS só adiciona os botões anterior/próximo e, se pedido,
+// um parallax interno nas imagens marcadas com [data-faixa-parallax].
+interface Props {
+  rotulo: string;
+  rotuloAnterior: string;
+  rotuloProximo: string;
+  parallax?: boolean;
+  /** tom dos botões */
+  tom?: 'claro' | 'escuro';
+  class?: string;
+}
+
+const {
+  rotulo,
+  rotuloAnterior,
+  rotuloProximo,
+  parallax = false,
+  tom = 'claro',
+  class: className,
+} = Astro.props;
+const botao =
+  tom === 'claro'
+    ? 'border-wine-900/20 text-wine-900 hover:border-wine-900 hover:bg-wine-900 hover:text-cream'
+    : 'border-white/25 text-cream hover:border-cream hover:bg-cream hover:text-wine-900';
+---
+
+<div
+  data-faixa
+  data-faixa-com-parallax={parallax ? '' : undefined}
+  class:list={['relative', className]}
+>
+  <ul
+    data-faixa-trilho
+    tabindex="0"
+    aria-label={rotulo}
+    class="faixa__trilho flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-2 sm:gap-6"
+  >
+    <slot />
+  </ul>
+  <div class="mt-6 hidden justify-end gap-3" data-faixa-controles>
+    <button
+      type="button"
+      data-faixa-anterior
+      aria-label={rotuloAnterior}
+      class:list={[
+        'grid size-12 place-items-center rounded-full border transition-colors duration-base disabled:pointer-events-none disabled:opacity-30',
+        botao,
+      ]}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        class="size-5 rotate-180"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M5 12h14M13 6l6 6-6 6"></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      data-faixa-proximo
+      aria-label={rotuloProximo}
+      class:list={[
+        'grid size-12 place-items-center rounded-full border transition-colors duration-base disabled:pointer-events-none disabled:opacity-30',
+        botao,
+      ]}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        class="size-5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M5 12h14M13 6l6 6-6 6"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .faixa__trilho {
+    scrollbar-width: none;
+    scroll-padding-inline: var(--faixa-respiro, 0px);
+    padding-inline: var(--faixa-respiro, 0px);
+  }
+  .faixa__trilho::-webkit-scrollbar {
+    display: none;
+  }
+  .faixa__trilho:focus-visible {
+    outline: 3px solid var(--color-red-600);
+    outline-offset: 4px;
+    border-radius: 1rem;
+  }
+</style>
+
+<script>
+  const reduz = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('[data-faixa]').forEach((faixa) => {
+    const trilho = faixa.querySelector<HTMLElement>('[data-faixa-trilho]')!;
+    const anterior = faixa.querySelector<HTMLButtonElement>('[data-faixa-anterior]')!;
+    const proximo = faixa.querySelector<HTMLButtonElement>('[data-faixa-proximo]')!;
+    faixa.querySelector<HTMLElement>('[data-faixa-controles]')!.classList.replace('hidden', 'flex');
+
+    const passo = () => (trilho.firstElementChild as HTMLElement | null)?.offsetWidth ?? 300;
+    const mover = (dir: number) =>
+      trilho.scrollBy({ left: dir * (passo() + 24), behavior: reduz.matches ? 'auto' : 'smooth' });
+    anterior.addEventListener('click', () => mover(-1));
+    proximo.addEventListener('click', () => mover(1));
+
+    const imagens = faixa.hasAttribute('data-faixa-com-parallax')
+      ? [...faixa.querySelectorAll<HTMLElement>('[data-faixa-parallax]')]
+      : [];
+
+    let pendente = false;
+    const atualizar = () => {
+      pendente = false;
+      const max = trilho.scrollWidth - trilho.clientWidth;
+      anterior.disabled = trilho.scrollLeft <= 4;
+      proximo.disabled = trilho.scrollLeft >= max - 4;
+      if (reduz.matches) return;
+      // cada foto desliza um pouco mais devagar que o cartão: profundidade sem custo de layout
+      const centro = trilho.getBoundingClientRect().left + trilho.clientWidth / 2;
+      for (const img of imagens) {
+        const r = img.parentElement!.getBoundingClientRect();
+        const desvio = (r.left + r.width / 2 - centro) / trilho.clientWidth;
+        img.style.transform = `translate3d(${(-desvio * 14).toFixed(2)}%,0,0) scale(1.18)`;
+      }
+    };
+    trilho.addEventListener(
+      'scroll',
+      () => {
+        if (!pendente) {
+          pendente = true;
+          requestAnimationFrame(atualizar);
+        }
+      },
+      { passive: true },
+    );
+    window.addEventListener('resize', atualizar, { passive: true });
+    atualizar();
+  });
+</script>

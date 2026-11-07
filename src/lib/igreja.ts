@@ -1,9 +1,9 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
 /** Coleções de página única (entrada 'principal'). */
-type Unica = 'quemSomos' | 'historia' | 'cultosSecao' | 'assista';
+type Unica = 'quemSomos' | 'historia' | 'cultosSecao' | 'assista' | 'cresca';
 /** Coleções em lista com campo 'ordem'. */
-type Ordenada = 'pastores' | 'cultos';
+type Ordenada = 'pastores' | 'cultos' | 'ministerios';
 
 /** Dados institucionais da igreja (src/content/igreja.json). */
 export async function getIgreja() {

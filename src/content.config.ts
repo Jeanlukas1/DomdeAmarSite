@@ -195,6 +195,32 @@ const mensagens = defineCollection({
   }),
 });
 
+const cresca = defineCollection({
+  loader: file('src/content/cresca.json'),
+  schema: z.object({
+    mock: z.boolean().default(false),
+    titulo: z.string(),
+    destaque: z.string().optional(),
+    texto: z.string(),
+    estudo: z.object({ titulo: z.string(), quando: z.string(), texto: z.string() }),
+    participar: link,
+    rotuloAnterior: z.string(),
+    rotuloProximo: z.string(),
+    rotuloLista: z.string(),
+  }),
+});
+
+const ministerios = defineCollection({
+  loader: file('src/content/ministerios.json'),
+  schema: z.object({
+    ordem: z.number(),
+    nome: z.string(),
+    frase: z.string(),
+    foto,
+    mock: z.boolean().default(false),
+  }),
+});
+
 export const collections = {
   igreja,
   navegacao,
@@ -206,4 +232,6 @@ export const collections = {
   cultosSecao,
   assista,
   mensagens,
+  cresca,
+  ministerios,
 };

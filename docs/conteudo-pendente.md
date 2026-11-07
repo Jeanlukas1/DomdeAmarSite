@@ -15,6 +15,8 @@ Cada item abaixo está marcado no arquivo com `mock: true` (ou `// MOCK`). Quand
 | `src/content/cultos-secao.json` | `semana`                                  | tema, texto bíblico e pregador da semana                                                                                    |
 | `src/content/assista.json`      | `video`                                   | canal do YouTube e vídeo em destaque (`youtubeId`)                                                                          |
 | `src/content/mensagens.json`    | todos                                     | mensagens reais (título, texto bíblico, data, link)                                                                         |
+| `src/content/ministerios.json`  | todos                                     | ministérios que realmente existem, com nome e descrição                                                                     |
+| `src/content/cresca.json`       | `estudo.texto`, `texto`                   | descrição real do Estudo da Palavra                                                                                         |
 | `src/assets/logo/`              | —                                         | **arquivo original da logo** (.ai / .pdf vetorial / .svg com camadas)                                                       |
 
 > Próximas fases adicionam: pastores (nomes/fotos), história, missão/visão, ministérios, eventos, mensagens/vídeos, depoimentos e chave PIX.
