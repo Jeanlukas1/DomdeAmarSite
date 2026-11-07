@@ -45,7 +45,7 @@ Não há testes automatizados. A verificação é feita com build, lint e Lighth
 
 ## Design com Impeccable
 
-Todo trabalho visual passa pela skill `impeccable`. `PRODUCT.md` e `DESIGN.md` ("O Selo da Graça") são a fonte de verdade. Fluxo por seção: `/impeccable shape` → `/nova-secao` → `/impeccable animate` → olhar em 375, 768 e 1440px e com reduced-motion → `/impeccable critique` → build + lint + commit. Ao fechar uma página: critique da página inteira → audit → polish. Detalhes e regras de qualidade em `docs/design-com-impeccable.md`.
+Todo trabalho visual passa pela skill `impeccable`. `PRODUCT.md` e `DESIGN.md` ("O Selo da Graça") são a fonte de verdade. Decida o design em texto e code uma vez só. Fluxo por seção: `/impeccable shape` (brief em `docs/secoes/<slug>.md`, com a animação) → usuário aprova → `/nova-secao` executa o brief sem decisões visuais próprias → olhar uma vez em 375, 768 e 1440px e com reduced-motion → build + lint + commit. Sem animate/critique por seção, salvo se algo falhar. Ao fechar uma página: critique da página inteira → audit → polish. Detalhes e regras de qualidade em `docs/design-com-impeccable.md`.
 
 ## Regras para o Claude
 
