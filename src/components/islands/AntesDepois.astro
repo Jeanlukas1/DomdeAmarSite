@@ -1,0 +1,98 @@
+---
+// Comparador antes/depois acessível: um <input type="range"> nativo (teclado, toque e leitor de
+// tela) controla o recorte da foto "antes". Sem JS, mostra as duas metades lado a lado (50%).
+import Foto from '@/components/ui/Foto.astro';
+
+interface FotoRef {
+  id: string;
+  alt: string;
+  posicao: string;
+}
+interface Props {
+  antes: FotoRef;
+  depois: FotoRef;
+  rotulo: string;
+  legendaAntes: string;
+  legendaDepois: string;
+  class?: string;
+}
+
+const { antes, depois, rotulo, legendaAntes, legendaDepois, class: className } = Astro.props;
+---
+
+<figure
+  data-antes-depois
+  class:list={[
+    'antes-depois relative isolate aspect-[4/3] overflow-hidden rounded-[1.25rem] bg-wine-900 select-none',
+    className,
+  ]}
+  style="--pos: 50%"
+>
+  <Foto {...depois} sizes="(min-width: 1024px) 46vw, 92vw" class="absolute inset-0" />
+  <div class="antes-depois__antes absolute inset-0">
+    <Foto {...antes} sizes="(min-width: 1024px) 46vw, 92vw" />
+  </div>
+
+  <div
+    aria-hidden="true"
+    class="antes-depois__linha pointer-events-none absolute inset-y-0 w-0.5 bg-cream"
+  >
+    <span class="antes-depois__alca absolute top-1/2 left-1/2 grid size-12 -translate-1/2 place-items-center rounded-full bg-cream text-red-600 shadow-[0_10px_30px_-10px_color-mix(in_srgb,var(--color-night)_70%,transparent)]">
+      <svg
+        viewBox="0 0 24 24"
+        class="size-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m9 6-6 6 6 6M15 6l6 6-6 6"></path>
+      </svg>
+    </span>
+  </div>
+
+  <span class="pointer-events-none absolute top-3 left-3 rounded-full bg-night/70 px-3 py-1 text-xs font-semibold text-cream backdrop-blur-sm">
+    {legendaAntes}
+  </span>
+  <span class="pointer-events-none absolute top-3 right-3 rounded-full bg-night/70 px-3 py-1 text-xs font-semibold text-cream backdrop-blur-sm">
+    {legendaDepois}
+  </span>
+
+  <input
+    type="range"
+    min="0"
+    max="100"
+    value="50"
+    step="1"
+    aria-label={rotulo}
+    class="antes-depois__controle absolute inset-0 z-10 h-full w-full cursor-ew-resize opacity-0"
+  />
+</figure>
+
+<style>
+  .antes-depois__antes {
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+  .antes-depois__linha {
+    left: var(--pos);
+    transform: translateX(-50%);
+  }
+  /* foco do teclado visível na alça (o input em si é transparente) */
+  .antes-depois:has(.antes-depois__controle:focus-visible) .antes-depois__alca {
+    outline: 3px solid var(--color-red-600);
+    outline-offset: 3px;
+  }
+  .antes-depois__controle {
+    touch-action: pan-y;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-antes-depois]').forEach((fig) => {
+    const input = fig.querySelector<HTMLInputElement>('input[type="range"]')!;
+    const set = () => fig.style.setProperty('--pos', `${input.value}%`);
+    input.addEventListener('input', set);
+    set();
+  });
+</script>

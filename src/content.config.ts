@@ -90,4 +90,33 @@ const pastores = defineCollection({
   }),
 });
 
-export const collections = { igreja, navegacao, hero, quemSomos, pastores };
+const historia = defineCollection({
+  loader: file('src/content/historia.json'),
+  schema: z.object({
+    mock: z.boolean().default(false),
+    titulo: z.string(),
+    destaque: z.string().optional(),
+    intro: z.string(),
+    capitulos: z
+      .array(
+        z.object({
+          marco: z.string(),
+          titulo: z.string(),
+          texto: z.string(),
+          fotos: z.array(foto).min(1).max(2),
+        }),
+      )
+      .min(1),
+    antesDepois: z.object({
+      titulo: z.string(),
+      rotulo: z.string(),
+      antes: foto,
+      depois: foto,
+      legendaAntes: z.string(),
+      legendaDepois: z.string(),
+    }),
+    cta: z.object({ titulo: z.string(), texto: z.string(), rotulo: z.string(), href: z.string() }),
+  }),
+});
+
+export const collections = { igreja, navegacao, hero, quemSomos, pastores, historia };

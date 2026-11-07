@@ -1,4 +1,9 @@
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+
+/** Coleções de página única (entrada 'principal'). */
+type Unica = 'quemSomos' | 'historia';
+/** Coleções em lista com campo 'ordem'. */
+type Ordenada = 'pastores';
 
 /** Dados institucionais da igreja (src/content/igreja.json). */
 export async function getIgreja() {
@@ -21,14 +26,16 @@ export async function getHero() {
 }
 
 /** Busca a entrada "principal" de uma coleção de página única (quem-somos, historia…). */
-export async function getPrincipal<C extends 'quemSomos'>(colecao: C) {
+export async function getPrincipal<C extends Unica>(
+  colecao: C,
+): Promise<CollectionEntry<C>['data']> {
   const entry = await getEntry(colecao, 'principal');
   if (!entry) throw new Error(`Coleção "${colecao}": entrada "principal" ausente`);
-  return entry.data;
+  return entry.data as CollectionEntry<C>['data'];
 }
 
 /** Itens de uma coleção em lista, ordenados pelo campo `ordem`. */
-export async function getOrdenados<C extends 'pastores'>(colecao: C) {
+export async function getOrdenados<C extends Ordenada>(colecao: C) {
   const itens = await getCollection(colecao);
   return itens.map((i) => ({ id: i.id, ...i.data })).sort((a, b) => a.ordem - b.ordem);
 }

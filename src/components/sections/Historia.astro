@@ -1,0 +1,197 @@
+---
+// Nossa história + Novo Templo. Padrão (sem JS / celular / reduced-motion): capítulos empilhados
+// com uma linha vermelha à esquerda. Desktop com JS: a seção fica presa e a trilha corre na
+// horizontal enquanto uma pincelada se desenha (src/lib/animations/historia.ts).
+import AntesDepois from '@/components/islands/AntesDepois.astro';
+import Button from '@/components/ui/Button.astro';
+import Foto from '@/components/ui/Foto.astro';
+import Icon from '@/components/ui/Icon.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import { getPrincipal } from '@/lib/igreja';
+
+const h = await getPrincipal('historia');
+const giro = ['-rotate-3', 'rotate-[4deg]'];
+---
+
+<section
+  id="historia"
+  data-historia
+  aria-labelledby="historia-titulo"
+  class="historia relative scroll-mt-20 overflow-hidden bg-wine-950 text-cream"
+>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_15%_10%,var(--color-wine-900)_0%,transparent_70%)]"
+  ></div>
+
+  <div data-track class="historia__trilha relative">
+    <!-- pincelada que atravessa a trilha (só no modo horizontal) -->
+    <svg
+      aria-hidden="true"
+      class="historia__pincelada pointer-events-none absolute left-0 hidden w-full"
+      viewBox="0 0 1000 40"
+      preserveAspectRatio="none"
+    >
+      <path
+        data-historia-linha
+        d="M0 24 C 120 10, 220 34, 340 20 S 560 8, 680 22 S 880 34, 1000 16"
+        fill="none"
+        stroke="var(--color-red-600)"
+        stroke-width="5"
+        stroke-linecap="round"
+      ></path>
+    </svg>
+
+    <!-- linha vertical (modo empilhado) -->
+    <span
+      aria-hidden="true"
+      data-historia-vertical
+      class="historia__vertical absolute top-0 bottom-0 left-[clamp(1rem,4vw,2.5rem)] w-0.5 origin-top bg-red-600/70"
+    ></span>
+
+    <div class="historia__painel historia__intro">
+      <SecaoTitulo id="historia-titulo" titulo={h.titulo} destaque={h.destaque} tom="escuro">
+        <p>{h.intro}</p>
+      </SecaoTitulo>
+    </div>
+
+    {h.capitulos.map((c, i) => (
+      <article class="historia__painel historia__capitulo" aria-labelledby={`historia-cap-${i}`}>
+        <div class="historia__texto">
+          <p
+            aria-hidden="true"
+            class="font-display text-[clamp(4rem,9vw,8.5rem)] leading-none font-light text-blush/40 [font-variation-settings:'opsz'_144]"
+          >
+            {c.marco}
+          </p>
+          <h3
+            id={`historia-cap-${i}`}
+            class="mt-2 font-display text-[clamp(1.75rem,3vw,2.5rem)] leading-tight"
+          >
+            <span class="sr-only">{c.marco}: </span>
+            {c.titulo}
+          </h3>
+          <p class="mt-4 max-w-md text-lg leading-relaxed text-blush-100/85">{c.texto}</p>
+        </div>
+        <div class="historia__fotos relative">
+          {c.fotos.map((f, j) => (
+            <figure
+              data-print
+              class:list={[
+                'historia__foto bg-cream p-2 pb-8 shadow-[0_30px_60px_-30px_color-mix(in_srgb,var(--color-night)_90%,transparent)]',
+                giro[j % 2],
+                j === 1 && 'historia__foto--b',
+              ]}
+            >
+              <div class="aspect-[4/3] overflow-hidden bg-sand">
+                <Foto {...f} sizes="(min-width: 1024px) 30vw, 70vw" />
+              </div>
+            </figure>
+          ))}
+        </div>
+      </article>
+    ))}
+
+    <div class="historia__painel historia__comparar">
+      <h3 class="font-display text-[clamp(1.75rem,3vw,2.5rem)]">{h.antesDepois.titulo}</h3>
+      <AntesDepois
+        class="mt-6"
+        antes={h.antesDepois.antes}
+        depois={h.antesDepois.depois}
+        rotulo={h.antesDepois.rotulo}
+        legendaAntes={h.antesDepois.legendaAntes}
+        legendaDepois={h.antesDepois.legendaDepois}
+      />
+    </div>
+
+    <div class="historia__painel historia__cta">
+      <h3 class="font-display text-[clamp(2rem,3.6vw,3rem)] leading-tight">{h.cta.titulo}</h3>
+      <p class="mt-4 max-w-md text-lg leading-relaxed text-blush-100/85">{h.cta.texto}</p>
+      <Button href={h.cta.href} variant="light" class="mt-8">
+        {h.cta.rotulo}
+        <Icon name="arrow" class="transition-transform duration-base group-hover:translate-x-1" />
+      </Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ---------- modo empilhado (padrão) ---------- */
+  .historia__trilha {
+    display: grid;
+    gap: clamp(4rem, 9vw, 7rem);
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: clamp(5rem, 11vw, 9rem) clamp(1rem, 4vw, 2.5rem);
+    padding-left: calc(clamp(1rem, 4vw, 2.5rem) + 2rem);
+  }
+  .historia__capitulo {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  .historia__fotos {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding-bottom: 18%;
+  }
+  .historia__foto {
+    width: 78%;
+  }
+  .historia__foto--b {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 52%;
+  }
+  .historia__comparar,
+  .historia__cta {
+    max-width: 40rem;
+  }
+  @media (min-width: 768px) {
+    .historia__capitulo {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: clamp(2rem, 5vw, 5rem);
+    }
+  }
+
+  /* ---------- modo horizontal (desktop + JS + movimento) ---------- */
+  :global(.historia.is-horizontal) .historia__trilha {
+    display: flex;
+    align-items: center;
+    gap: 8vw;
+    width: max-content;
+    max-width: none;
+    height: 100svh;
+    margin: 0;
+    padding: 6rem 8vw 4rem;
+  }
+  :global(.historia.is-horizontal) .historia__painel {
+    flex: 0 0 auto;
+  }
+  :global(.historia.is-horizontal) .historia__intro {
+    width: min(36vw, 34rem);
+  }
+  :global(.historia.is-horizontal) .historia__capitulo {
+    width: min(66vw, 64rem);
+  }
+  :global(.historia.is-horizontal) .historia__comparar {
+    width: min(46vw, 44rem);
+    max-width: none;
+  }
+  :global(.historia.is-horizontal) .historia__cta {
+    width: min(34vw, 30rem);
+  }
+  :global(.historia.is-horizontal) .historia__pincelada {
+    display: block;
+    bottom: 9vh;
+    height: 40px;
+  }
+  :global(.historia.is-horizontal) .historia__vertical {
+    display: none;
+  }
+</style>
+
+<script>
+  import '@/lib/animations/historia';
+</script>

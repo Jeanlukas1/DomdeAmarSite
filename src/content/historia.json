@@ -1,0 +1,83 @@
+{
+  "principal": {
+    "mock": true,
+    "titulo": "Oito anos levantando uma casa de Graça",
+    "destaque": "casa de Graça",
+    "intro": "Uma história escrita por gente simples, com fé e as próprias mãos. Role para caminhar com a gente.",
+    "capitulos": [
+      {
+        "marco": "2018",
+        "titulo": "O começo",
+        "texto": "Poucas famílias, cadeiras de plástico e uma certeza: a Graça de Deus alcança qualquer pessoa. Foi assim que a Dom de Amar nasceu em Jaconé.",
+        "fotos": [
+          {
+            "id": "templo-antigo/templo-antigo-13",
+            "alt": "Culto no templo antigo, com irmãos em pé louvando e o telão ao fundo",
+            "posicao": "50% 40%"
+          },
+          {
+            "id": "templo-antigo/templo-antigo-12",
+            "alt": "Salão do templo antigo durante o culto, com cadeiras brancas e a porta aberta",
+            "posicao": "60% 40%"
+          }
+        ]
+      },
+      {
+        "marco": "2026",
+        "titulo": "Oito anos de Graça",
+        "texto": "Em 25 de julho celebramos oito anos com uma noite de louvor, Palavra e gratidão. A família cresceu, e a casa também.",
+        "fotos": [
+          {
+            "id": "templo-novo/templo-novo-27",
+            "alt": "Salão do templo novo com mesas decoradas e irmãos reunidos",
+            "posicao": "50% 55%"
+          },
+          {
+            "id": "templo-novo/templo-novo-20",
+            "alt": "Irmãos conversando no templo novo, à luz do fim de tarde",
+            "posicao": "50% 40%"
+          }
+        ]
+      },
+      {
+        "marco": "Hoje",
+        "titulo": "O novo templo",
+        "texto": "Em mutirão, irmãos se revezam na obra: fundação, concreto, cada bloco levantado com as próprias mãos. Uma casa feita por quem foi alcançado pela Graça.",
+        "fotos": [
+          {
+            "id": "novo-templo-construcao/novo-templo-construcao-44",
+            "alt": "Irmãos trabalhando no mutirão da obra do novo templo, ao lado da betoneira",
+            "posicao": "40% 50%"
+          },
+          {
+            "id": "novo-templo-construcao/novo-templo-construcao-50",
+            "alt": "Jovens da igreja reunidos no terreno da obra do novo templo",
+            "posicao": "50% 50%"
+          }
+        ]
+      }
+    ],
+    "antesDepois": {
+      "titulo": "Antes e agora",
+      "rotulo": "Arraste para comparar o templo antigo com o templo novo",
+      "antes": {
+        "id": "templo-antigo/templo-antigo-13",
+        "alt": "O templo antigo",
+        "posicao": "50% 40%"
+      },
+      "depois": {
+        "id": "templo-novo/templo-novo-28",
+        "alt": "O templo novo",
+        "posicao": "50% 50%"
+      },
+      "legendaAntes": "Templo antigo",
+      "legendaDepois": "Templo novo"
+    },
+    "cta": {
+      "titulo": "Venha levantar essa casa com a gente",
+      "texto": "Cada oferta vira bloco, cimento e telhado. E cada mão que chega no mutirão é recebida com café e gratidão.",
+      "rotulo": "Ajude a construir",
+      "href": "/#contribua"
+    }
+  }
+}
