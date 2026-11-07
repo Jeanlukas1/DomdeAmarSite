@@ -1,0 +1,25 @@
+{
+  "principal": {
+    "titulo": "Três encontros por semana",
+    "destaque": "encontros",
+    "texto": "Não precisa se arrumar nem conhecer ninguém. É só chegar: a porta está aberta e tem lugar para você.",
+    "proximoRotulo": "Próximo culto",
+    "comoChegar": {
+      "rotulo": "Como chegar",
+      "href": "/#visite"
+    },
+    "semana": {
+      "mock": true,
+      "rotulo": "Nesta semana",
+      "tema": "Graça que alcança: a nova aliança",
+      "referencia": "Hebreus 8.10–12",
+      "pregador": "Pr. Marcelo",
+      "culto": "Culto da Plenitude do Amor"
+    },
+    "quando": {
+      "agora": "Acontecendo agora",
+      "hoje": "Hoje",
+      "amanha": "Amanhã"
+    }
+  }
+}

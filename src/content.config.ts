@@ -119,4 +119,49 @@ const historia = defineCollection({
   }),
 });
 
-export const collections = { igreja, navegacao, hero, quemSomos, pastores, historia };
+const cultos = defineCollection({
+  loader: file('src/content/cultos.json'),
+  schema: z.object({
+    ordem: z.number(),
+    dia: z.string(),
+    /** 0 = domingo … 6 = sábado */
+    diaSemana: z.number().int().min(0).max(6),
+    /** HH:MM, horário de Brasília */
+    hora: z.string().regex(/^\d{2}:\d{2}$/),
+    nome: z.string(),
+    descricao: z.string(),
+    foto,
+    mock: z.boolean().default(false),
+  }),
+});
+
+const cultosSecao = defineCollection({
+  loader: file('src/content/cultos-secao.json'),
+  schema: z.object({
+    titulo: z.string(),
+    destaque: z.string().optional(),
+    texto: z.string(),
+    proximoRotulo: z.string(),
+    quando: z.object({ agora: z.string(), hoje: z.string(), amanha: z.string() }),
+    comoChegar: link,
+    semana: z.object({
+      mock: z.boolean().default(false),
+      rotulo: z.string(),
+      tema: z.string(),
+      referencia: z.string().optional(),
+      pregador: z.string(),
+      culto: z.string(),
+    }),
+  }),
+});
+
+export const collections = {
+  igreja,
+  navegacao,
+  hero,
+  quemSomos,
+  pastores,
+  historia,
+  cultos,
+  cultosSecao,
+};

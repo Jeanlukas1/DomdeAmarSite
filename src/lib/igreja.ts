@@ -1,9 +1,9 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
 /** Coleções de página única (entrada 'principal'). */
-type Unica = 'quemSomos' | 'historia';
+type Unica = 'quemSomos' | 'historia' | 'cultosSecao';
 /** Coleções em lista com campo 'ordem'. */
-type Ordenada = 'pastores';
+type Ordenada = 'pastores' | 'cultos';
 
 /** Dados institucionais da igreja (src/content/igreja.json). */
 export async function getIgreja() {
@@ -35,7 +35,11 @@ export async function getPrincipal<C extends Unica>(
 }
 
 /** Itens de uma coleção em lista, ordenados pelo campo `ordem`. */
-export async function getOrdenados<C extends Ordenada>(colecao: C) {
-  const itens = await getCollection(colecao);
-  return itens.map((i) => ({ id: i.id, ...i.data })).sort((a, b) => a.ordem - b.ordem);
+export async function getOrdenados<C extends Ordenada>(
+  colecao: C,
+): Promise<Array<CollectionEntry<C>['data'] & { id: string }>> {
+  const itens = (await getCollection(colecao)) as CollectionEntry<C>[];
+  return itens
+    .map((i) => ({ id: i.id, ...(i.data as CollectionEntry<C>['data']) }))
+    .sort((a, b) => a.ordem - b.ordem);
 }
