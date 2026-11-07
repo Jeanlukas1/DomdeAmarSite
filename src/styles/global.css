@@ -28,13 +28,15 @@
     outline: 3px solid var(--color-red-600);
     outline-offset: 3px;
   }
+  /* Menos movimento: nada se desloca nem gira, mas mudanças de cor e opacidade continuam
+     suaves (o feedback de hover/foco não some). Animações em loop param no estado final. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+      transition-property: color, background-color, border-color, opacity, outline-color !important;
       scroll-behavior: auto !important;
     }
   }

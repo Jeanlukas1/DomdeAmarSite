@@ -78,7 +78,7 @@ const PARTICULAS = 14;
     style="--d: 1.2s"
   >
     {hero.rolar}
-    <Icon name="down" class="animate-bounce" />
+    <Icon name="down" class="cue-drift" />
   </a>
 </section>
 <div id="conteudo-inicio"></div>
@@ -87,6 +87,23 @@ const PARTICULAS = 14;
   /* entrada do texto em CSS (não espera JS, protege o LCP) */
   .hero-in {
     animation: hero-in 0.9s var(--ease-out) var(--d, 0s) both;
+  }
+  /* seta do "role": desce devagar e some, como uma brasa caindo (sem quique) */
+  .cue-drift {
+    animation: cue-drift 2.4s var(--ease-out) infinite;
+  }
+  @keyframes cue-drift {
+    0% {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    35% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
   }
   @keyframes hero-in {
     from {
