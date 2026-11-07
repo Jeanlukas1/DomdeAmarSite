@@ -20,7 +20,7 @@
 - [x] F3 — Seções
 - [x] F4 — Conteúdo, Visite-nos, Contribua, Fale com a gente (WhatsApp), Keystatic
 - [x] F5 — Performance, SEO, acessibilidade
-- [ ] F6 — Deploy (no ar, deploy automático ligado; falta o GitHub App do Keystatic)
+- [x] F6 — Deploy (https://domdeamar.vercel.app, deploy automático, painel /keystatic em produção)
 
 ## Sessões
 
