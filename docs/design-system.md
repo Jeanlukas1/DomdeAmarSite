@@ -29,4 +29,14 @@ Regra de contraste: `red-600` sobre claro só em texto ≥ 18px ou bold; abaixo 
 
 ## Logo
 
-O SVG atual (`logo_dom_de_amar.svg`) é um trace automático, sem camadas. Na F2 ele é redesenhado em camadas com IDs fixos (`borda`, `arco-texto`, `fita-esq`, `fita-dir`, `dom`, `de`, `amar`, `slogan`, `mini-coracao`). Quando o designer enviar o original, basta trocar o arquivo mantendo os IDs.
+- `src/assets/logo/logo.svg` é **gerado** por `node scripts/logo/build-logo.mjs` a partir de `logo-trace.svg` (o trace automático recebido). O script:
+  - classifica cada pedaço por região e cor (`scripts/logo/layers.json`);
+  - suaviza os degraus de pixel (RDP + Catmull-Rom);
+  - remove ruído no coração e no "Amar";
+  - troca a borda por um `<circle>` real.
+
+  Use `--debug <arquivo.png>` para ver as camadas coloridas.
+
+- Ids das camadas (contrato com a animação): `fundo`, `borda`, `coracao` (`fita-esq`, `fita-dir`), `nome` (`dom`, `de`, `amar`), `arco-texto`, `slogan` (`slogan-serif`, `slogan-script`), `mini-coracao`.
+- Cores reais da logo: `#de0101`, `#a90504`, `#6f0101` (o "Dom" é vinho, não preto) e `#d08383`.
+- **Quando chegar o original do designer:** exporte um SVG com essas camadas e ids e substitua o `logo.svg`. A partir daí o script deixa de ser necessário.

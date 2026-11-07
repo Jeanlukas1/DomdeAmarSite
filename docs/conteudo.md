@@ -2,9 +2,11 @@
 
 Todo o conteúdo fica em `src/content/`. Depois de editar, rode `npm run build`: o Zod acusa campos errados.
 
-| Arquivo       | O que é                                 |
-| ------------- | --------------------------------------- |
-| `igreja.json` | nome, slogan, endereço, contatos, redes |
+| Arquivo          | O que é                                                                |
+| ---------------- | ---------------------------------------------------------------------- |
+| `igreja.json`    | nome, slogan, endereço, contatos, redes                                |
+| `navegacao.json` | itens do menu (`ordem`, `rotulo`, `href`, `destaque` = botão vermelho) |
+| `hero.json`      | saudação, título, texto e botões do topo da home                       |
 
 > As próximas coleções (cultos, eventos, mensagens, pastores, ministérios, galeria, depoimentos) entram nas fases F3/F4, e esta tabela é atualizada junto.
 
