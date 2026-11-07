@@ -78,6 +78,16 @@ const hero = defineCollection({
   }),
 });
 
+/** Transição Hero → Quem somos: o versículo que "pousa" depois de atravessar a cruz. */
+const alianca = defineCollection({
+  loader: file('src/content/alianca.json'),
+  schema: z.object({
+    /** só para leitor de tela (o momento é visual) */
+    titulo: z.string(),
+    versiculo: z.object({ texto: z.string(), referencia: z.string() }),
+  }),
+});
+
 const quemSomos = defineCollection({
   loader: file('src/content/quem-somos.json'),
   schema: z.object({
@@ -409,6 +419,7 @@ export const collections = {
   igreja,
   navegacao,
   hero,
+  alianca,
   quemSomos,
   pastores,
   historia,
