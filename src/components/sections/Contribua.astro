@@ -1,0 +1,117 @@
+---
+// Contribua: a oferta como gratidão, não cobrança (2 Co 9.7). Faixa vinho com a foto real da
+// obra e o cartão do PIX. Sem chave cadastrada, o cartão mostra o estado "em breve" — nunca uma
+// chave falsa. Com chave, o botão copia (com retorno visual e para leitor de tela).
+import Foto from '@/components/ui/Foto.astro';
+import Icon from '@/components/ui/Icon.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import { getPrincipal } from '@/lib/igreja';
+
+const c = await getPrincipal('contribua');
+const { pix } = c;
+---
+
+<section
+  id="contribua"
+  aria-labelledby="contribua-titulo"
+  class="superficie-escura relative scroll-mt-20 overflow-hidden bg-wine-900 py-[clamp(5rem,11vw,9rem)] text-cream"
+>
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_60%_at_0%_100%,color-mix(in_srgb,var(--color-wine-950)_80%,transparent),transparent_70%)]"
+  ></div>
+
+  <div class="container-site relative grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-16">
+    <figure class="order-2 lg:order-1" data-reveal="clip">
+      <div class="aspect-[4/5] overflow-hidden rounded-[2rem] bg-wine-950 sm:aspect-[4/3] lg:aspect-[4/5]">
+        <Foto {...c.foto} sizes="(min-width: 1024px) 40vw, 100vw" />
+      </div>
+      <figcaption class="mt-3 flex items-center gap-2 text-sm text-blush-100/80">
+        <Icon name="heart" size={14} class="text-red-500" />
+        {c.legenda}
+      </figcaption>
+    </figure>
+
+    <div class="order-1 min-w-0 lg:order-2">
+      <SecaoTitulo id="contribua-titulo" titulo={c.titulo} destaque={c.destaque} tom="escuro">
+        <p>{c.texto}</p>
+      </SecaoTitulo>
+
+      <!-- cartão do PIX -->
+      <div
+        class="mt-10 rounded-[1.5rem] bg-cream p-6 text-ink sm:p-8"
+        data-reveal="scale"
+        data-pix={pix.chave ?? undefined}
+      >
+        <p class="text-sm font-semibold text-red-700">{pix.titulo}</p>
+        {pix.chave ? (
+          <>
+            <p class="mt-3 text-sm text-muted">{pix.tipo}</p>
+            <p class="mt-1 font-display text-2xl break-all text-ink tabular-nums">{pix.chave}</p>
+            <p class="mt-1 text-sm text-ink-soft">{pix.titular}</p>
+            <button
+              type="button"
+              data-pix-copiar
+              data-copiada={pix.copiada}
+              class="mt-6 inline-flex min-h-12 items-center gap-2 rounded-full bg-red-600 px-6 font-semibold text-white transition-colors duration-base hover:bg-red-500"
+            >
+              {pix.copiar}
+            </button>
+            <p data-pix-status role="status" class="mt-2 min-h-5 text-sm text-red-700" />
+          </>
+        ) : (
+          <>
+            <p class="mt-3 font-display text-[clamp(1.6rem,3vw,2rem)] leading-tight">
+              {pix.emBreve}
+            </p>
+            <p class="mt-2 max-w-md leading-relaxed text-ink-soft">{pix.emBreveTexto}</p>
+          </>
+        )}
+      </div>
+
+      <blockquote class="mt-10 border-l border-white/20 pl-5" data-reveal>
+        <p class="font-display text-xl leading-snug text-cream italic sm:text-2xl">
+          “{c.versiculo.texto}”
+        </p>
+        <footer class="mt-3 text-sm font-semibold text-blush-100">{c.versiculo.referencia}</footer>
+      </blockquote>
+
+      <div class="mt-10" data-reveal>
+        <h3 class="font-display text-lg">{c.outrasFormas.titulo}</h3>
+        <ul class="mt-3 flex flex-wrap gap-3">
+          {c.outrasFormas.itens.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="group inline-flex min-h-11 items-center gap-2 rounded-full border border-white/25 px-5 text-sm font-semibold transition-colors duration-base hover:border-cream hover:bg-white/10"
+              >
+                {item.rotulo}
+                <Icon
+                  name="arrow"
+                  size={16}
+                  class="transition-transform duration-base group-hover:translate-x-1"
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const card = document.querySelector<HTMLElement>('[data-pix]');
+  const botao = card?.querySelector<HTMLButtonElement>('[data-pix-copiar]');
+  const status = card?.querySelector<HTMLElement>('[data-pix-status]');
+  botao?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(card!.dataset.pix!);
+      if (status) status.textContent = botao.dataset.copiada ?? '';
+    } catch {
+      // sem permissão de área de transferência: seleciona a chave para cópia manual
+      const chave = card!.querySelector('.font-display');
+      if (chave) getSelection()?.selectAllChildren(chave);
+    }
+  });
+</script>

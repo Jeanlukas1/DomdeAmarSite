@@ -1,0 +1,35 @@
+{
+  "principal": {
+    "titulo": "Contribua com alegria",
+    "destaque": "alegria",
+    "texto": "Tudo o que temos, recebemos de graça. Se o seu coração quiser, a sua oferta vira tijolo, cimento e telhado no novo templo, e sustenta a obra que a igreja faz em Jaconé.",
+    "versiculo": {
+      "texto": "Cada um contribua segundo propôs no seu coração; não com tristeza, ou por necessidade; porque Deus ama ao que dá com alegria.",
+      "referencia": "2 Coríntios 9.7"
+    },
+    "foto": {
+      "id": "novo-templo-construcao/novo-templo-construcao-45",
+      "alt": "Paredes de tijolo do novo templo subindo durante o mutirão",
+      "posicao": "35% 50%"
+    },
+    "legenda": "O novo templo, levantado em mutirão",
+    "pix": {
+      "mock": true,
+      "chave": null,
+      "tipo": "Chave PIX",
+      "titular": "Igreja Evangélica Dom de Amar",
+      "titulo": "Oferta por PIX",
+      "emBreve": "Chave em breve",
+      "emBreveTexto": "A chave PIX da igreja está chegando. Enquanto isso, as ofertas são recebidas nos cultos.",
+      "copiar": "Copiar chave",
+      "copiada": "Chave copiada!"
+    },
+    "outrasFormas": {
+      "titulo": "Outras formas de ajudar",
+      "itens": [
+        { "rotulo": "Venha para o mutirão da obra", "href": "/#agenda" },
+        { "rotulo": "Ore pela construção do templo", "href": "/#oracao" }
+      ]
+    }
+  }
+}
