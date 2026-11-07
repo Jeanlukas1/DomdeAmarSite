@@ -36,12 +36,15 @@ export async function jsonLdIgreja(site: URL) {
     },
     hasMap: end.googleMaps,
     sameAs: redes.map((r) => r.href),
-    openingHoursSpecification: cultos.map((c) => ({
-      '@type': 'OpeningHoursSpecification',
-      name: c.nome,
-      dayOfWeek: `https://schema.org/${DIAS[c.diaSemana]}`,
-      opens: c.hora,
-    })),
+    // só os semanais: OpeningHoursSpecification não expressa "1º domingo do mês" (a Ceia)
+    openingHoursSpecification: cultos
+      .filter((c) => c.ocorrencia === 'semanal')
+      .map((c) => ({
+        '@type': 'OpeningHoursSpecification',
+        name: c.nome,
+        dayOfWeek: `https://schema.org/${DIAS[c.diaSemana]}`,
+        opens: c.hora,
+      })),
   };
 
   const evts = eventos.map((e) => ({

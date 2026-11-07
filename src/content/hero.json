@@ -13,7 +13,8 @@
     },
     "rolar": "Role para descobrir",
     "proximo": {
-      "rotulo": "Próximo culto",
+      "rotulo": "Próximo encontro",
+      "rotuloGrade": "Cultos",
       "href": "/#cultos"
     }
   }

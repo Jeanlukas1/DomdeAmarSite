@@ -1,8 +1,7 @@
 {
   "principal": {
     "semana": {
-      "rotulo": "Nesta semana",
-      "culto": "Culto da Plenitude do Amor de Deus",
+      "data": "2026-11-08",
       "tema": "Graça que alcança: a nova aliança",
       "referencia": "Hebreus 8.10–12",
       "pregador": "Pr. Marcelo Roque",
@@ -20,6 +19,7 @@
     "comoChegar": {
       "rotulo": "Como chegar",
       "href": "/#visite"
-    }
+    },
+    "avisoSubstituido": "Neste domingo: {nome} às {hora}, no lugar deste encontro"
   }
 }

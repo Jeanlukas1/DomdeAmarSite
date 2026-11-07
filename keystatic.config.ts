@@ -209,6 +209,40 @@ export default config({
             hora: campoHora,
             nome: fields.text({ label: 'Nome do culto' }),
             descricao: textoLongo('Descrição'),
+            ocorrencia: fields.select({
+              label: 'Quando acontece',
+              description:
+                'Ex.: a Santa Ceia é "Só no 1º" (1º domingo do mês). O site calcula as datas sozinho.',
+              options: [
+                { label: 'Toda semana', value: 'semanal' },
+                { label: 'Só no 1º deste dia da semana no mês', value: '1' },
+                { label: 'Só no 2º deste dia da semana no mês', value: '2' },
+                { label: 'Só no 3º deste dia da semana no mês', value: '3' },
+                { label: 'Só no 4º deste dia da semana no mês', value: '4' },
+                { label: 'Só no último deste dia da semana no mês', value: 'ultima' },
+              ],
+              defaultValue: 'semanal',
+            }),
+            substituiODia: fields.checkbox({
+              label: 'Neste dia, substitui os outros encontros',
+              description:
+                'Marque na Santa Ceia: no domingo dela, o Seminário e o culto da noite não acontecem.',
+            }),
+            duracaoMin: fields.integer({
+              label: 'Duração (minutos)',
+              description: 'Tempo em que o site mostra "Acontecendo agora". Ceia + almoço: 240.',
+              defaultValue: 120,
+              validation: { min: 30 },
+            }),
+            recebeTema: fields.checkbox({
+              label: 'O tema da semana é deste encontro',
+              description: 'Marque no Culto da Plenitude e na Santa Ceia.',
+            }),
+            nomeCurto: fields.text({
+              label: 'Nome curto (opcional)',
+              description:
+                'Aparece no topo do site ao lado do horário, ex.: "Santa Ceia". Deixe vazio nos encontros de toda semana.',
+            }),
             foto: campoFoto('Foto'),
             mock: campoMock,
           }),
@@ -229,10 +263,11 @@ export default config({
         principal: fields.object({
           semana: fields.object(
             {
-              rotulo: fields.text({ label: 'Rótulo', defaultValue: 'Nesta semana' }),
-              culto: fields.text({
-                label: 'Culto',
-                description: 'Ex.: Culto da Plenitude do Amor',
+              data: fields.date({
+                label: 'Dia do encontro deste tema',
+                description:
+                  'O culto, o dia e a hora o site calcula sozinho (na semana da Ceia, vira a Ceia). Depois deste dia, o tema some até você trocar.',
+                validation: { isRequired: true },
               }),
               tema: fields.text({ label: 'Tema da mensagem' }),
               referencia: fields.text({
@@ -260,6 +295,10 @@ export default config({
             { label: 'Palavras de tempo' },
           ),
           comoChegar: campoLink('Botão "Como chegar"'),
+          avisoSubstituido: fields.text({
+            label: 'Aviso nos encontros que não acontecem (domingo de Ceia)',
+            description: '{nome} e {hora} são trocados pelo encontro do dia, ex.: Santa Ceia, 10h.',
+          }),
         }),
       },
     }),

@@ -217,3 +217,9 @@ export function gradeSemanal(encontros: Encontro[], dias: string[], e = 'e') {
     .map(([d, horas]) => `${dias[d]} ${horas.join(` ${e} `)}`)
     .join(' · ');
 }
+
+/** "2026-12-06" → "6 de dezembro" */
+export const diaEMes = (data: string) =>
+  new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(
+    new Date(`${data}T12:00:00Z`),
+  );

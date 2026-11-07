@@ -10,6 +10,7 @@ import {
   getPrincipal,
   getRedes,
 } from '@/lib/igreja';
+import { horaCurta } from '@/lib/encontros';
 
 const r = await getPrincipal('rodape');
 const igreja = await getIgreja();
@@ -18,7 +19,6 @@ const cultos = await getOrdenados('cultos');
 const endereco = await getEndereco();
 const { rua, bairro, cidade, uf, cep } = endereco;
 const mapa = endereco.googleMaps;
-const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
 const redes = await getRedes();
 const ui = await getPrincipal('ui');
 const ano = new Date().getFullYear();

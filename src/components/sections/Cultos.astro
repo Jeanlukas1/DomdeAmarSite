@@ -1,18 +1,40 @@
 ---
-// Cultos + destaque da semana. Os três encontros como um convite impresso; o próximo culto é
-// marcado no navegador (fuso de São Paulo) — sem JS, o convite aparece completo, sem destaque.
+// Cultos + destaque da semana. Os encontros como um convite impresso. O calendário real (fuso de
+// São Paulo, Santa Ceia no 1º domingo substituindo os encontros do dia) é calculado no navegador
+// por src/lib/encontros.ts:
+//   - marca o próximo encontro (agora / hoje / amanhã);
+//   - mostra a Ceia só na semana dela (sem JS ela aparece sempre, com a regra "1º domingo do mês");
+//   - avisa nos encontros que não acontecem naquele domingo;
+//   - o destaque usa o tema só se a data dele bater com o encontro calculado.
 import Button from '@/components/ui/Button.astro';
 import Foto from '@/components/ui/Foto.astro';
 import Icon from '@/components/ui/Icon.astro';
 import Ornamento from '@/components/ui/Ornamento.astro';
 import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
 import { getOrdenados, getPrincipal } from '@/lib/igreja';
+import { destaqueDaSemana, diaEMes, horaCurta } from '@/lib/encontros';
 
 const s = await getPrincipal('cultosSecao');
 const cultos = await getOrdenados('cultos');
 const ui = await getPrincipal('ui');
-// "09:00" → "9h", "19:30" → "19h30"
-const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
+
+// o que o navegador precisa para recalcular (sem fotos nem descrições)
+const encontros = cultos.map((c) => ({
+  id: c.id,
+  diaSemana: c.diaSemana,
+  hora: c.hora,
+  ocorrencia: c.ocorrencia,
+  substituiODia: c.substituiODia,
+  duracaoMin: c.duracaoMin,
+  recebeTema: c.recebeTema,
+  nome: c.nome,
+  nomeCurto: c.nomeCurto,
+}));
+
+// destaque no build (sem JS); o navegador recalcula para o momento da visita
+const d = destaqueDaSemana(cultos, s.semana.data);
+const linhaData = (data: string, diaSemana: number, hora: string) =>
+  `${ui.diasSemana[diaSemana]}, ${diaEMes(data)} · ${horaCurta(hora)}`;
 ---
 
 <section
@@ -31,25 +53,26 @@ const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').r
       </Button>
     </div>
 
-    <!-- o convite -->
+    <!-- o convite: 1px de areia entre os cartões vem do gap, então funciona com 3 ou 4 cartões -->
     <ol
       data-cultos
+      data-encontros={JSON.stringify(encontros)}
       data-quando-agora={s.quando.agora}
       data-quando-hoje={s.quando.hoje}
       data-quando-amanha={s.quando.amanha}
+      data-aviso-modelo={s.avisoSubstituido}
       data-reveal-group
-      class="mt-14 grid overflow-hidden rounded-[2rem] border border-sand bg-white shadow-[0_40px_80px_-50px_color-mix(in_srgb,var(--color-wine-900)_45%,transparent)] lg:grid-cols-3"
+      class="cultos-lista mt-14 grid gap-px overflow-hidden rounded-[2rem] border border-sand bg-sand shadow-[0_40px_80px_-50px_color-mix(in_srgb,var(--color-wine-900)_45%,transparent)]"
     >
       {cultos.map((c) => (
         <li
           data-culto={c.id}
-          data-dia={c.diaSemana}
-          data-hora={c.hora}
+          data-so-na-semana={c.ocorrencia !== 'semanal' ? '' : undefined}
           data-reveal
-          class="culto group relative grid grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-x-5 gap-y-4 border-sand p-5 transition-colors duration-[600ms] ease-out not-first:border-t sm:grid-cols-[6rem_minmax(0,1fr)] sm:p-8 lg:flex lg:flex-col lg:items-stretch lg:gap-0 lg:not-first:border-t-0 lg:not-first:border-l"
+          class="culto group relative grid grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-x-5 gap-y-4 bg-white p-5 transition-colors duration-[600ms] ease-out sm:grid-cols-[6rem_minmax(0,1fr)] sm:p-8 lg:flex lg:flex-col lg:items-stretch lg:gap-0"
         >
           {/* no celular vira linha de convite: miniatura + dia/hora, texto embaixo */}
-          <div class="aspect-square self-start overflow-hidden rounded-[1rem] bg-sand lg:aspect-[16/10] lg:rounded-[1.25rem]">
+          <div class="culto__foto aspect-square self-start lg:self-stretch overflow-hidden rounded-[1rem] bg-sand lg:aspect-[16/10] lg:rounded-[1.25rem]">
             <Foto {...c.foto} sizes="(min-width: 1024px) 30vw, 96px" />
           </div>
           <div class="min-w-0 lg:mt-6">
@@ -76,6 +99,7 @@ const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').r
                 {c.nome}
               </span>
             </h3>
+            <p data-aviso hidden class="mt-2 text-sm font-semibold text-red-700" />
           </div>
           <p class="col-span-2 leading-relaxed text-ink-soft group-data-[proximo]:text-blush-100/85 lg:mt-3">
             {c.descricao}
@@ -84,39 +108,87 @@ const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').r
       ))}
     </ol>
 
-    <!-- destaque da semana -->
-    <div
-      role="group"
-      aria-label={s.semana.rotulo}
-      class="mt-10 flex flex-col gap-6 rounded-[2rem] border border-sand px-6 py-8 sm:px-10 md:flex-row md:items-center md:gap-10"
-      data-reveal
-    >
-      <Ornamento class="shrink-0" />
-      <div class="min-w-0 flex-1">
-        <p class="text-sm font-semibold text-red-700">
-          {s.semana.rotulo} · {s.semana.culto}
-        </p>
-        <p class="mt-2 font-display text-[clamp(1.5rem,2.6vw,2.1rem)] leading-tight text-ink">
-          {s.semana.tema}
-        </p>
-      </div>
-      <dl class="grid shrink-0 grid-cols-2 gap-x-8 gap-y-1 text-sm md:block md:text-right">
-        {s.semana.referencia && (
-          <div>
-            <dt class="sr-only">{ui.a11y.textoBiblico}</dt>
-            <dd class="font-semibold text-ink">{s.semana.referencia}</dd>
-          </div>
-        )}
-        <div>
-          <dt class="sr-only">{ui.a11y.pregador}</dt>
-          <dd class="text-muted md:mt-1">{s.semana.pregador}</dd>
+    <!-- destaque da semana: o encontro e a data vêm do calendário; o tema, do painel -->
+    {d && (
+      <div
+        role="group"
+        aria-labelledby="cultos-destaque"
+        data-destaque
+        data-tema-data={s.semana.data}
+        data-dias={JSON.stringify(ui.diasSemana)}
+        class="mt-10 flex flex-col gap-6 rounded-[2rem] border border-sand px-6 py-8 sm:px-10 md:flex-row md:items-center md:gap-10"
+        data-reveal
+      >
+        <Ornamento class="shrink-0" />
+        <div class="min-w-0 flex-1">
+          <p id="cultos-destaque" class="text-sm font-semibold text-red-700">
+            <span data-destaque-data>
+              {linhaData(d.vez.data, d.vez.diaSemana, d.vez.encontro.hora)}
+            </span>
+            <span data-destaque-nome hidden={!d.temTema}>
+              {' · '}
+              {d.vez.encontro.nome}
+            </span>
+          </p>
+          <p
+            data-destaque-titulo
+            data-tema={s.semana.tema}
+            class="mt-2 font-display text-[clamp(1.5rem,2.6vw,2.1rem)] leading-tight text-ink"
+          >
+            {d.temTema ? s.semana.tema : d.vez.encontro.nome}
+          </p>
         </div>
-      </dl>
-    </div>
+        <dl
+          data-destaque-tema
+          hidden={!d.temTema}
+          class="grid shrink-0 grid-cols-2 gap-x-8 gap-y-1 text-sm md:block md:text-right"
+        >
+          {s.semana.referencia && (
+            <div>
+              <dt class="sr-only">{ui.a11y.textoBiblico}</dt>
+              <dd class="font-semibold text-ink">{s.semana.referencia}</dd>
+            </div>
+          )}
+          <div>
+            <dt class="sr-only">{ui.a11y.pregador}</dt>
+            <dd class="text-muted md:mt-1">{s.semana.pregador}</dd>
+          </div>
+        </dl>
+      </div>
+    )}
   </div>
 </section>
 
 <style>
+  @media (min-width: 1024px) {
+    .cultos-lista {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    /* com a Ceia na grade: 2×2, para as fotos não ficarem espremidas */
+    :global(html:not(.js)) .cultos-lista:has([data-so-na-semana]),
+    .cultos-lista[data-com-mensal] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    /* cartões mais largos: foto mais baixa, para a grade 2×2 não dobrar de altura */
+    :global(html:not(.js)) .cultos-lista:has([data-so-na-semana]) .culto__foto,
+    .cultos-lista[data-com-mensal] .culto__foto {
+      aspect-ratio: 2 / 1;
+    }
+  }
+  /* encontro mensal (a Ceia): primeiro da grade; com JS, só na semana dele */
+  .culto[data-so-na-semana] {
+    order: -1;
+  }
+  :global(.js) .culto[data-so-na-semana]:not([data-na-semana]) {
+    display: none;
+  }
+  /* não acontece neste domingo: a foto recua, o texto continua legível e o aviso explica */
+  .culto[data-substituido] .culto__foto {
+    opacity: 0.4;
+  }
+  [hidden] {
+    display: none !important;
+  }
   .culto[data-proximo] {
     background: var(--color-wine-900);
     color: var(--color-cream);
@@ -143,30 +215,80 @@ const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').r
 </style>
 
 <script>
-  import { proximoCulto } from '@/lib/proximoCulto';
+  import {
+    destaqueDaSemana,
+    diaEMes,
+    horaCurta,
+    proximoEncontro,
+    situacaoDaSemana,
+    type Encontro,
+  } from '@/lib/encontros';
+  import { agoraDaPagina } from '@/lib/agoraDaPagina';
+
+  type Dados = Encontro & { nome: string; nomeCurto?: string };
 
   const lista = document.querySelector<HTMLElement>('[data-cultos]');
   if (lista) {
-    const itens = [...lista.querySelectorAll<HTMLElement>('[data-culto]')];
-    const r = proximoCulto(
-      itens.map((el) => ({
-        id: el.dataset.culto!,
-        diaSemana: Number(el.dataset.dia),
-        hora: el.dataset.hora!,
-      })),
-    );
-    const alvo = r && itens.find((el) => el.dataset.culto === r.culto.id);
+    const encontros: Dados[] = JSON.parse(lista.dataset.encontros ?? '[]');
+    const agora = agoraDaPagina();
+    const item = (id: string) => lista.querySelector<HTMLElement>(`[data-culto="${id}"]`);
+    const palavra = {
+      agora: lista.dataset.quandoAgora,
+      hoje: lista.dataset.quandoHoje,
+      amanha: lista.dataset.quandoAmanha,
+      semana: undefined,
+    };
+
+    // a Ceia na semana dela + avisos nos encontros que ela substitui
+    let comMensal = false;
+    for (const s of situacaoDaSemana(encontros, agora)) {
+      const el = item(s.encontro.id);
+      if (!el) continue;
+      if (el.hasAttribute('data-so-na-semana')) {
+        el.toggleAttribute('data-na-semana', s.mostrar);
+        comMensal ||= s.mostrar;
+      }
+      const aviso = el.querySelector<HTMLElement>('[data-aviso]');
+      if (s.substituidoPor && aviso) {
+        const por = s.substituidoPor.encontro;
+        el.toggleAttribute('data-substituido', true);
+        aviso.textContent = (lista.dataset.avisoModelo ?? '')
+          .replace('{nome}', por.nomeCurto || por.nome)
+          .replace('{hora}', horaCurta(por.hora));
+        aviso.hidden = false;
+      }
+    }
+    lista.toggleAttribute('data-com-mensal', comMensal);
+
+    // o próximo encontro
+    const r = proximoEncontro(encontros, agora);
+    const alvo = r && item(r.vez.encontro.id);
     if (r && alvo) {
       alvo.toggleAttribute('data-proximo', true);
       alvo.setAttribute('aria-current', 'true');
       const rotulo = alvo.querySelector<HTMLElement>('[data-quando]');
-      const texto = {
-        agora: lista.dataset.quandoAgora,
-        hoje: lista.dataset.quandoHoje,
-        amanha: lista.dataset.quandoAmanha,
-        semana: '',
-      }[r.quando];
+      const texto = palavra[r.quando];
       if (rotulo && texto) rotulo.textContent = `${rotulo.textContent} · ${texto}`;
+    }
+
+    // o destaque da semana
+    const box = document.querySelector<HTMLElement>('[data-destaque]');
+    const d = box && destaqueDaSemana(encontros, box.dataset.temaData, agora);
+    if (box && d) {
+      const dias: string[] = JSON.parse(box.dataset.dias ?? '[]');
+      const enc = d.vez.encontro;
+      // "Acontecendo agora, 6 de dezembro" não soa bem: durante o encontro, "Hoje"
+      const quando =
+        d.quando === 'semana'
+          ? dias[d.vez.diaSemana]
+          : palavra[d.quando === 'agora' ? 'hoje' : d.quando];
+      const q = <T extends HTMLElement>(sel: string) => box.querySelector<T>(sel)!;
+      q('[data-destaque-data]').textContent =
+        `${quando}, ${diaEMes(d.vez.data)} · ${horaCurta(enc.hora)}`;
+      q('[data-destaque-nome]').hidden = !d.temTema;
+      const titulo = q('[data-destaque-titulo]');
+      titulo.textContent = d.temTema ? (titulo.dataset.tema ?? '') : enc.nome;
+      q('[data-destaque-tema]').hidden = !d.temTema;
     }
   }
 </script>
