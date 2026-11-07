@@ -16,6 +16,20 @@
       "mock": true
     },
     {
+      "id": "culto-ceia",
+      "ordem": 2,
+      "dia": "Domingo",
+      "diaSemana": "0",
+      "hora": "10:00",
+      "nome": "Culto de ceia",
+      "descricao": "Nos reunimos como corpo de Cristo para fazermos um memorial de sua morte na Cruz.",
+      "foto": {
+        "id": "artes-divulgacao/artes-divulgacao-01",
+        "posicao": "50% 50%"
+      },
+      "mock": false
+    },
+    {
       "id": "domingo-estudo",
       "ordem": 2,
       "dia": "Domingo",
