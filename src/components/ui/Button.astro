@@ -9,8 +9,7 @@ interface Props extends HTMLAttributes<'a'> {
 const { href, variant = 'primary', class: className, ...rest } = Astro.props;
 
 const styles = {
-  primary:
-    'bg-red-600 text-white shadow-[0_10px_30px_-10px_rgb(222_1_1/.7)] hover:bg-red-500 hover:shadow-[0_14px_36px_-10px_rgb(222_1_1/.9)]',
+  primary: 'bg-red-600 text-white hover:bg-red-500',
   ghost: 'border border-current/30 text-current hover:border-current hover:bg-current/5',
   light: 'bg-cream text-wine-900 hover:bg-white',
 };
@@ -19,7 +18,7 @@ const styles = {
 <a
   href={href}
   class:list={[
-    'group inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold tracking-tight transition-[background-color,box-shadow,transform,border-color] duration-base ease-out active:scale-[.98]',
+    'group inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold tracking-tight transition-[background-color,transform,border-color] duration-base ease-out active:scale-[.98]',
     styles[variant],
     className,
   ]}

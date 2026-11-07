@@ -169,16 +169,17 @@ Mobile-first, de 320px a ultrawide. Container central de até `80rem`, com respi
 
 ## Elevation & Depth
 
-Profundidade **quente e difusa**: sombras grandes, macias e tingidas (vinho ou vermelho, nunca cinza puro), mais o brilho radial atrás do selo. As superfícies ficam planas em repouso. A sombra aparece para destacar o que é especial (o selo, o botão primário) ou para separar o header do conteúdo.
+Profundidade **quente e difusa**: sombras grandes, macias e tingidas (vinho ou vermelho, nunca cinza puro), mais o brilho radial atrás do selo. As superfícies ficam planas em repouso. A sombra aparece para destacar o que é especial (o selo) ou para separar o header do conteúdo.
 
 ### Shadow Vocabulary
 
-- **Brilho do botão** (`box-shadow: 0 10px 30px -10px rgb(222 1 1 / .7)`): sob o botão primário; intensifica no hover.
 - **Selo flutuante** (`box-shadow: 0 30px 80px -20px rgb(0 0 0 / .6)`): o selo sobre o fundo escuro.
 - **Header sólido** (`box-shadow: 0 1px 0 rgb(0 0 0 / .06), 0 8px 30px -12px rgb(42 5 5 / .25)`): separação do header ao rolar.
 - **Halo do selo** (gradiente radial vermelho → vinho → transparente, com blur): luz atrás do selo que pulsa na batida.
 
 ### Named Rules
+
+**The One Glow Rule.** Só o selo brilha. Botões, cartões e textos não ganham halo colorido; a luz é da marca, não da interface.
 
 **The Warm Shadow Rule.** Sombras levam a cor da marca (vinho ou vermelho) em baixa opacidade. Sombra cinza neutra não entra.
 
@@ -193,8 +194,8 @@ Formas macias e acolhedoras. O círculo do selo é a forma-mãe: botões em píl
 Macios e calorosos: pílulas com altura mínima de 48px (alvo de toque confortável).
 
 - **Shape:** pílula (`pill`).
-- **Primary:** fundo vermelho da Graça, texto branco, `12px 24px`, com brilho vermelho embaixo. Ícone de seta à direita, que desliza 4px no hover.
-- **Hover / Focus:** passa a vermelho aceso e o brilho intensifica (320ms, ease-out). `:active` reduz a 98%. Foco: contorno vermelho de 3px com 3px de afastamento.
+- **Primary:** fundo vermelho da Graça, texto branco, `12px 24px`, sem sombra. Ícone de seta à direita, que desliza 4px no hover.
+- **Hover / Focus:** passa a vermelho aceso (320ms, ease-out). `:active` reduz a 98%. Foco: contorno vermelho de 3px com 3px de afastamento.
 - **Ghost:** transparente, borda `currentColor` a 30%, que fica sólida no hover. Usado como ação secundária sobre o escuro.
 - **Light:** fundo creme, texto vinho. Para CTAs sobre faixas vinho.
 

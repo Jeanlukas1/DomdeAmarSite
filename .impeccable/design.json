@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-07T02:54:25.354Z",
+  "generatedAt": "2026-11-07T03:06:49.380Z",
   "title": "Design System: Igreja Evangélica Dom de Amar",
   "extensions": {
     "colorMeta": {
@@ -254,11 +254,6 @@
     },
     "shadows": [
       {
-        "name": "brilho-botao",
-        "value": "0 10px 30px -10px rgb(222 1 1 / .7)",
-        "purpose": "Sob o botão primário; intensifica no hover."
-      },
-      {
         "name": "selo-flutuante",
         "value": "0 30px 80px -20px rgb(0 0 0 / .6)",
         "purpose": "O selo sobre fundo escuro."
@@ -322,7 +317,7 @@
       "refersTo": "button-primary",
       "description": "Ação principal: vir à igreja, contribuir.",
       "html": "<a class=\"ds-btn-primary\" href=\"#\">Quero conhecer a igreja <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a>",
-      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:12px 24px;border-radius:9999px;background:#de0101;color:#fff;font:600 .95rem/1 'Manrope Variable',system-ui,sans-serif;text-decoration:none;box-shadow:0 10px 30px -10px rgb(222 1 1/.7);transition:background-color 320ms cubic-bezier(.22,1,.36,1),box-shadow 320ms cubic-bezier(.22,1,.36,1),transform 180ms}.ds-btn-primary svg{transition:transform 320ms cubic-bezier(.22,1,.36,1)}.ds-btn-primary:hover{background:#f0141a;box-shadow:0 14px 36px -10px rgb(222 1 1/.9)}.ds-btn-primary:hover svg{transform:translateX(4px)}.ds-btn-primary:active{transform:scale(.98)}.ds-btn-primary:focus-visible{outline:3px solid #de0101;outline-offset:3px}"
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:12px 24px;border-radius:9999px;background:#de0101;color:#fff;font:600 .95rem/1 'Manrope Variable',system-ui,sans-serif;text-decoration:none;transition:background-color 320ms cubic-bezier(.22,1,.36,1),transform 180ms}.ds-btn-primary svg{transition:transform 320ms cubic-bezier(.22,1,.36,1)}.ds-btn-primary:hover{background:#f0141a}.ds-btn-primary:hover svg{transform:translateX(4px)}.ds-btn-primary:active{transform:scale(.98)}.ds-btn-primary:focus-visible{outline:3px solid #de0101;outline-offset:3px}"
     },
     {
       "name": "Botão ghost (sobre escuro)",
@@ -396,6 +391,11 @@
         "name": "The Script Stays Home Rule",
         "section": "typography",
         "body": "A letra cursiva pertence ao selo. Títulos, botões e navegação nunca usam fonte script."
+      },
+      {
+        "name": "The One Glow Rule",
+        "section": "elevation",
+        "body": "Só o selo brilha. Botões, cartões e textos não ganham halo colorido; a luz é da marca, não da interface."
       },
       {
         "name": "The Warm Shadow Rule",
