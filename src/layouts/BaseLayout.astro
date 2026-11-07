@@ -1,0 +1,57 @@
+---
+import '@/styles/global.css';
+import { getIgreja } from '@/lib/igreja';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const igreja = await getIgreja();
+const {
+  title,
+  description = `${igreja.nome} — igreja evangélica em ${igreja.endereco.bairro}, ${igreja.endereco.cidade} – ${igreja.endereco.uf}. ${igreja.slogan}.`,
+  image = '/og-image.jpg',
+} = Astro.props;
+
+const fullTitle = title
+  ? `${title} | ${igreja.nome}`
+  : `${igreja.nome} | Igreja em ${igreja.endereco.bairro}, ${igreja.endereco.cidade}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#6f0101" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={igreja.nome} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <slot name="head" />
+  </head>
+  <body class="min-h-dvh antialiased">
+    <a
+      href="#conteudo"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2"
+    >
+      Pular para o conteúdo
+    </a>
+    <main id="conteudo">
+      <slot />
+    </main>
+  </body>
+</html>

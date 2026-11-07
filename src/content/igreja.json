@@ -1,0 +1,28 @@
+{
+  "principal": {
+    "nome": "Igreja Evangélica Dom de Amar",
+    "bio": "Uma igreja segundo a eleição da Graça de Deus.",
+    "slogan": "Transformando vidas pelo Poder da Graça",
+    "fundacao": "2018-07-25",
+    "endereco": {
+      "rua": "Rua 94, Lote 21, Quadra 2203",
+      "bairro": "Jaconé",
+      "cidade": "Saquarema",
+      "uf": "RJ",
+      "cep": "28990-000",
+      "referencia": "Rua 94 esquina com Rua 19"
+    },
+    "contato": {
+      "telefone": "(22) 00000-0000",
+      "whatsapp": "5522000000000",
+      "email": "contato@exemplo.com",
+      "mock": true
+    },
+    "redes": {
+      "facebook": "https://www.facebook.com/profile.php?id=61591387636497",
+      "instagram": "https://instagram.com/",
+      "youtube": "https://youtube.com/",
+      "mockInstagramYoutube": true
+    }
+  }
+}
