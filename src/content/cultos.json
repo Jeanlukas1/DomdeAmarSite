@@ -30,23 +30,8 @@
       "mock": false
     },
     {
-      "id": "domingo-estudo",
-      "ordem": 2,
-      "dia": "Domingo",
-      "diaSemana": "0",
-      "hora": "09:00",
-      "nome": "Seminário dom de Amar",
-      "descricao": "Bíblia aberta, perguntas bem-vindas. Uma manhã para entender a Graça com calma.",
-      "foto": {
-        "id": "cultos-louvor/cultos-louvor-03",
-        "alt": "Pregador no púlpito com um versículo de Provérbios projetado no telão",
-        "posicao": "50% 40%"
-      },
-      "mock": true
-    },
-    {
       "id": "domingo-plenitude",
-      "ordem": 3,
+      "ordem": 4,
       "dia": "Domingo",
       "diaSemana": "0",
       "hora": "18:00",
@@ -55,6 +40,21 @@
       "foto": {
         "id": "cultos-louvor/cultos-louvor-06",
         "alt": "Pregador ministrando com a banda ao fundo, durante o culto de domingo",
+        "posicao": "50% 40%"
+      },
+      "mock": true
+    },
+    {
+      "id": "domingo-estudo",
+      "ordem": 3,
+      "dia": "Domingo",
+      "diaSemana": "0",
+      "hora": "09:00",
+      "nome": "Seminário dom de Amar",
+      "descricao": "Bíblia aberta, perguntas bem-vindas. Uma manhã para entender a Graça com calma.",
+      "foto": {
+        "id": "cultos-louvor/cultos-louvor-03",
+        "alt": "Pregador no púlpito com um versículo de Provérbios projetado no telão",
         "posicao": "50% 40%"
       },
       "mock": true
