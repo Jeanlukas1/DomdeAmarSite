@@ -31,3 +31,4 @@
 - [2026-11-07 — sessão 03](sessoes/2026-11-07-sessao-03.md) — PRODUCT/DESIGN.md e correções da auditoria
 - [2026-11-07 — sessão 04](sessoes/2026-11-07-sessao-04.md) — F3: todas as seções da home
 - [2026-11-07 — sessão 05](sessoes/2026-11-07-sessao-05.md) — correções da crítica da home (P1–P3)
+- [2026-11-07 — sessão 06](sessoes/2026-11-07-sessao-06.md) — polish + audit da home e F4 (Visite-nos, Contribua, Fale com a gente, Keystatic)
