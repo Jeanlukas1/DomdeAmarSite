@@ -61,6 +61,7 @@ const hero = defineCollection({
     texto: z.string(),
     ctaPrimario: link,
     ctaSecundario: link,
+    proximo: link,
     rolar: z.string(),
   }),
 });

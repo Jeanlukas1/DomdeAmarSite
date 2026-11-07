@@ -3,8 +3,18 @@
     "saudacao": "Graça e Paz!",
     "titulo": "Bem-vindo à família Dom de Amar",
     "texto": "Somos uma igreja evangélica em Jaconé, Saquarema, que vive e anuncia a Graça de Deus. Aqui você é recebido com amor, do jeito que está.",
-    "ctaPrimario": { "rotulo": "Quero conhecer a igreja", "href": "/#visite" },
-    "ctaSecundario": { "rotulo": "Preciso de oração ou ajuda", "href": "/#oracao" },
-    "rolar": "Role para descobrir"
+    "ctaPrimario": {
+      "rotulo": "Quero conhecer a igreja",
+      "href": "/#cultos"
+    },
+    "ctaSecundario": {
+      "rotulo": "Preciso de oração ou ajuda",
+      "href": "/#oracao"
+    },
+    "rolar": "Role para descobrir",
+    "proximo": {
+      "rotulo": "Próximo culto",
+      "href": "/#cultos"
+    }
   }
 }

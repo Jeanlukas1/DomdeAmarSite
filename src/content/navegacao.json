@@ -1,8 +1,39 @@
 [
-  { "id": "inicio", "ordem": 1, "rotulo": "Início", "href": "/#inicio" },
-  { "id": "visite", "ordem": 2, "rotulo": "Visite", "href": "/#visite" },
-  { "id": "assista", "ordem": 3, "rotulo": "Assista Online", "href": "/#assista" },
-  { "id": "cresca", "ordem": 4, "rotulo": "Cresça na Fé", "href": "/#cresca" },
-  { "id": "mensagens", "ordem": 5, "rotulo": "Mensagens", "href": "/#mensagens" },
-  { "id": "contribua", "ordem": 6, "rotulo": "Contribua", "href": "/#contribua", "destaque": true }
+  {
+    "id": "inicio",
+    "ordem": 1,
+    "rotulo": "Início",
+    "href": "/#inicio"
+  },
+  {
+    "id": "cultos",
+    "ordem": 2,
+    "rotulo": "Cultos",
+    "href": "/#cultos"
+  },
+  {
+    "id": "visite",
+    "ordem": 3,
+    "rotulo": "Visite",
+    "href": "/#visite"
+  },
+  {
+    "id": "assista",
+    "ordem": 4,
+    "rotulo": "Assista Online",
+    "href": "/#assista"
+  },
+  {
+    "id": "cresca",
+    "ordem": 5,
+    "rotulo": "Cresça na Fé",
+    "href": "/#cresca"
+  },
+  {
+    "id": "contribua",
+    "ordem": 6,
+    "rotulo": "Contribua",
+    "href": "/#contribua",
+    "destaque": true
+  }
 ]

@@ -6,7 +6,7 @@
     "proximoRotulo": "Próximo culto",
     "comoChegar": {
       "rotulo": "Como chegar",
-      "href": "/#visite"
+      "href": "https://www.google.com/maps/search/?api=1&query=Rua%2094%2C%20Lote%2021%2C%20Quadra%202203%2C%20Jacon%C3%A9%2C%20Saquarema%20-%20RJ%2C%2028990-000"
     },
     "semana": {
       "mock": true,

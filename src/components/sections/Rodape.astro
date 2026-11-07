@@ -74,6 +74,9 @@ const ano = new Date().getFullYear();
           <br />
           CEP {cep}
         </p>
+        {igreja.endereco.referencia && (
+          <p class="mt-2 text-sm font-semibold text-blush-100">{igreja.endereco.referencia}</p>
+        )}
         <a
           href={mapa}
           target="_blank"

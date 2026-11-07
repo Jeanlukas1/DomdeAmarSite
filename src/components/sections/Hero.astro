@@ -2,9 +2,16 @@
 import logoRaw from '@/assets/logo/logo.svg?raw';
 import Button from '@/components/ui/Button.astro';
 import Icon from '@/components/ui/Icon.astro';
-import { getHero } from '@/lib/igreja';
+import { getHero, getIgreja, getOrdenados } from '@/lib/igreja';
+import { proximoCulto } from '@/lib/proximoCulto';
 
 const hero = await getHero();
+const igreja = await getIgreja();
+const cultos = await getOrdenados('cultos');
+const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
+// valor do build (sem JS); o navegador recalcula para "agora"
+const noBuild = proximoCulto(cultos)?.culto;
+const proximoTexto = noBuild ? `${noBuild.dia}, ${horaCurta(noBuild.hora)}` : '';
 // SVG inline para poder animar cada camada (ids: borda, coracao, fita-esq, fita-dir, nome, dom, de, amar, arco-texto, slogan, mini-coracao)
 const logo = logoRaw.replace('<svg ', '<svg class="block h-auto w-full overflow-visible" ');
 const PARTICULAS = 14;
@@ -30,8 +37,7 @@ const PARTICULAS = 14;
         class="hero-in mx-auto mt-6 max-w-xl text-[clamp(1rem,1.6vw,1.2rem)] text-blush-100/85 lg:mx-0"
         style="--d: 0.3s"
       >
-        <strong class="font-semibold text-cream">{hero.saudacao}</strong>
-        {hero.texto}
+        <strong class="font-semibold text-cream">{hero.saudacao}</strong> {hero.texto}
       </p>
       <div
         class="hero-in mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start"
@@ -46,6 +52,39 @@ const PARTICULAS = 14;
           {hero.ctaSecundario.rotulo}
         </Button>
       </div>
+      <!-- "quando e onde" logo no topo: o próximo culto é recalculado no navegador -->
+      <a
+        href={hero.proximo.href}
+        data-hero-proximo={JSON.stringify(
+          cultos.map(({ id, diaSemana, hora }) => ({ id, diaSemana, hora })),
+        )}
+        data-rotulos={JSON.stringify(
+          Object.fromEntries(cultos.map((c) => [c.id, `${c.dia}, ${horaCurta(c.hora)}`])),
+        )}
+        class="hero-in group mt-8 inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 py-2 pr-4 pl-2 text-sm text-blush-100 transition-colors duration-base hover:border-white/40 hover:bg-white/10"
+        style="--d: 0.6s"
+      >
+        <span class="grid size-8 shrink-0 place-items-center rounded-full bg-red-600 text-white">
+          <Icon name="heart" size={16} />
+        </span>
+        <span class="text-left leading-snug">
+          <span class="font-semibold text-cream">
+            {hero.proximo.rotulo}: <span data-hero-proximo-quando>{proximoTexto}</span>
+          </span>
+          <span class="block text-blush-100/90 sm:inline">
+            <span class="hidden sm:inline" aria-hidden="true">
+              {' '}
+              ·{' '}
+            </span>
+            {igreja.endereco.referencia}, {igreja.endereco.bairro}
+          </span>
+        </span>
+        <Icon
+          name="arrow"
+          size={16}
+          class="shrink-0 transition-transform duration-base group-hover:translate-x-1"
+        />
+      </a>
     </div>
 
     <div class="relative order-1 mx-auto w-[min(78vw,22rem)] lg:order-2 lg:w-[min(40vw,34rem)]">
@@ -120,4 +159,14 @@ const PARTICULAS = 14;
 
 <script>
   import '@/lib/animations/hero';
+  import { proximoCulto } from '@/lib/proximoCulto';
+
+  // atualiza "Próximo culto" para o momento da visita (o HTML traz o valor do build)
+  const link = document.querySelector<HTMLElement>('[data-hero-proximo]');
+  const alvo = link?.querySelector('[data-hero-proximo-quando]');
+  if (link && alvo) {
+    const r = proximoCulto(JSON.parse(link.dataset.heroProximo ?? '[]'));
+    const rotulos = JSON.parse(link.dataset.rotulos ?? '{}');
+    if (r && rotulos[r.culto.id]) alvo.textContent = rotulos[r.culto.id];
+  }
 </script>
