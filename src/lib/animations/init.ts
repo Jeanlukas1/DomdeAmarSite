@@ -1,6 +1,7 @@
-// Ponto único de entrada das animações globais (carregado pelo BaseLayout).
+// Ponto único de entrada das animações globais (carregado pelo BaseLayout com import() depois
+// da primeira pintura).
 // Animações específicas (ex.: hero) ficam em módulos próprios importados pela seção.
-import { quandoOcioso, reduceMotion } from './motion';
+import { quandoOcioso, reduceMotion } from '../agendar';
 import { initReveal } from './reveal';
 import { initParallax } from './parallax';
 import { initSplit } from './split';

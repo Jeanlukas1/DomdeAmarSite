@@ -143,7 +143,7 @@ const redes = await getRedes();
 </div>
 
 <script>
-  import { getLenis } from '@/lib/animations/smooth';
+  import { pausarRolagem, retomarRolagem } from '@/lib/rolagem';
 
   const header = document.querySelector<HTMLElement>('[data-header]')!;
   const menu = document.querySelector<HTMLElement>('[data-menu]')!;
@@ -170,8 +170,8 @@ const redes = await getRedes();
     openBtn.setAttribute('aria-expanded', String(open));
     setBackgroundInert(open);
     document.documentElement.style.overflow = open ? 'hidden' : '';
-    if (open) getLenis()?.stop();
-    else getLenis()?.start();
+    if (open) pausarRolagem();
+    else retomarRolagem();
     if (open) {
       closeBtn.focus();
       if (reduce.matches) return;

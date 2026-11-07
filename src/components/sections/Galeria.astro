@@ -206,7 +206,7 @@ const fotos = await Promise.all(
 </style>
 
 <script>
-  import { getLenis } from '@/lib/animations/smooth';
+  import { pausarRolagem, retomarRolagem } from '@/lib/rolagem';
 
   // sem JS todas as fotos aparecem; com JS, as extras esperam o 'ver mais'
   const extras = [...document.querySelectorAll<HTMLElement>('[data-galeria-extra]')];
@@ -257,11 +257,11 @@ const fotos = await Promise.all(
         origem = b;
         mostrar(i);
         dialog.showModal();
-        getLenis()?.stop();
+        pausarRolagem();
       }),
     );
     dialog.addEventListener('close', () => {
-      getLenis()?.start();
+      retomarRolagem();
       origem?.focus();
     });
     dialog.querySelector('[data-lightbox-fechar]')!.addEventListener('click', () => dialog.close());

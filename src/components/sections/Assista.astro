@@ -97,20 +97,23 @@ const linkDe = (youtubeId: string | null) =>
 </section>
 
 <script>
-  import { gsap, reduceMotion } from '@/lib/animations/motion';
+  import { quandoOcioso, reduceMotion } from '@/lib/agendar';
 
   // o vídeo "se aproxima" enquanto entra na tela: começa um pouco menor e mais escuro
   const alvo = document.querySelector<HTMLElement>('[data-assista-video]');
   if (alvo && !reduceMotion()) {
-    gsap.fromTo(
-      alvo,
-      { scale: 0.9, opacity: 0.55 },
-      {
-        scale: 1,
-        opacity: 1,
-        ease: 'none',
-        scrollTrigger: { trigger: alvo, start: 'top 95%', end: 'top 35%', scrub: true },
-      },
-    );
+    quandoOcioso(async () => {
+      const { gsap } = await import('@/lib/animations/motion');
+      gsap.fromTo(
+        alvo,
+        { scale: 0.9, opacity: 0.55 },
+        {
+          scale: 1,
+          opacity: 1,
+          ease: 'none',
+          scrollTrigger: { trigger: alvo, start: 'top 95%', end: 'top 35%', scrub: true },
+        },
+      );
+    });
   }
 </script>

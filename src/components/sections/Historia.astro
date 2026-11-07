@@ -232,5 +232,6 @@ const giro = ['-rotate-3', 'rotate-[4deg]'];
 </style>
 
 <script>
-  import '@/lib/animations/historia';
+  import { depoisDaPintura } from '@/lib/agendar';
+  depoisDaPintura(() => import('@/lib/animations/historia'));
 </script>

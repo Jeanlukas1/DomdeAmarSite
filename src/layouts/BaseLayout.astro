@@ -73,7 +73,9 @@ const ogImage = new URL(image, Astro.site);
     </main>
     <slot name="footer" />
     <script>
-      import '@/lib/animations/init';
+      // GSAP/Lenis só depois da primeira pintura (protege o LCP)
+      import { depoisDaPintura } from '@/lib/agendar';
+      depoisDaPintura(() => import('@/lib/animations/init'));
     </script>
   </body>
 </html>
