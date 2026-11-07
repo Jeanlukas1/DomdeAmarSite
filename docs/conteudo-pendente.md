@@ -18,6 +18,7 @@ Cada item abaixo está marcado no arquivo com `mock: true` (ou `// MOCK`). Quand
 | `src/content/ministerios.json`  | todos                                     | ministérios que realmente existem, com nome e descrição                                                                     |
 | `src/content/cresca.json`       | `estudo.texto`, `texto`                   | descrição real do Estudo da Palavra                                                                                         |
 | `src/content/eventos.json`      | todos com `mock: true`                    | agenda real de eventos (o aniversário de 8 anos é real)                                                                     |
+| `src/content/contribua.json`    | `pix.chave`, `pix.tipo`                   | chave PIX oficial e o tipo (CNPJ, e-mail, telefone ou aleatória); enquanto `null`, o cartão mostra "Chave em breve"         |
 | `src/assets/logo/`              | —                                         | **arquivo original da logo** (.ai / .pdf vetorial / .svg com camadas)                                                       |
 
 > Próximas fases adicionam: pastores (nomes/fotos), história, missão/visão, ministérios, eventos, mensagens/vídeos, depoimentos e chave PIX.

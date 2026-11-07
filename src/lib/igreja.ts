@@ -10,6 +10,8 @@ type Unica =
   | 'cresca'
   | 'agenda'
   | 'galeria'
+  | 'contribua'
+  | 'faleConosco'
   | 'rodape';
 /** Coleções em lista com campo 'ordem'. */
 type Ordenada = 'pastores' | 'cultos' | 'ministerios';

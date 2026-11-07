@@ -1,0 +1,27 @@
+{
+  "principal": {
+    "titulo": "Fale com a gente",
+    "destaque": "a gente",
+    "texto": "Ninguém precisa carregar nada sozinho. Escolha o assunto e a conversa começa no WhatsApp, com a mensagem já escrita.",
+    "assuntos": [
+      {
+        "id": "oracao",
+        "titulo": "Pedido de oração",
+        "texto": "Conte o que está no seu coração: saúde, família, trabalho, uma decisão difícil. A gente ora com você.",
+        "rotulo": "Pedir oração",
+        "mensagem": "Graça e Paz! Gostaria de pedir oração por:"
+      },
+      {
+        "id": "participe",
+        "titulo": "Quero fazer parte",
+        "texto": "Quer ser membro, servir num ministério ou só entender melhor como a igreja caminha? Vamos conversar.",
+        "rotulo": "Quero conversar",
+        "mensagem": "Graça e Paz! Quero conhecer melhor a igreja e saber como fazer parte."
+      }
+    ],
+    "semWhatsapp": {
+      "aviso": "Nosso WhatsApp está chegando. Por enquanto, a conversa é pelo Facebook da igreja.",
+      "rotulo": "Falar pelo Facebook"
+    }
+  }
+}

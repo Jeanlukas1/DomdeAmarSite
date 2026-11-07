@@ -20,6 +20,8 @@ Todo o conteúdo fica em `src/content/`. Depois de editar, rode `npm run build`:
 | `eventos.json`      | eventos: título, data (AAAA-MM-DD), hora, local, descrição, foto opcional. **Eventos passados somem sozinhos**                                                                                           |
 | `visite.json`       | Visite-nos: título, texto, nomes das duas ruas da esquina (mapinha desenhado), rótulos das rotas e mensagem pronta do WhatsApp. O endereço vem de `igreja.json`                                          |
 | `galeria.json`      | fotos da galeria (id + alt). Retrato ocupa 2 linhas, paisagem 1: mantenha as 8 primeiras na ordem paisagem, retrato, paisagem, retrato, retrato, retrato, paisagem, paisagem (fecha a grade sem buracos) |
+| `contribua.json`    | Contribua: texto, versículo, foto da obra e o cartão do PIX. `pix.chave` = `null` mostra "Chave em breve"; com a chave preenchida, aparece o botão de copiar                                             |
+| `fale-conosco.json` | Fale com a gente: os assuntos (`id` vira a âncora: `#oracao`, `#participe`) e a mensagem pronta de cada um no WhatsApp                                                                                   |
 | `rodape.json`       | versículo do rodapé e títulos das colunas (endereço e cultos vêm de `igreja.json` e `cultos.json`)                                                                                                       |
 
 > **Fotos:** use o id `pasta/arquivo` (sem .jpg), um `alt` que descreva a cena sem nomear pessoas, e `posicao` (object-position, ex.: `50% 30%`) para acertar o recorte.

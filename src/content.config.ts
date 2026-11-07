@@ -292,6 +292,51 @@ const galeria = defineCollection({
   }),
 });
 
+const contribua = defineCollection({
+  loader: file('src/content/contribua.json'),
+  schema: z.object({
+    titulo: z.string(),
+    destaque: z.string().optional(),
+    texto: z.string(),
+    versiculo: z.object({ texto: z.string(), referencia: z.string() }),
+    foto,
+    legenda: z.string(),
+    pix: z.object({
+      mock: z.boolean().default(false),
+      /** null enquanto a igreja não tiver a chave: o cartão mostra o estado "em breve" */
+      chave: z.string().nullable(),
+      tipo: z.string(),
+      titular: z.string(),
+      titulo: z.string(),
+      emBreve: z.string(),
+      emBreveTexto: z.string(),
+      copiar: z.string(),
+      copiada: z.string(),
+    }),
+    outrasFormas: z.object({ titulo: z.string(), itens: z.array(link) }),
+  }),
+});
+
+const faleConosco = defineCollection({
+  loader: file('src/content/fale-conosco.json'),
+  schema: z.object({
+    titulo: z.string(),
+    destaque: z.string().optional(),
+    texto: z.string(),
+    /** cada assunto vira uma âncora (#oracao, #participe) e uma mensagem pronta no WhatsApp */
+    assuntos: z.array(
+      z.object({
+        id: z.string(),
+        titulo: z.string(),
+        texto: z.string(),
+        rotulo: z.string(),
+        mensagem: z.string(),
+      }),
+    ),
+    semWhatsapp: z.object({ aviso: z.string(), rotulo: z.string() }),
+  }),
+});
+
 const rodape = defineCollection({
   loader: file('src/content/rodape.json'),
   schema: z.object({
@@ -322,5 +367,7 @@ export const collections = {
   agenda,
   eventos,
   galeria,
+  contribua,
+  faleConosco,
   rodape,
 };
