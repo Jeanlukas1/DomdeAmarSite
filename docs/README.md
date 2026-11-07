@@ -14,7 +14,7 @@
 
 ## Status das fases
 
-- [ ] F1 — Setup + docs + tokens _(em andamento)_
+- [x] F1 — Setup + docs + tokens
 - [ ] F2 — Logo em camadas + Hero
 - [ ] F3 — Seções
 - [ ] F4 — Conteúdo, formulários, Contribua, Keystatic
