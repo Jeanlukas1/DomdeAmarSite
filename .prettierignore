@@ -7,3 +7,13 @@ package-lock.json
 src/styles/tokens.css
 docs/prompt-planejamento.md
 .impeccable/hook.cache.json
+# gravados pelo painel Keystatic (formato dele, não o do Prettier)
+src/content/igreja.json
+src/content/pastores.json
+src/content/ministerios.json
+src/content/cultos.json
+src/content/cultos-secao.json
+src/content/eventos.json
+src/content/assista.json
+src/content/mensagens.json
+src/content/contribua.json

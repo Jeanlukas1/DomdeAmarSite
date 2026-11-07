@@ -94,7 +94,7 @@ docs/                            # README, arquitetura, design-system, animacoes
 **F4 — Conteúdo, formulários, Contribua, Keystatic**
 
 - Mockups completos marcados com `mock: true` e listados em `conteudo-pendente.md` (telefone `(22) 00000-0000`, `contato@exemplo.com`, PIX "chave em breve" com QR placeholder; QR real gerado no build quando a chave existir).
-- Formulários Seja membro / Pedido de oração (Web3Forms, validação, estados de sucesso/erro). Visite-nos com mapa carregado sob demanda + link do Google Maps/Waze + WhatsApp.
+- ~~Formulários Seja membro / Pedido de oração (Web3Forms)~~ **Decidido na F4:** Pedido de oração e "Quero fazer parte" abrem o WhatsApp com a mensagem pronta (Facebook enquanto o número for mock). Visite-nos com mapa carregado sob demanda + link do Google Maps/Waze + WhatsApp.
 - Keystatic configurado para as coleções. Endpoints `/api/*.json`.
 - _Pronto quando:_ formulários enviam em produção de teste, o painel edita um culto e o deploy reflete a mudança, e não sobra texto fixo em componentes (grep).
 

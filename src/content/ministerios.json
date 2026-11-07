@@ -1,62 +1,64 @@
-[
-  {
-    "id": "louvor",
-    "ordem": 1,
-    "nome": "Louvor",
-    "frase": "Voz, violão, teclado e bateria a serviço da adoração.",
-    "foto": {
-      "id": "cultos-louvor/cultos-louvor-17",
-      "alt": "Jovem tocando piano durante o culto",
-      "posicao": "50% 40%"
+{
+  "itens": [
+    {
+      "id": "louvor",
+      "ordem": 1,
+      "nome": "Louvor",
+      "frase": "Voz, violão, teclado e bateria a serviço da adoração.",
+      "foto": {
+        "id": "cultos-louvor/cultos-louvor-17",
+        "alt": "Jovem tocando piano durante o culto",
+        "posicao": "50% 40%"
+      },
+      "mock": true
     },
-    "mock": true
-  },
-  {
-    "id": "intercessao",
-    "ordem": 2,
-    "nome": "Intercessão",
-    "frase": "Gente que ora pela igreja, pela cidade e por quem pede ajuda.",
-    "foto": {
-      "id": "oracao/oracao-30",
-      "alt": "Irmãos orando de mãos dadas em frente ao púlpito",
-      "posicao": "50% 45%"
+    {
+      "id": "intercessao",
+      "ordem": 2,
+      "nome": "Intercessão",
+      "frase": "Gente que ora pela igreja, pela cidade e por quem pede ajuda.",
+      "foto": {
+        "id": "oracao/oracao-30",
+        "alt": "Irmãos orando de mãos dadas em frente ao púlpito",
+        "posicao": "50% 45%"
+      },
+      "mock": true
     },
-    "mock": true
-  },
-  {
-    "id": "casais",
-    "ordem": 3,
-    "nome": "Casais",
-    "frase": "Encontros para cuidar do amor que Deus uniu.",
-    "foto": {
-      "id": "casais-evento-amor/casais-evento-amor-21",
-      "alt": "Casal sorrindo no evento de casais, com decoração de corações vermelhos",
-      "posicao": "50% 55%"
+    {
+      "id": "casais",
+      "ordem": 3,
+      "nome": "Casais",
+      "frase": "Encontros para cuidar do amor que Deus uniu.",
+      "foto": {
+        "id": "casais-evento-amor/casais-evento-amor-21",
+        "alt": "Casal sorrindo no evento de casais, com decoração de corações vermelhos",
+        "posicao": "50% 55%"
+      },
+      "mock": true
     },
-    "mock": true
-  },
-  {
-    "id": "jovens",
-    "ordem": 4,
-    "nome": "Jovens",
-    "frase": "Amizade, perguntas sinceras e fé para a vida real.",
-    "foto": {
-      "id": "comunhao/comunhao-35",
-      "alt": "Três jovens da igreja lado a lado, sorrindo",
-      "posicao": "50% 35%"
+    {
+      "id": "jovens",
+      "ordem": 4,
+      "nome": "Jovens",
+      "frase": "Amizade, perguntas sinceras e fé para a vida real.",
+      "foto": {
+        "id": "comunhao/comunhao-35",
+        "alt": "Três jovens da igreja lado a lado, sorrindo",
+        "posicao": "50% 35%"
+      },
+      "mock": true
     },
-    "mock": true
-  },
-  {
-    "id": "acolhimento",
-    "ordem": 5,
-    "nome": "Acolhimento",
-    "frase": "Quem recebe você na porta e lembra o seu nome.",
-    "foto": {
-      "id": "comunhao/comunhao-02",
-      "alt": "Casal da igreja sorrindo, sentado lado a lado",
-      "posicao": "50% 35%"
-    },
-    "mock": true
-  }
-]
+    {
+      "id": "acolhimento",
+      "ordem": 5,
+      "nome": "Acolhimento",
+      "frase": "Quem recebe você na porta e lembra o seu nome.",
+      "foto": {
+        "id": "comunhao/comunhao-02",
+        "alt": "Casal da igreja sorrindo, sentado lado a lado",
+        "posicao": "50% 35%"
+      },
+      "mock": true
+    }
+  ]
+}

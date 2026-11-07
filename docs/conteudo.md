@@ -2,6 +2,17 @@
 
 Todo o conteúdo fica em `src/content/`. Depois de editar, rode `npm run build`: o Zod acusa campos errados.
 
+## Painel (Keystatic)
+
+Quem não é técnico edita pelo painel em **`/keystatic`**:
+
+- **Local:** `npm run dev` e abra `http://localhost:4321/keystatic`. O painel grava direto nos arquivos de `src/content/`; depois é só commitar.
+- **Produção (a partir da F6):** `https://<site>/keystatic`, com login do GitHub. Cada "Save" vira um commit na `main`, e a Vercel publica sozinha.
+- No painel: dados da igreja, liderança, ministérios, horários dos cultos, destaque da semana, agenda, Assista (vídeo do YouTube), mensagens e Contribua (PIX). Os demais textos (hero, história etc.) continuam sendo editados no arquivo.
+- As fotos são escolhidas numa lista com as fotos de `src/assets/fotos/`. Foto nova precisa ser adicionada ao repositório antes.
+- **Regra para quem programa:** o painel regrava o arquivo inteiro e descarta campos que não conhece. Campo novo num desses arquivos precisa entrar em `src/content.config.ts` **e** em `keystatic.config.ts`.
+- Listas editadas pelo painel ficam no formato `{ "itens": [...] }`, e esses arquivos estão no `.prettierignore` (o painel usa a formatação dele).
+
 | Arquivo             | O que é                                                                                                                                                                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `igreja.json`       | nome, slogan, endereço, contatos, redes                                                                                                                                                                  |

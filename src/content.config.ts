@@ -3,6 +3,12 @@ import { file } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 // Toda informação provisória leva `mock: true` — ver docs/conteudo-pendente.md.
+// Os arquivos editados pelo painel (keystatic.config.ts) seguem o formato dele: listas ficam em
+// { "itens": [...] } e campos vazios chegam como "" — os preprocess abaixo normalizam isso.
+
+/** Lista editável pelo Keystatic: o arquivo guarda { itens: [...] }. */
+const lista = (caminho: string) =>
+  file(caminho, { parser: (texto) => (JSON.parse(texto) as { itens: unknown[] }).itens as never });
 
 const igreja = defineCollection({
   loader: file('src/content/igreja.json'),
@@ -43,6 +49,12 @@ const foto = z.object({
   posicao: z.string().default('50% 50%'),
 });
 
+/** Foto opcional: o painel grava { id: "" } quando nenhuma foi escolhida. */
+const fotoOpcional = z.preprocess(
+  (v) => (v && typeof v === 'object' && 'id' in v && v.id ? v : undefined),
+  foto.optional(),
+);
+
 const navegacao = defineCollection({
   loader: file('src/content/navegacao.json'),
   schema: z.object({
@@ -81,12 +93,12 @@ const quemSomos = defineCollection({
 });
 
 const pastores = defineCollection({
-  loader: file('src/content/pastores.json'),
+  loader: lista('src/content/pastores.json'),
   schema: z.object({
     ordem: z.number(),
     nome: z.string(),
     funcao: z.string(),
-    foto: foto.optional(),
+    foto: fotoOpcional,
     mock: z.boolean().default(false),
   }),
 });
@@ -124,12 +136,12 @@ const historia = defineCollection({
 });
 
 const cultos = defineCollection({
-  loader: file('src/content/cultos.json'),
+  loader: lista('src/content/cultos.json'),
   schema: z.object({
     ordem: z.number(),
     dia: z.string(),
-    /** 0 = domingo … 6 = sábado */
-    diaSemana: z.number().int().min(0).max(6),
+    /** 0 = domingo … 6 = sábado (o painel grava como texto) */
+    diaSemana: z.coerce.number().int().min(0).max(6),
     /** HH:MM, horário de Brasília */
     hora: z.string().regex(/^\d{2}:\d{2}$/),
     nome: z.string(),
@@ -159,12 +171,15 @@ const cultosSecao = defineCollection({
   }),
 });
 
-/** id do vídeo no YouTube (só o id, não a URL); null enquanto não houver */
-const youtubeId = z
-  .string()
-  .regex(/^[\w-]{11}$/)
-  .nullable()
-  .default(null);
+/** id do vídeo no YouTube (só o id, não a URL); null/"" enquanto não houver */
+const youtubeId = z.preprocess(
+  (v) => (v === '' ? null : v),
+  z
+    .string()
+    .regex(/^[\w-]{11}$/)
+    .nullable()
+    .default(null),
+);
 
 const visite = defineCollection({
   loader: file('src/content/visite.json'),
@@ -207,7 +222,7 @@ const assista = defineCollection({
 });
 
 const mensagens = defineCollection({
-  loader: file('src/content/mensagens.json'),
+  loader: lista('src/content/mensagens.json'),
   schema: z.object({
     titulo: z.string(),
     referencia: z.string(),
@@ -235,7 +250,7 @@ const cresca = defineCollection({
 });
 
 const ministerios = defineCollection({
-  loader: file('src/content/ministerios.json'),
+  loader: lista('src/content/ministerios.json'),
   schema: z.object({
     ordem: z.number(),
     nome: z.string(),
@@ -259,7 +274,7 @@ const agenda = defineCollection({
 });
 
 const eventos = defineCollection({
-  loader: file('src/content/eventos.json'),
+  loader: lista('src/content/eventos.json'),
   schema: z.object({
     titulo: z.string(),
     /** AAAA-MM-DD */
@@ -268,7 +283,7 @@ const eventos = defineCollection({
     hora: z.string().regex(/^\d{2}:\d{2}$/),
     local: z.string(),
     descricao: z.string(),
-    foto: foto.optional(),
+    foto: fotoOpcional,
     mock: z.boolean().default(false),
   }),
 });

@@ -15,9 +15,11 @@ src/design/tokens.json ──(scripts/build-tokens.mjs)──> src/styles/tokens
 ## Pensando no app
 
 - `tokens.json` pode ser consumido direto pelo app (React Native/Flutter) ou convertido.
-- Na F4, as coleções serão expostas como endpoints estáticos `/api/*.json` gerados no build. O app lê os mesmos dados sem backend.
+- As coleções são expostas como endpoints estáticos gerados no build (`src/pages/api/[colecao].json.ts`): `/api/igreja.json`, `/api/cultos.json`, `/api/eventos.json`, `/api/mensagens.json`, `/api/ministerios.json` e `/api/pastores.json`. O app lê os mesmos dados sem backend.
 - Lives/transmissões entram depois como ilha + fonte de dados própria, sem mudar a base.
 
 ## Edição de conteúdo
 
-Até a F4, a edição é feita direto nos arquivos de `src/content/`. Na F4 entra o **Keystatic** (painel `/keystatic`, commits no GitHub), que exige o adapter da Vercel só para essa rota.
+O **Keystatic** (`keystatic.config.ts`, painel em `/keystatic`) edita os arquivos de `src/content/`. Ele é a única rota sob demanda, por isso React, Keystatic e o adapter da Vercel só entram no `astro dev` e no build da Vercel (`VERCEL=1`). O `npm run build` local continua 100% estático, e o `npm run preview` e o Lighthouse ficam iguais. Ver `docs/conteudo.md`.
+
+Pedidos de oração e "quero fazer parte" **não** usam formulário: abrem o WhatsApp com a mensagem pronta (decisão da F4, sem Web3Forms). Enquanto o número for mock, os botões levam ao Facebook.
