@@ -154,7 +154,7 @@ Uma paleta de um único matiz, vermelho, extraída da logo, sobre neutros quente
 - **Display** (500, clamp 2.4–5.4rem, 1.1, tracking −0.02em, opsz 144): h1 do hero e aberturas de página.
 - **Headline** (400, ~2.25rem, 1.1): títulos de seção (h2), com `text-wrap: balance`.
 - **Title** (600, ~1.125rem, 1.25): títulos de cartão e o nome "Dom de Amar" no header.
-- **Body** (400, 1rem–1.2rem, 1.6): texto corrido, máximo de ~65ch.
+- **Body** (400, 1rem–1.2rem, 1.6): texto corrido, máximo de ~65ch. O parágrafo de abertura de seção usa 1.0625rem no celular e 1.125rem a partir de `sm`.
 - **Label** (700, 0.75rem, tracking 0.22em, CAIXA ALTA): metadados dentro do conteúdo (dia e hora de culto, data de evento, rótulo de botão de rolagem). Nunca como linha solta acima de um título.
 
 ### Named Rules
