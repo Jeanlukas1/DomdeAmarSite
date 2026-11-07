@@ -1,0 +1,237 @@
+---
+// Galeria: mosaico em colunas que respeita a proporção real de cada foto (nada é cortado) +
+// lightbox com <dialog> nativo (foco preso, Esc fecha), setas do teclado e deslize no toque.
+import { getImage } from 'astro:assets';
+import Foto from '@/components/ui/Foto.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import { foto } from '@/lib/fotos';
+import { getPrincipal } from '@/lib/igreja';
+
+const g = await getPrincipal('galeria');
+const fotos = await Promise.all(
+  g.fotos.map(async (f) => {
+    const meta = foto(f.id);
+    const grande = await getImage({ src: meta, width: 1600, format: 'webp' });
+    return { ...f, proporcao: `${meta.width} / ${meta.height}`, grande: grande.src };
+  }),
+);
+---
+
+<section
+  id="galeria"
+  aria-labelledby="galeria-titulo"
+  class="scroll-mt-20 bg-white py-[clamp(5rem,11vw,9rem)]"
+>
+  <div class="container-site">
+    <SecaoTitulo id="galeria-titulo" titulo={g.titulo} destaque={g.destaque} centro>
+      <p>{g.texto}</p>
+    </SecaoTitulo>
+
+    <ul
+      class="mt-14 columns-2 gap-3 sm:gap-4 md:columns-3 lg:columns-4 [&>li]:mb-3 sm:[&>li]:mb-4"
+      data-reveal-group
+      data-stagger="0.06"
+      data-galeria
+    >
+      {fotos.map((f, i) => (
+        <li class="break-inside-avoid" data-reveal="clip">
+          <button
+            type="button"
+            data-galeria-abrir={i}
+            data-grande={f.grande}
+            data-alt={f.alt}
+            class="group relative block w-full overflow-hidden rounded-2xl bg-sand"
+            style={`aspect-ratio: ${f.proporcao}`}
+          >
+            <Foto
+              {...f}
+              sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+              class="transition-transform duration-[900ms] ease-out group-hover:scale-[1.04]"
+            />
+            <span class="sr-only">
+              {g.rotuloAmpliar}: {f.alt}
+            </span>
+            <span
+              aria-hidden="true"
+              class="absolute inset-0 bg-wine-950/0 transition-colors duration-base group-hover:bg-wine-950/15"
+            />
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <dialog
+    data-lightbox
+    aria-label={g.titulo}
+    class="lightbox m-0 h-dvh max-h-none w-screen max-w-none bg-transparent p-0 text-cream backdrop:bg-night/95"
+  >
+    <div class="relative flex h-full flex-col">
+      <div class="flex items-center justify-between p-4 sm:p-6">
+        <p
+          data-lightbox-contador
+          class="text-sm font-semibold text-blush-100/80 tabular-nums"
+          aria-live="polite"
+        ></p>
+        <button
+          type="button"
+          data-lightbox-fechar
+          class="grid size-12 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            class="size-6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M6 6l12 12M18 6 6 18"></path>
+          </svg>
+          <span class="sr-only">{g.rotuloFechar}</span>
+        </button>
+      </div>
+      <figure
+        class="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 px-4 pb-6 sm:px-20"
+        data-lightbox-palco
+      >
+        <figcaption
+          data-lightbox-legenda
+          class="max-w-2xl text-center text-sm text-blush-100/80"
+        ></figcaption>
+      </figure>
+      <button
+        type="button"
+        data-lightbox-anterior
+        class="absolute top-1/2 left-3 hidden size-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20 sm:grid"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          class="size-5 rotate-180"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M5 12h14M13 6l6 6-6 6"></path>
+        </svg>
+        <span class="sr-only">{g.rotuloAnterior}</span>
+      </button>
+      <button
+        type="button"
+        data-lightbox-proximo
+        class="absolute top-1/2 right-3 hidden size-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20 sm:grid"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          class="size-5"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M5 12h14M13 6l6 6-6 6"></path>
+        </svg>
+        <span class="sr-only">{g.rotuloProximo}</span>
+      </button>
+    </div>
+  </dialog>
+  <span data-galeria-de hidden>
+    {g.rotuloDe}
+  </span>
+</section>
+
+<style>
+  .lightbox[open] {
+    animation: lightbox-in 0.35s var(--ease-out);
+  }
+  .lightbox [data-lightbox-img] {
+    touch-action: pan-y;
+  }
+  @keyframes lightbox-in {
+    from {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  import { getLenis } from '@/lib/animations/smooth';
+
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  const botoes = [...document.querySelectorAll<HTMLButtonElement>('[data-galeria-abrir]')];
+
+  if (dialog && botoes.length) {
+    // a <img> só nasce aqui, já com src: nada de imagem vazia no HTML
+    const img = document.createElement('img');
+    img.className = 'max-h-full min-h-0 max-w-full rounded-xl object-contain select-none';
+    img.dataset.lightboxImg = '';
+    const palco = dialog.querySelector<HTMLElement>('[data-lightbox-palco]')!;
+    let montada = false;
+    const legenda = dialog.querySelector<HTMLElement>('[data-lightbox-legenda]')!;
+    const contador = dialog.querySelector<HTMLElement>('[data-lightbox-contador]')!;
+    const de = document.querySelector<HTMLElement>('[data-galeria-de]')?.textContent ?? '/';
+    let atual = 0;
+    let origem: HTMLButtonElement | null = null;
+
+    const mostrar = (i: number) => {
+      atual = (i + botoes.length) % botoes.length;
+      const b = botoes[atual];
+      img.src = b.dataset.grande!;
+      if (!montada) {
+        palco.prepend(img);
+        montada = true;
+      }
+      img.alt = b.dataset.alt ?? '';
+      legenda.textContent = b.dataset.alt ?? '';
+      contador.textContent = `${atual + 1} ${de} ${botoes.length}`;
+      // pré-carrega a vizinha
+      new Image().src = botoes[(atual + 1) % botoes.length].dataset.grande!;
+    };
+
+    botoes.forEach((b, i) =>
+      b.addEventListener('click', () => {
+        origem = b;
+        mostrar(i);
+        dialog.showModal();
+        getLenis()?.stop();
+      }),
+    );
+    dialog.addEventListener('close', () => {
+      getLenis()?.start();
+      origem?.focus();
+    });
+    dialog.querySelector('[data-lightbox-fechar]')!.addEventListener('click', () => dialog.close());
+    dialog
+      .querySelector('[data-lightbox-anterior]')!
+      .addEventListener('click', () => mostrar(atual - 1));
+    dialog
+      .querySelector('[data-lightbox-proximo]')!
+      .addEventListener('click', () => mostrar(atual + 1));
+    // clique no fundo (fora da foto e dos botões) fecha
+    dialog.querySelector('[data-lightbox-palco]')!.addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) dialog.close();
+    });
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') mostrar(atual - 1);
+      if (e.key === 'ArrowRight') mostrar(atual + 1);
+    });
+
+    // deslizar no toque
+    let inicioX: number | null = null;
+    img.addEventListener('pointerdown', (e) => (inicioX = e.clientX));
+    const fim = (e: PointerEvent) => {
+      if (inicioX === null) return;
+      const dx = e.clientX - inicioX;
+      inicioX = null;
+      if (Math.abs(dx) > 50) mostrar(atual + (dx < 0 ? 1 : -1));
+    };
+    img.addEventListener('pointerup', fim);
+    img.addEventListener('pointercancel', () => (inicioX = null));
+  }
+</script>

@@ -249,6 +249,21 @@ const eventos = defineCollection({
   }),
 });
 
+const galeria = defineCollection({
+  loader: file('src/content/galeria.json'),
+  schema: z.object({
+    titulo: z.string(),
+    destaque: z.string().optional(),
+    texto: z.string(),
+    rotuloAmpliar: z.string(),
+    rotuloFechar: z.string(),
+    rotuloAnterior: z.string(),
+    rotuloProximo: z.string(),
+    rotuloDe: z.string(),
+    fotos: z.array(foto).min(1),
+  }),
+});
+
 export const collections = {
   igreja,
   navegacao,
@@ -264,4 +279,5 @@ export const collections = {
   ministerios,
   agenda,
   eventos,
+  galeria,
 };

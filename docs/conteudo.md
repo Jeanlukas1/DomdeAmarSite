@@ -18,6 +18,7 @@ Todo o conteúdo fica em `src/content/`. Depois de editar, rode `npm run build`:
 | `ministerios.json`  | ministérios: nome, frase, foto vertical, ordem                                                                          |
 | `agenda.json`       | textos da seção Agenda                                                                                                  |
 | `eventos.json`      | eventos: título, data (AAAA-MM-DD), hora, local, descrição, foto opcional. **Eventos passados somem sozinhos**          |
+| `galeria.json`      | fotos da galeria (id + alt), na ordem do mosaico. A proporção de cada foto é respeitada                                 |
 
 > **Fotos:** use o id `pasta/arquivo` (sem .jpg), um `alt` que descreva a cena sem nomear pessoas, e `posicao` (object-position, ex.: `50% 30%`) para acertar o recorte.
 
