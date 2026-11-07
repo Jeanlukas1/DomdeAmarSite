@@ -9,7 +9,8 @@
     "build": "npm run tokens && astro check && astro build",
     "preview": "astro preview",
     "lint": "eslint . && prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "imagens": "node scripts/gerar-imagens.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.4",
