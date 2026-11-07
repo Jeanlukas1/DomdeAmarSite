@@ -35,8 +35,10 @@
     line-height: 1.1;
     text-wrap: balance;
   }
+  /* vermelho sobre o claro; sobre vinho/noite o vermelho some (≈2:1), então as superfícies
+     escuras trocam o anel para creme com a utilidade `superficie-escura` */
   :focus-visible {
-    outline: 3px solid var(--color-red-600);
+    outline: 3px solid var(--foco, var(--color-red-600));
     outline-offset: 3px;
   }
   /* Menos movimento: nada se desloca nem gira, mas mudanças de cor e opacidade continuam
@@ -59,6 +61,10 @@
   font-weight: 700;
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
+}
+
+@utility superficie-escura {
+  --foco: var(--color-cream);
 }
 
 @utility container-site {

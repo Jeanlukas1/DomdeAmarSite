@@ -23,7 +23,10 @@ const ministerios = await getOrdenados('ministerios');
         <p>{c.texto}</p>
       </SecaoTitulo>
 
-      <div class="mt-10 rounded-[1.5rem] bg-wine-900 p-6 text-cream sm:p-8" data-reveal="scale">
+      <div
+        class="superficie-escura mt-10 rounded-[1.5rem] bg-wine-900 p-6 text-cream sm:p-8"
+        data-reveal="scale"
+      >
         <h3 class="font-display text-3xl">{c.primeiroDomingo.titulo}</h3>
         <ol class="mt-5 space-y-4">
           {c.primeiroDomingo.passos.map((passo) => (
