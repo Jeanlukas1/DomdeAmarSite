@@ -15,7 +15,7 @@
 ## Status das fases
 
 - [x] F1 — Setup + docs + tokens
-- [ ] F2 — Logo em camadas + Hero
+- [x] F2 — Logo em camadas + Hero
 - [ ] F3 — Seções
 - [ ] F4 — Conteúdo, formulários, Contribua, Keystatic
 - [ ] F5 — Performance, SEO, acessibilidade
@@ -26,3 +26,4 @@
 <!-- /registrar-sessao adiciona linhas aqui -->
 
 - [2026-11-06 — sessão 01](sessoes/2026-11-06-sessao-01.md) — planejamento + F1
+- [2026-11-06 — sessão 02](sessoes/2026-11-06-sessao-02.md) — F2: logo em camadas, header e hero animado
