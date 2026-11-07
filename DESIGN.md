@@ -105,7 +105,7 @@ O movimento é parte da identidade: o selo se pinta, escreve o nome e bate como 
 - Selo do coração como assinatura e elemento de transição (hero → ícone do header).
 - Alternância entre faixas escuras vinho e superfícies creme.
 - Vermelho da Graça reservado para ação e emoção.
-- Serifada display calorosa + sans legível + eyebrow em caixa alta espaçada.
+- Serifada display calorosa + sans legível; títulos falam sozinhos, sem rótulo acima.
 - Formas macias: pílulas, cartões arredondados, sombras quentes e difusas.
 - Fotos reais da comunidade. Nenhuma imagem genérica.
 
@@ -117,7 +117,7 @@ Uma paleta de um único matiz, vermelho, extraída da logo, sobre neutros quente
 
 - **Vermelho da Graça** (`graca-red`): o vermelho da borda do selo e das fitas do coração. Botões primários, CTA do menu, pinceladas, foco do teclado, o coração. Em texto, só ≥ 18px ou em negrito.
 - **Vermelho Aceso** (`graca-red-bright`): estado de hover do primário. Um passo mais luminoso, como brasa assoprada.
-- **Vermelho Profundo** (`graca-red-deep`): a sombra das fitas na logo. Texto vermelho pequeno (eyebrows sobre claro), por contraste AA.
+- **Vermelho Profundo** (`graca-red-deep`): a sombra das fitas na logo. Texto vermelho pequeno (metadados, links sobre claro), por contraste AA.
 
 ### Secondary
 
@@ -126,7 +126,7 @@ Uma paleta de um único matiz, vermelho, extraída da logo, sobre neutros quente
 
 ### Tertiary
 
-- **Rubor** (`blush`) e **Névoa Rosada** (`blush-mist`): o brilho rosado das fitas da logo. Eyebrows e texto secundário sobre fundo escuro, faíscas e brasas.
+- **Rubor** (`blush`) e **Névoa Rosada** (`blush-mist`): o brilho rosado das fitas da logo. Metadados e texto secundário sobre fundo escuro, faíscas e brasas.
 
 ### Neutral
 
@@ -155,11 +155,11 @@ Uma paleta de um único matiz, vermelho, extraída da logo, sobre neutros quente
 - **Headline** (400, ~2.25rem, 1.1): títulos de seção (h2), com `text-wrap: balance`.
 - **Title** (600, ~1.125rem, 1.25): títulos de cartão e o nome "Dom de Amar" no header.
 - **Body** (400, 1rem–1.2rem, 1.6): texto corrido, máximo de ~65ch.
-- **Label / Eyebrow** (700, 0.75rem, tracking 0.22em, CAIXA ALTA): a linha acima de cada título de seção, que ecoa o texto em arco do selo.
+- **Label** (700, 0.75rem, tracking 0.22em, CAIXA ALTA): metadados dentro do conteúdo (dia e hora de culto, data de evento, rótulo de botão de rolagem). Nunca como linha solta acima de um título.
 
 ### Named Rules
 
-**The Arc Echo Rule.** Toda seção abre com um eyebrow em caixa alta espaçada, seguido do título serifado. É a mesma voz do "IGREJA EVANGÉLICA" sobre o coração.
+**The Heading Speaks Rule.** Nenhum rótulo (eyebrow/kicker) acima de títulos. O título serifado carrega a seção sozinho; se uma palavra importa (ex.: "Graça e Paz!"), ela entra no título ou no texto. A caixa alta espaçada fica para metadados e para o arco do próprio selo.
 
 **The Script Stays Home Rule.** A letra cursiva pertence ao selo. Títulos, botões e navegação nunca usam fonte script.
 
@@ -209,15 +209,15 @@ Macios e calorosos: pílulas com altura mínima de 48px (alvo de toque confortá
 
 O SVG da logo inline, com camadas nomeadas, se pinta na entrada: borda, texto em arco, fitas, nome, slogan e mini-coração. Depois bate duas vezes, solta faíscas e mantém brasas subindo. No scroll, encolhe e voa até virar o ícone do header. Detalhes em `docs/animacoes.md`.
 
-### Eyebrow + título de seção
+### Abertura de seção
 
-Eyebrow em caixa alta espaçada (vermelho profundo sobre claro, rubor sobre escuro), seguido de headline serifada. Esse cabeçalho padrão abre toda seção.
+Título serifado (headline) sozinho, seguido de um parágrafo curto de apoio. Sem rótulo acima (The Heading Speaks Rule). A personalidade vem do título, da pincelada vermelha que pode sublinhar uma palavra-chave e da composição de cada seção.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** abrir cada seção com eyebrow + título serifado (The Arc Echo Rule).
+- **Do** abrir cada seção com o título serifado sozinho; a palavra-chave pode ganhar a pincelada vermelha (The Heading Speaks Rule).
 - **Do** usar o selo, o círculo, a pincelada e o mini-coração entre traços como assinatura e pontuação.
 - **Do** alternar faixas escuras vinho com superfícies creme para dar ritmo.
 - **Do** usar sombras quentes e tingidas e cantos macios (pílulas, `lg`/`xl`).

@@ -19,7 +19,7 @@ Regra de contraste: `red-600` sobre claro só em texto ≥ 18px ou bold; abaixo 
 
 - **Fraunces Variable** (`font-display`): títulos, com eixo `opsz`. Itálico leve para frases de efeito.
 - **Manrope Variable** (`font-sans`): texto e UI.
-- `eyebrow`: caixa alta, 0.75rem, tracking 0.22em, que ecoa o texto em arco da logo.
+- `eyebrow` (utilitário): caixa alta, 0.75rem, tracking 0.22em — **só para metadados** (dia/hora, datas). Nunca acima de títulos (The Heading Speaks Rule, em `DESIGN.md`).
 - A letra cursiva ("Dom de Amar") aparece só dentro do SVG da logo.
 
 ## Motivos

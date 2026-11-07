@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-07T03:06:49.380Z",
+  "generatedAt": "2026-11-07T03:14:34.223Z",
   "title": "Design System: Igreja Evangélica Dom de Amar",
   "extensions": {
     "colorMeta": {
@@ -248,8 +248,8 @@
         "purpose": "Texto corrido, até ~65ch."
       },
       "label": {
-        "displayName": "Eyebrow",
-        "purpose": "Caixa alta espaçada acima de cada título; ecoa o texto em arco do selo."
+        "displayName": "Label",
+        "purpose": "Metadados em caixa alta espaçada (dia/hora, datas). Nunca acima de títulos."
       }
     },
     "shadows": [
@@ -347,9 +347,9 @@
       "name": "Cabeçalho de seção",
       "kind": "custom",
       "refersTo": "",
-      "description": "Eyebrow em caixa alta + título serifado (The Arc Echo Rule).",
-      "html": "<header class=\"ds-sec\"><p class=\"ds-eyebrow\">Nossa história</p><h2 class=\"ds-h2\">Oito anos levantando uma casa de Graça</h2></header>",
-      "css": ".ds-sec{background:#fff8f3;padding:32px}.ds-eyebrow{margin:0;font:700 .75rem/1 'Manrope Variable',system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#a90504}.ds-h2{margin:12px 0 0;font:400 2.25rem/1.1 'Fraunces Variable',Georgia,serif;color:#111;text-wrap:balance}"
+      "description": "Título serifado sozinho + parágrafo de apoio (The Heading Speaks Rule).",
+      "html": "<header class=\"ds-sec\"><h2 class=\"ds-h2\">Oito anos levantando uma casa de Graça</h2><p class=\"ds-lead\">Uma comunidade pequena que constrói o próprio templo com as próprias mãos.</p></header>",
+      "css": ".ds-sec{background:#fff8f3;padding:32px}.ds-h2{margin:0;font:400 2.25rem/1.1 'Fraunces Variable',Georgia,serif;color:#111;text-wrap:balance}.ds-lead{margin:16px 0 0;max-width:60ch;font:400 1.0625rem/1.6 'Manrope Variable',system-ui,sans-serif;color:#3d3536}"
     },
     {
       "name": "Cartão",
@@ -367,7 +367,7 @@
       "Selo do coração como assinatura e elemento de transição (hero → ícone do header).",
       "Alternância entre faixas escuras vinho e superfícies creme.",
       "Vermelho da Graça reservado para ação e emoção.",
-      "Serifada display calorosa + sans legível + eyebrow em caixa alta espaçada.",
+      "Serifada display calorosa + sans legível; títulos falam sozinhos, sem rótulo acima.",
       "Formas macias: pílulas, cartões arredondados, sombras quentes e difusas.",
       "Fotos reais da comunidade. Nenhuma imagem genérica."
     ],
@@ -383,9 +383,9 @@
         "body": "Neutros são sempre quentes (creme, areia, tinta levemente avermelhada). Cinzas frios e azulados não entram."
       },
       {
-        "name": "The Arc Echo Rule",
+        "name": "The Heading Speaks Rule",
         "section": "typography",
-        "body": "Toda seção abre com um eyebrow em caixa alta espaçada, seguido do título serifado. É a mesma voz do \"IGREJA EVANGÉLICA\" sobre o coração."
+        "body": "Nenhum rótulo (eyebrow/kicker) acima de títulos. O título serifado carrega a seção sozinho; se uma palavra importa, ela entra no título ou no texto. A caixa alta espaçada fica para metadados e para o arco do próprio selo."
       },
       {
         "name": "The Script Stays Home Rule",
@@ -404,7 +404,7 @@
       }
     ],
     "dos": [
-      "Do abrir cada seção com eyebrow + título serifado (The Arc Echo Rule).",
+      "Do abrir cada seção com o título serifado sozinho; a palavra-chave pode ganhar a pincelada vermelha (The Heading Speaks Rule).",
       "Do usar o selo, o círculo, a pincelada e o mini-coração entre traços como assinatura e pontuação.",
       "Do alternar faixas escuras vinho com superfícies creme para dar ritmo.",
       "Do usar sombras quentes e tingidas e cantos macios (pílulas, lg/xl).",

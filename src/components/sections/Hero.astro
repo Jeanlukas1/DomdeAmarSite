@@ -23,16 +23,14 @@ const PARTICULAS = 14;
 
   <div class="container-site grid items-center gap-8 pt-24 pb-20 lg:grid-cols-[1.1fr_1fr] lg:gap-12 lg:pt-28">
     <div class="order-2 text-center lg:order-1 lg:text-left">
-      <p class="hero-in eyebrow text-blush" style="--d: 0.15s">
-        {hero.saudacao}
-      </p>
-      <h1 class="mt-4 text-[clamp(2.4rem,6.4vw,5.4rem)] font-medium tracking-[-0.02em] [font-variation-settings:'opsz'_144]">
+      <h1 class="text-[clamp(2.4rem,6.4vw,5.4rem)] font-medium tracking-[-0.02em] [font-variation-settings:'opsz'_144]">
         {hero.titulo}
       </h1>
       <p
         class="hero-in mx-auto mt-6 max-w-xl text-[clamp(1rem,1.6vw,1.2rem)] text-blush-100/85 lg:mx-0"
         style="--d: 0.3s"
       >
+        <strong class="font-semibold text-cream">{hero.saudacao}</strong>
         {hero.texto}
       </p>
       <div

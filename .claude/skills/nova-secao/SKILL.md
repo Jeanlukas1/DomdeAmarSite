@@ -11,7 +11,7 @@ Argumento: nome da seção (ex.: `Horarios`) e o que ela mostra.
 2. **Conteúdo**: crie ou estenda a coleção em `src/content/` e o schema em `src/content.config.ts`. Dados provisórios: realistas, no tom da igreja (acolhedor, tema da Graça), com tamanho próximo ao texto final e com `mock: true`. Registre cada mock em `docs/conteudo-pendente.md`.
 3. **Componente** `src/components/sections/<Nome>.astro`:
    - `<section id="<slug>" aria-labelledby="<slug>-titulo">` + `container-site`.
-   - Cabeçalho padrão: `eyebrow` + `h2` em `font-display`.
+   - Abertura: `h2` em `font-display` sozinho + parágrafo curto. **Sem eyebrow/kicker acima do título** (DESIGN.md: The Heading Speaks Rule).
    - Zero texto fixo: tudo vem de props/coleção.
    - Imagens via `astro:assets` com `alt` e `object-position` definido no conteúdo para fotos verticais.
    - Mobile-first, sem scroll horizontal de 320px a 2560px.
