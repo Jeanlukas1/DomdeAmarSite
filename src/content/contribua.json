@@ -36,6 +36,15 @@
           "href": "/#oracao"
         }
       ]
+    },
+    "transferencia": {
+      "titulo": "Ou por transferência",
+      "banco": "Cora SCFI",
+      "agencia": "0001",
+      "conta": "1746315-2",
+      "rotuloBanco": "Banco",
+      "rotuloAgencia": "Agência",
+      "rotuloConta": "Conta"
     }
   }
 }

@@ -328,6 +328,18 @@ const contribua = defineCollection({
       copiar: z.string(),
       copiada: z.string(),
     }),
+    /** dados da conta para TED/transferência; banco vazio = bloco não aparece */
+    transferencia: z
+      .object({
+        titulo: z.string(),
+        banco: z.string(),
+        agencia: z.string(),
+        conta: z.string(),
+        rotuloBanco: z.string(),
+        rotuloAgencia: z.string(),
+        rotuloConta: z.string(),
+      })
+      .optional(),
     outrasFormas: z.object({ titulo: z.string(), itens: z.array(link) }),
   }),
 });

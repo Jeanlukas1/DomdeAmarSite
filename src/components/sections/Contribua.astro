@@ -70,6 +70,25 @@ const chaveNaTela = pix.chave ? formatarChavePix(pix.chave, pix.tipo) : null;
             <p class="mt-2 max-w-md leading-relaxed text-ink-soft">{pix.emBreveTexto}</p>
           </>
         )}
+        {c.transferencia?.banco && (
+          <div class="mt-6 border-t border-sand pt-5">
+            <p class="text-sm font-semibold text-ink">{c.transferencia.titulo}</p>
+            <dl class="mt-2 grid grid-cols-3 gap-x-4 text-sm">
+              <div>
+                <dt class="text-muted">{c.transferencia.rotuloBanco}</dt>
+                <dd class="font-semibold text-ink">{c.transferencia.banco}</dd>
+              </div>
+              <div>
+                <dt class="text-muted">{c.transferencia.rotuloAgencia}</dt>
+                <dd class="font-semibold text-ink tabular-nums">{c.transferencia.agencia}</dd>
+              </div>
+              <div>
+                <dt class="text-muted">{c.transferencia.rotuloConta}</dt>
+                <dd class="font-semibold text-ink tabular-nums">{c.transferencia.conta}</dd>
+              </div>
+            </dl>
+          </div>
+        )}
       </div>
 
       <blockquote class="mt-10 border-l border-white/20 pl-5" data-reveal>

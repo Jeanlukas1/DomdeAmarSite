@@ -361,6 +361,21 @@ export default config({
             },
             { label: 'PIX' },
           ),
+          transferencia: fields.object(
+            {
+              titulo: fields.text({ label: 'Título' }),
+              banco: fields.text({
+                label: 'Banco',
+                description: 'Vazio = o bloco de transferência não aparece.',
+              }),
+              agencia: fields.text({ label: 'Agência' }),
+              conta: fields.text({ label: 'Conta' }),
+              rotuloBanco: fields.text({ label: 'Rótulo "Banco"' }),
+              rotuloAgencia: fields.text({ label: 'Rótulo "Agência"' }),
+              rotuloConta: fields.text({ label: 'Rótulo "Conta"' }),
+            },
+            { label: 'Transferência bancária' },
+          ),
           titulo: fields.text({ label: 'Título da seção' }),
           destaque: fields.text({ label: 'Palavra com pincelada' }),
           texto: textoLongo('Texto de apoio'),

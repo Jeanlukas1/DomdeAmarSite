@@ -5,8 +5,7 @@ Cada item abaixo está marcado no arquivo com `mock: true` (ou `// MOCK`). Quand
 | Arquivo                         | Campo                                     | O que precisamos                                                                                                            |
 | ------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `src/content/igreja.json`       | `contato.email`                           | e-mail oficial (hoje vazio; não aparece no site)                                                                            |
-| `src/content/contribua.json`    | dados de transferência                    | banco e agência da conta 1746315-2, se a igreja quiser mostrar transferência além do PIX                                    |
-| `src/content/pastores.json`     | `foto`, `funcao` de Karen Costa           | fotos da liderança e confirmar como apresentar Karen Costa (hoje: "Lidera a igreja ao lado do Pr. Marcelo")                 |
+| `src/content/pastores.json`     | `foto`                                    | fotos do Pr. Marcelo Roque e da Pra. Karen Costa (hoje aparecem os monogramas)                                              |
 | `src/content/igreja.json`       | `redes.instagram`, `redes.youtube`        | links do Instagram e YouTube, se existirem (hoje `null`: o ícone não aparece até ter o link)                                |
 | `src/content/igreja.json`       | `fundacao`                                | data exata de fundação (estimada: 25/07/2018, pelos 8 anos)                                                                 |
 | `src/content/quem-somos.json`   | `carta`, `missao`, `visao`                | texto real de apresentação, missão e visão                                                                                  |
@@ -22,8 +21,9 @@ Cada item abaixo está marcado no arquivo com `mock: true` (ou `// MOCK`). Quand
 
 ## Resolvidos
 
-| Data       | Arquivo                      | O que entrou                                                                                                           |
-| ---------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| 2026-11-07 | `src/content/igreja.json`    | WhatsApp e telefone **(21) 99403-4141** (`contato.mock: false`): os botões de WhatsApp passam a aparecer               |
-| 2026-11-07 | `src/content/pastores.json`  | **Pr. Marcelo Roque** (pastor líder) e **Karen Costa**, sua esposa; o pregador "Pr. Marcelo" virou "Pr. Marcelo Roque" |
-| 2026-11-07 | `src/content/contribua.json` | PIX **CNPJ 42.753.605/0001-01** (dígitos verificadores conferidos); o botão copia só os números                        |
+| Data       | Arquivo                      | O que entrou                                                                                                              |
+| ---------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-07 | `src/content/igreja.json`    | WhatsApp e telefone **(21) 99403-4141** (`contato.mock: false`): os botões de WhatsApp passam a aparecer                  |
+| 2026-11-07 | `src/content/pastores.json`  | **Pr. Marcelo Roque** (pastor líder) e **Pra. Karen Costa** (pastora); o pregador "Pr. Marcelo" virou "Pr. Marcelo Roque" |
+| 2026-11-07 | `src/content/contribua.json` | PIX **CNPJ 42.753.605/0001-01** (dígitos verificadores conferidos); o botão copia só os números                           |
+| 2026-11-07 | `src/content/contribua.json` | transferência: banco **Cora SCFI**, agência **0001**, conta **1746315-2** (aparece no cartão do PIX)                      |
