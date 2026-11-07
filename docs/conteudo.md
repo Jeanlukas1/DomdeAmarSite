@@ -16,6 +16,8 @@ Todo o conteúdo fica em `src/content/`. Depois de editar, rode `npm run build`:
 | `mensagens.json`    | pregações: título, referência, data (AAAA-MM-DD), pregador, `youtubeId`. A home mostra as 3 mais recentes               |
 | `cresca.json`       | textos da seção Cresça na fé e do Estudo da Palavra                                                                     |
 | `ministerios.json`  | ministérios: nome, frase, foto vertical, ordem                                                                          |
+| `agenda.json`       | textos da seção Agenda                                                                                                  |
+| `eventos.json`      | eventos: título, data (AAAA-MM-DD), hora, local, descrição, foto opcional. **Eventos passados somem sozinhos**          |
 
 > **Fotos:** use o id `pasta/arquivo` (sem .jpg), um `alt` que descreva a cena sem nomear pessoas, e `posicao` (object-position, ex.: `50% 30%`) para acertar o recorte.
 

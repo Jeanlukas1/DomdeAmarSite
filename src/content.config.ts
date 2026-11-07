@@ -221,6 +221,34 @@ const ministerios = defineCollection({
   }),
 });
 
+const agenda = defineCollection({
+  loader: file('src/content/agenda.json'),
+  schema: z.object({
+    titulo: z.string(),
+    destaque: z.string().optional(),
+    texto: z.string(),
+    rotuloLista: z.string(),
+    rotuloAnterior: z.string(),
+    rotuloProximo: z.string(),
+    semEventos: z.string(),
+  }),
+});
+
+const eventos = defineCollection({
+  loader: file('src/content/eventos.json'),
+  schema: z.object({
+    titulo: z.string(),
+    /** AAAA-MM-DD */
+    data: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    /** HH:MM */
+    hora: z.string().regex(/^\d{2}:\d{2}$/),
+    local: z.string(),
+    descricao: z.string(),
+    foto: foto.optional(),
+    mock: z.boolean().default(false),
+  }),
+});
+
 export const collections = {
   igreja,
   navegacao,
@@ -234,4 +262,6 @@ export const collections = {
   mensagens,
   cresca,
   ministerios,
+  agenda,
+  eventos,
 };

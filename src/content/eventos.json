@@ -1,0 +1,71 @@
+[
+  {
+    "id": "aniversario-8-anos",
+    "titulo": "Aniversário de 8 anos",
+    "data": "2026-07-25",
+    "hora": "19:00",
+    "local": "Templo Dom de Amar",
+    "descricao": "Uma noite especial de louvor, Palavra e gratidão, com preletor convidado.",
+    "mock": false
+  },
+  {
+    "id": "acao-de-gracas",
+    "titulo": "Culto de Ação de Graças",
+    "data": "2026-11-22",
+    "hora": "18:00",
+    "local": "Templo Dom de Amar",
+    "descricao": "Um culto inteiro para agradecer o que a Graça fez neste ano. Traga um testemunho.",
+    "mock": true
+  },
+  {
+    "id": "encontro-de-casais",
+    "titulo": "Encontro de Casais",
+    "data": "2026-11-28",
+    "hora": "19:30",
+    "local": "Templo Dom de Amar",
+    "descricao": "Jantar, conversa e oração por cada casamento.",
+    "foto": {
+      "id": "casais-evento-amor/casais-evento-amor-29",
+      "alt": "Casais sentados à mesa decorada com corações, conversando no encontro",
+      "posicao": "50% 50%"
+    },
+    "mock": true
+  },
+  {
+    "id": "mutirao-novo-templo",
+    "titulo": "Mutirão do novo templo",
+    "data": "2026-11-29",
+    "hora": "08:00",
+    "local": "Obra do novo templo",
+    "descricao": "Venha com roupa de trabalho. Tem tarefa para todas as idades e café para todos.",
+    "foto": {
+      "id": "novo-templo-construcao/novo-templo-construcao-42",
+      "alt": "Irmão misturando cimento na betoneira durante o mutirão",
+      "posicao": "50% 50%"
+    },
+    "mock": true
+  },
+  {
+    "id": "cantata-de-natal",
+    "titulo": "Cantata de Natal",
+    "data": "2026-12-20",
+    "hora": "18:00",
+    "local": "Templo Dom de Amar",
+    "descricao": "O louvor da igreja conta a história do maior presente: Jesus.",
+    "foto": {
+      "id": "cultos-louvor/cultos-louvor-37",
+      "alt": "Banda e igreja reunidas durante o louvor",
+      "posicao": "50% 50%"
+    },
+    "mock": true
+  },
+  {
+    "id": "culto-da-virada",
+    "titulo": "Culto da Virada",
+    "data": "2026-12-31",
+    "hora": "22:00",
+    "local": "Templo Dom de Amar",
+    "descricao": "Terminar o ano em oração e começar o próximo debaixo da Graça.",
+    "mock": true
+  }
+]

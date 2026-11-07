@@ -17,6 +17,7 @@ Cada item abaixo está marcado no arquivo com `mock: true` (ou `// MOCK`). Quand
 | `src/content/mensagens.json`    | todos                                     | mensagens reais (título, texto bíblico, data, link)                                                                         |
 | `src/content/ministerios.json`  | todos                                     | ministérios que realmente existem, com nome e descrição                                                                     |
 | `src/content/cresca.json`       | `estudo.texto`, `texto`                   | descrição real do Estudo da Palavra                                                                                         |
+| `src/content/eventos.json`      | todos com `mock: true`                    | agenda real de eventos (o aniversário de 8 anos é real)                                                                     |
 | `src/assets/logo/`              | —                                         | **arquivo original da logo** (.ai / .pdf vetorial / .svg com camadas)                                                       |
 
 > Próximas fases adicionam: pastores (nomes/fotos), história, missão/visão, ministérios, eventos, mensagens/vídeos, depoimentos e chave PIX.

@@ -1,0 +1,11 @@
+{
+  "principal": {
+    "titulo": "O que vem por aí",
+    "destaque": "vem por aí",
+    "texto": "Datas para marcar no calendário e trazer quem você ama.",
+    "rotuloLista": "Próximos eventos",
+    "rotuloAnterior": "Evento anterior",
+    "rotuloProximo": "Próximo evento",
+    "semEventos": "Novos eventos em breve. Enquanto isso, os cultos acontecem toda semana."
+  }
+}

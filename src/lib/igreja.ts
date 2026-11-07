@@ -1,7 +1,7 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
 /** Coleções de página única (entrada 'principal'). */
-type Unica = 'quemSomos' | 'historia' | 'cultosSecao' | 'assista' | 'cresca';
+type Unica = 'quemSomos' | 'historia' | 'cultosSecao' | 'assista' | 'cresca' | 'agenda';
 /** Coleções em lista com campo 'ordem'. */
 type Ordenada = 'pastores' | 'cultos' | 'ministerios';
 
@@ -51,4 +51,12 @@ export async function getMensagens(limite = 3) {
     .map((i) => ({ id: i.id, ...i.data }))
     .sort((a, b) => b.data.localeCompare(a.data))
     .slice(0, limite);
+}
+
+/** Eventos em ordem cronológica (o navegador esconde os que já passaram). */
+export async function getEventos() {
+  const itens = await getCollection('eventos');
+  return itens
+    .map((i) => ({ id: i.id, ...i.data }))
+    .sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora));
 }

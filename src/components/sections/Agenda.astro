@@ -1,0 +1,102 @@
+---
+// Agenda: eventos em faixa horizontal (reusa a ilha Faixa). Cada cartão tem uma "folhinha" de
+// calendário. Eventos passados são escondidos no navegador (fuso de São Paulo).
+import Faixa from '@/components/islands/Faixa.astro';
+import Foto from '@/components/ui/Foto.astro';
+import Ornamento from '@/components/ui/Ornamento.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import { getEventos, getPrincipal } from '@/lib/igreja';
+
+const a = await getPrincipal('agenda');
+const eventos = await getEventos();
+
+const emData = (iso: string, opcoes: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat('pt-BR', { ...opcoes, timeZone: 'UTC' })
+    .format(new Date(`${iso}T12:00:00Z`))
+    .replace('.', '');
+const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
+---
+
+<section
+  id="agenda"
+  aria-labelledby="agenda-titulo"
+  class="scroll-mt-20 overflow-hidden bg-cream py-[clamp(5rem,11vw,9rem)]"
+>
+  <div class="container-site">
+    <SecaoTitulo id="agenda-titulo" titulo={a.titulo} destaque={a.destaque}>
+      <p>{a.texto}</p>
+    </SecaoTitulo>
+
+    <div
+      class="mt-12 -mx-[clamp(1rem,4vw,2.5rem)] [--faixa-respiro:clamp(1rem,4vw,2.5rem)]"
+      data-reveal-group
+      data-stagger="0.1"
+    >
+      <Faixa
+        rotulo={a.rotuloLista}
+        rotuloAnterior={a.rotuloAnterior}
+        rotuloProximo={a.rotuloProximo}
+        class="[&_[data-faixa-controles]]:px-[var(--faixa-respiro)]"
+      >
+        {eventos.map((e) => (
+          <li
+            data-evento={e.data}
+            data-reveal
+            class="w-[80vw] max-w-[22rem] shrink-0 snap-start sm:w-[20rem]"
+          >
+            <article class="flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-sand bg-white">
+              <div class="relative aspect-[16/10] overflow-hidden bg-wine-900">
+                {e.foto ? (
+                  <Foto {...e.foto} sizes="(min-width: 640px) 20rem, 80vw" />
+                ) : (
+                  <div class="grid h-full place-items-center bg-[radial-gradient(circle_at_50%_40%,var(--color-wine-800),var(--color-wine-950))]">
+                    <Ornamento class="text-blush [&_span]:w-14" />
+                  </div>
+                )}
+                <p class="absolute top-4 left-4 grid min-w-16 place-items-center rounded-2xl bg-cream px-3 py-2 text-center leading-none text-ink shadow-[0_12px_24px_-14px_color-mix(in_srgb,var(--color-night)_70%,transparent)]">
+                  <span class="font-display text-3xl tabular-nums">
+                    {emData(e.data, { day: 'numeric' })}
+                  </span>
+                  <span class="mt-1 text-xs font-bold tracking-[0.16em] text-red-700 uppercase">
+                    {emData(e.data, { month: 'short' })}
+                  </span>
+                </p>
+              </div>
+              <div class="flex flex-1 flex-col p-6">
+                <h3 class="font-display text-2xl leading-tight">{e.titulo}</h3>
+                <p class="mt-2 text-sm font-semibold text-red-700">
+                  <time datetime={`${e.data}T${e.hora}`}>
+                    {emData(e.data, { weekday: 'long' })}, {horaCurta(e.hora)}
+                  </time>
+                  <span class="text-muted"> · {e.local}</span>
+                </p>
+                <p class="mt-3 leading-relaxed text-ink-soft">{e.descricao}</p>
+              </div>
+            </article>
+          </li>
+        ))}
+      </Faixa>
+      <p data-agenda-vazia hidden class="px-[var(--faixa-respiro)] text-lg text-ink-soft">
+        {a.semEventos}
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // esconde eventos que já passaram (data de hoje em São Paulo, formato AAAA-MM-DD)
+  const hoje = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(
+    new Date(),
+  );
+  const itens = [...document.querySelectorAll<HTMLElement>('[data-evento]')];
+  let visiveis = 0;
+  for (const li of itens) {
+    const passou = (li.dataset.evento ?? '') < hoje;
+    li.hidden = passou;
+    if (!passou) visiveis++;
+  }
+  if (itens.length && visiveis === 0) {
+    document.querySelector<HTMLElement>('[data-agenda-vazia]')?.removeAttribute('hidden');
+    itens[0].closest<HTMLElement>('[data-faixa]')?.setAttribute('hidden', '');
+  }
+</script>
