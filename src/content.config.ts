@@ -155,6 +155,46 @@ const cultosSecao = defineCollection({
   }),
 });
 
+/** id do vídeo no YouTube (só o id, não a URL); null enquanto não houver */
+const youtubeId = z
+  .string()
+  .regex(/^[\w-]{11}$/)
+  .nullable()
+  .default(null);
+
+const assista = defineCollection({
+  loader: file('src/content/assista.json'),
+  schema: z.object({
+    titulo: z.string(),
+    destaque: z.string().optional(),
+    texto: z.string(),
+    video: z.object({
+      mock: z.boolean().default(false),
+      titulo: z.string(),
+      descricao: z.string(),
+      youtubeId,
+      poster: foto,
+    }),
+    emBreve: z.string(),
+    rotuloAssistir: z.string(),
+    rotuloFacebook: z.string(),
+    mensagensTitulo: z.string(),
+  }),
+});
+
+const mensagens = defineCollection({
+  loader: file('src/content/mensagens.json'),
+  schema: z.object({
+    titulo: z.string(),
+    referencia: z.string(),
+    /** AAAA-MM-DD */
+    data: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    pregador: z.string(),
+    youtubeId,
+    mock: z.boolean().default(false),
+  }),
+});
+
 export const collections = {
   igreja,
   navegacao,
@@ -164,4 +204,6 @@ export const collections = {
   historia,
   cultos,
   cultosSecao,
+  assista,
+  mensagens,
 };

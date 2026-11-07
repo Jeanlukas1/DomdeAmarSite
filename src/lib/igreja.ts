@@ -1,7 +1,7 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
 /** Coleções de página única (entrada 'principal'). */
-type Unica = 'quemSomos' | 'historia' | 'cultosSecao';
+type Unica = 'quemSomos' | 'historia' | 'cultosSecao' | 'assista';
 /** Coleções em lista com campo 'ordem'. */
 type Ordenada = 'pastores' | 'cultos';
 
@@ -42,4 +42,13 @@ export async function getOrdenados<C extends Ordenada>(
   return itens
     .map((i) => ({ id: i.id, ...(i.data as CollectionEntry<C>['data']) }))
     .sort((a, b) => a.ordem - b.ordem);
+}
+
+/** Mensagens da mais recente para a mais antiga. */
+export async function getMensagens(limite = 3) {
+  const itens = await getCollection('mensagens');
+  return itens
+    .map((i) => ({ id: i.id, ...i.data }))
+    .sort((a, b) => b.data.localeCompare(a.data))
+    .slice(0, limite);
 }

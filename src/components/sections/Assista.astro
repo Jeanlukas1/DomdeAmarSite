@@ -1,0 +1,116 @@
+---
+// Assista online + mensagens recentes. Fundo noite: a luz vem do próprio vídeo.
+import VideoDestaque from '@/components/islands/VideoDestaque.astro';
+import Icon from '@/components/ui/Icon.astro';
+import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
+import { getIgreja, getMensagens, getPrincipal } from '@/lib/igreja';
+
+const a = await getPrincipal('assista');
+const igreja = await getIgreja();
+const mensagens = await getMensagens(3);
+
+const dataCurta = (iso: string) =>
+  new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', timeZone: 'UTC' })
+    .format(new Date(`${iso}T12:00:00Z`))
+    .replace('.', '');
+const linkDe = (youtubeId: string | null) =>
+  youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : igreja.redes.facebook;
+---
+
+<section
+  id="assista"
+  aria-labelledby="assista-titulo"
+  class="relative scroll-mt-20 overflow-hidden bg-night py-[clamp(5rem,11vw,9rem)] text-cream"
+>
+  <div class="container-site">
+    <SecaoTitulo id="assista-titulo" titulo={a.titulo} destaque={a.destaque} tom="escuro">
+      <p>{a.texto}</p>
+    </SecaoTitulo>
+
+    <div data-assista-video class="mt-12 origin-top">
+      <VideoDestaque
+        titulo={a.video.titulo}
+        descricao={a.video.descricao}
+        youtubeId={a.video.youtubeId}
+        poster={a.video.poster}
+        rotuloAssistir={a.rotuloAssistir}
+        emBreve={a.emBreve}
+        rotuloFacebook={a.rotuloFacebook}
+        facebook={igreja.redes.facebook}
+      />
+    </div>
+
+    <div id="mensagens" class="mt-16 scroll-mt-24">
+      <h3 class="font-display text-2xl">{a.mensagensTitulo}</h3>
+      <ol class="mt-6 border-b border-white/10" data-reveal-group>
+        {mensagens.map((m) => (
+          <li class="border-t border-white/10" data-reveal>
+            <a
+              href={linkDe(m.youtubeId)}
+              target="_blank"
+              rel="noopener"
+              class="group grid grid-cols-[auto_1fr_auto] items-center gap-x-5 gap-y-1 py-5 sm:grid-cols-[6rem_1fr_auto_auto] sm:gap-x-8"
+            >
+              <time
+                datetime={m.data}
+                class="text-sm font-semibold text-blush tabular-nums sm:row-span-1"
+              >
+                {dataCurta(m.data)}
+              </time>
+              <span class="min-w-0">
+                <span class="block font-display text-xl leading-snug transition-colors duration-base group-hover:text-white sm:text-2xl">
+                  {m.titulo}
+                </span>
+                <span class="mt-1 block text-sm text-blush-100/70 sm:hidden">
+                  {m.referencia} · {m.pregador}
+                </span>
+              </span>
+              <span class="hidden text-right text-sm text-blush-100/70 sm:block">
+                {m.referencia}
+                <span class="block">{m.pregador}</span>
+              </span>
+              <span class="grid size-11 place-items-center rounded-full border border-white/20 transition-[background-color,border-color,transform] duration-base group-hover:scale-110 group-hover:border-red-600 group-hover:bg-red-600">
+                <svg viewBox="0 0 24 24" class="ml-0.5 size-4 fill-current" aria-hidden="true">
+                  <path d="M8 5.5v13l11-6.5z" />
+                </svg>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
+      {/* com vídeo no YouTube, o Facebook vira alternativa; sem ele, o botão do vídeo já leva lá */}
+      {a.video.youtubeId && (
+        <p class="mt-6 flex items-center gap-2 text-sm text-blush-100/70">
+          <Icon name="facebook" size={16} />
+          <a
+            href={igreja.redes.facebook}
+            target="_blank"
+            rel="noopener"
+            class="underline decoration-white/30 hover:text-cream hover:decoration-current"
+          >
+            {a.rotuloFacebook}
+          </a>
+        </p>
+      )}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap, reduceMotion } from '@/lib/animations/motion';
+
+  // o vídeo "se aproxima" enquanto entra na tela: começa um pouco menor e mais escuro
+  const alvo = document.querySelector<HTMLElement>('[data-assista-video]');
+  if (alvo && !reduceMotion()) {
+    gsap.fromTo(
+      alvo,
+      { scale: 0.9, opacity: 0.55 },
+      {
+        scale: 1,
+        opacity: 1,
+        ease: 'none',
+        scrollTrigger: { trigger: alvo, start: 'top 95%', end: 'top 35%', scrub: true },
+      },
+    );
+  }
+</script>

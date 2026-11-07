@@ -1,0 +1,89 @@
+---
+// Vídeo com "clique para assistir": só a foto-pôster carrega; o player do YouTube (no-cookie)
+// entra no clique. Sem youtubeId, mostra o estado "em breve" com link para o Facebook.
+import Foto from '@/components/ui/Foto.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+interface FotoRef {
+  id: string;
+  alt: string;
+  posicao: string;
+}
+interface Props {
+  titulo: string;
+  descricao: string;
+  youtubeId: string | null;
+  poster: FotoRef;
+  rotuloAssistir: string;
+  emBreve: string;
+  rotuloFacebook: string;
+  facebook: string;
+}
+
+const { titulo, descricao, youtubeId, poster, rotuloAssistir, emBreve, rotuloFacebook, facebook } =
+  Astro.props;
+---
+
+<div
+  data-video
+  data-youtube={youtubeId ?? undefined}
+  class="video relative isolate aspect-[4/5] overflow-hidden rounded-[2rem] bg-wine-950 sm:aspect-video"
+>
+  <div data-video-poster class="absolute inset-0 -z-10">
+    <Foto {...poster} sizes="(min-width: 1280px) 1200px, 100vw" />
+    <div class="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--color-night)_92%,transparent)_8%,color-mix(in_srgb,var(--color-night)_25%,transparent)_60%,transparent)]"></div>
+  </div>
+
+  <div class="flex h-full flex-col justify-end gap-5 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-10">
+    <div class="max-w-xl">
+      <h3 class="font-display text-[clamp(1.75rem,3.4vw,2.75rem)] leading-tight text-cream">
+        {titulo}
+      </h3>
+      <p class="mt-2 text-blush-100/85">{youtubeId ? descricao : emBreve}</p>
+    </div>
+    {youtubeId ? (
+      <button
+        type="button"
+        data-video-play
+        class="group flex shrink-0 items-center gap-3 self-start rounded-full bg-red-600 py-2 pr-6 pl-2 font-semibold text-white transition-colors duration-base hover:bg-red-500 sm:self-auto"
+      >
+        <span class="grid size-11 place-items-center rounded-full bg-white text-red-600 transition-transform duration-base group-hover:scale-110">
+          <svg viewBox="0 0 24 24" class="ml-0.5 size-5 fill-current" aria-hidden="true">
+            <path d="M8 5.5v13l11-6.5z" />
+          </svg>
+        </span>
+        {rotuloAssistir}
+        <span class="sr-only">: {titulo}</span>
+      </button>
+    ) : (
+      <a
+        href={facebook}
+        target="_blank"
+        rel="noopener"
+        class="group flex shrink-0 items-center gap-3 self-start rounded-full bg-cream py-2 pr-6 pl-2 font-semibold text-wine-900 transition-colors duration-base hover:bg-white sm:self-auto"
+      >
+        <span class="grid size-11 place-items-center rounded-full bg-wine-900 text-cream">
+          <Icon name="facebook" />
+        </span>
+        {rotuloFacebook}
+      </a>
+    )}
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video][data-youtube]').forEach((box) => {
+    const play = box.querySelector<HTMLButtonElement>('[data-video-play]');
+    play?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${box.dataset.youtube}?autoplay=1&rel=0`;
+      iframe.title = play.textContent?.trim() ?? 'Vídeo';
+      iframe.allow =
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      iframe.className = 'absolute inset-0 h-full w-full';
+      box.replaceChildren(iframe);
+      iframe.focus();
+    });
+  });
+</script>

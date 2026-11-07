@@ -1,0 +1,22 @@
+{
+  "principal": {
+    "titulo": "Assista de onde estiver",
+    "destaque": "de onde estiver",
+    "texto": "Perdeu o culto, está viajando ou quer ouvir de novo? A Palavra continua com você durante a semana.",
+    "video": {
+      "mock": true,
+      "titulo": "Culto da Plenitude do Amor",
+      "descricao": "Louvor e Palavra do último domingo.",
+      "youtubeId": null,
+      "poster": {
+        "id": "cultos-louvor/cultos-louvor-07",
+        "alt": "Louvor no culto de domingo, com a banda e a igreja de pé",
+        "posicao": "50% 45%"
+      }
+    },
+    "emBreve": "Nosso canal no YouTube está chegando. Enquanto isso, os cultos e reels estão no Facebook.",
+    "rotuloAssistir": "Assistir",
+    "rotuloFacebook": "Assistir no Facebook",
+    "mensagensTitulo": "Mensagens recentes"
+  }
+}
