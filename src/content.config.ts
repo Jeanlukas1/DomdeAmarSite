@@ -264,6 +264,19 @@ const galeria = defineCollection({
   }),
 });
 
+const rodape = defineCollection({
+  loader: file('src/content/rodape.json'),
+  schema: z.object({
+    versiculo: z.object({ texto: z.string(), referencia: z.string() }),
+    enderecoTitulo: z.string(),
+    mapaRotulo: z.string(),
+    cultosTitulo: z.string(),
+    navTitulo: z.string(),
+    redesTitulo: z.string(),
+    direitos: z.string(),
+  }),
+});
+
 export const collections = {
   igreja,
   navegacao,
@@ -280,4 +293,5 @@ export const collections = {
   agenda,
   eventos,
   galeria,
+  rodape,
 };

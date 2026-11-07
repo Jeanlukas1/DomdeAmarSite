@@ -19,6 +19,7 @@ Todo o conteúdo fica em `src/content/`. Depois de editar, rode `npm run build`:
 | `agenda.json`       | textos da seção Agenda                                                                                                  |
 | `eventos.json`      | eventos: título, data (AAAA-MM-DD), hora, local, descrição, foto opcional. **Eventos passados somem sozinhos**          |
 | `galeria.json`      | fotos da galeria (id + alt), na ordem do mosaico. A proporção de cada foto é respeitada                                 |
+| `rodape.json`       | versículo do rodapé e títulos das colunas (endereço e cultos vêm de `igreja.json` e `cultos.json`)                      |
 
 > **Fotos:** use o id `pasta/arquivo` (sem .jpg), um `alt` que descreva a cena sem nomear pessoas, e `posicao` (object-position, ex.: `50% 30%`) para acertar o recorte.
 

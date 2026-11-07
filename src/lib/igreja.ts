@@ -1,7 +1,8 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
 /** Coleções de página única (entrada 'principal'). */
-type Unica = 'quemSomos' | 'historia' | 'cultosSecao' | 'assista' | 'cresca' | 'agenda' | 'galeria';
+type Unica =
+  'quemSomos' | 'historia' | 'cultosSecao' | 'assista' | 'cresca' | 'agenda' | 'galeria' | 'rodape';
 /** Coleções em lista com campo 'ordem'. */
 type Ordenada = 'pastores' | 'cultos' | 'ministerios';
 
