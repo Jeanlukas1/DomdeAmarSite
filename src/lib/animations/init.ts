@@ -9,6 +9,7 @@ import { initSmoothScroll } from './smooth';
 declare global {
   interface Window {
     __animReady?: boolean;
+    __heroReady?: boolean;
   }
 }
 

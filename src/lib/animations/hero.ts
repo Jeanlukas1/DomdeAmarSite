@@ -78,6 +78,8 @@ function iniciar() {
   const selo = secao?.querySelector<HTMLElement>('[data-hero-seal]');
   const svg = selo?.querySelector('svg');
   if (!secao || !selo || !svg) return;
+  // o fallback do BaseLayout já desistiu (JS chegou tarde): o selo está visível, não reanima
+  if (!document.documentElement.classList.contains('js-anim')) return;
 
   const tilt = selo.querySelector<HTMLElement>('[data-hero-tilt]')!;
   const brilho = secao.querySelector<HTMLElement>('[data-hero-glow]')!;
@@ -107,6 +109,7 @@ function iniciar() {
   };
 
   gsap.set(svg.querySelectorAll(':scope > :not(defs)'), { opacity: 1 });
+  window.__heroReady = true;
   gsap.set(brilho, { opacity: 0, scale: 0.8 });
 
   const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' }, onComplete: limpar });

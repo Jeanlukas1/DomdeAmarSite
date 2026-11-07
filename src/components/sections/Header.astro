@@ -149,22 +149,38 @@ const redes = [
 </div>
 
 <script>
+  import { getLenis } from '@/lib/animations/smooth';
+
   const header = document.querySelector<HTMLElement>('[data-header]')!;
   const menu = document.querySelector<HTMLElement>('[data-menu]')!;
   const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]')!;
   const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]')!;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const desktop = window.matchMedia('(min-width: 1024px)');
 
   // fundo sólido depois de rolar um pouco
   const onScroll = () => header.toggleAttribute('data-solid', window.scrollY > 40);
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  function setOpen(open: boolean) {
+  /** Tudo fora do menu fica inerte enquanto ele está aberto: o Tab não escapa do diálogo. */
+  function setBackgroundInert(inert: boolean) {
+    for (const el of document.body.children) {
+      if (el !== menu && el instanceof HTMLElement) el.inert = inert;
+    }
+  }
+
+  function setOpen(open: boolean, { restoreFocus = true } = {}) {
+    if (open === !menu.hidden) return;
     menu.hidden = !open;
     openBtn.setAttribute('aria-expanded', String(open));
+    setBackgroundInert(open);
     document.documentElement.style.overflow = open ? 'hidden' : '';
+    if (open) getLenis()?.stop();
+    else getLenis()?.start();
     if (open) {
       closeBtn.focus();
+      if (reduce.matches) return;
       menu.querySelectorAll<HTMLElement>('[data-menu-item]').forEach((el, i) => {
         el.animate(
           [
@@ -179,15 +195,20 @@ const redes = [
           },
         );
       });
-    } else openBtn.focus();
+    } else if (restoreFocus) openBtn.focus();
   }
 
   openBtn.addEventListener('click', () => setOpen(true));
   closeBtn.addEventListener('click', () => setOpen(false));
+  // ao tocar num link o foco segue para o destino, não volta ao botão
   menu.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).closest('a')) setOpen(false);
+    if ((e.target as HTMLElement).closest('a')) setOpen(false, { restoreFocus: false });
   });
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !menu.hidden) setOpen(false);
+    if (e.key === 'Escape') setOpen(false);
+  });
+  // virou desktop com o menu aberto: fecha e destrava a rolagem
+  desktop.addEventListener('change', (e) => {
+    if (e.matches) setOpen(false, { restoreFocus: false });
   });
 </script>
