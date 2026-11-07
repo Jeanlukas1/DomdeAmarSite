@@ -1,16 +1,17 @@
 # Documentação — Site Dom de Amar
 
-| Arquivo                                          | Conteúdo                                                                         |
-| ------------------------------------------------ | -------------------------------------------------------------------------------- |
-| [plano.md](plano.md)                             | Plano aprovado: stack, hero, direção visual, fases F1–F6 e critérios de "pronto" |
-| [arquitetura.md](arquitetura.md)                 | Como o projeto está organizado e por quê                                         |
-| [design-system.md](design-system.md)             | Tokens, paleta, tipografia e motivos visuais                                     |
-| [animacoes.md](animacoes.md)                     | Padrões de animação (`data-reveal` etc.) e regras de performance                 |
-| [conteudo.md](conteudo.md)                       | Como editar cultos, eventos, mensagens e dados da igreja                         |
-| [conteudo-pendente.md](conteudo-pendente.md)     | Todos os mockups e o que falta a igreja fornecer                                 |
-| [deploy.md](deploy.md)                           | Vercel, variáveis de ambiente e domínio                                          |
-| [sessoes/](sessoes/)                             | Registro de cada sessão de trabalho                                              |
-| [prompt-planejamento.md](prompt-planejamento.md) | Briefing original do projeto                                                     |
+| Arquivo                                              | Conteúdo                                                                         |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [plano.md](plano.md)                                 | Plano aprovado: stack, hero, direção visual, fases F1–F6 e critérios de "pronto" |
+| [arquitetura.md](arquitetura.md)                     | Como o projeto está organizado e por quê                                         |
+| [design-system.md](design-system.md)                 | Tokens, paleta, tipografia e motivos visuais                                     |
+| [animacoes.md](animacoes.md)                         | Padrões de animação (`data-reveal` etc.) e regras de performance                 |
+| [conteudo.md](conteudo.md)                           | Como editar cultos, eventos, mensagens e dados da igreja                         |
+| [conteudo-pendente.md](conteudo-pendente.md)         | Todos os mockups e o que falta a igreja fornecer                                 |
+| [design-com-impeccable.md](design-com-impeccable.md) | Fluxo de design com o impeccable (por seção e por página)                        |
+| [deploy.md](deploy.md)                               | Vercel, variáveis de ambiente e domínio                                          |
+| [sessoes/](sessoes/)                                 | Registro de cada sessão de trabalho                                              |
+| [prompt-planejamento.md](prompt-planejamento.md)     | Briefing original do projeto                                                     |
 
 ## Status das fases
 

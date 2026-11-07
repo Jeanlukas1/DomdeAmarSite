@@ -26,7 +26,7 @@ Não há testes automatizados. A verificação é feita com build, lint e Lighth
 ## Onde fica cada coisa
 
 - `src/design/tokens.json`: **fonte única** de cores, fontes, raios, easing e durações. `src/styles/tokens.css` é gerado e está no gitignore, então nunca edite à mão.
-- `src/styles/global.css`: base, utilitários (`eyebrow`, `container-site`), reduced-motion.
+- `src/styles/global.css`: base, utilitários (`eyebrow` só para metadados, `container-site`), reduced-motion.
 - `src/content/` + `src/content.config.ts`: todo o conteúdo (igreja, cultos, eventos, mensagens…). Para ler a config da igreja, use `getIgreja()` de `src/lib/igreja.ts`.
 - `src/components/ui/` (primitivos) · `sections/` (uma seção da página por arquivo) · `islands/` (únicos com JS de cliente).
 - `src/lib/animations/`: helpers de animação (padrão `data-reveal` etc.); ver `docs/animacoes.md`.
@@ -41,6 +41,10 @@ Não há testes automatizados. A verificação é feita com build, lint e Lighth
 - Imagens sempre via `<Image>`/`<Picture>` de `astro:assets`, com `alt`. Não identificar pessoas por nome nas legendas.
 - Embeds (YouTube, mapa, Facebook) carregam só com clique (click-to-load).
 - Classificação das fotos de templo (confirmada): `templo-antigo/` = templo antigo, `templo-novo/` = espaço atual, `participacoes/` = visita a outra igreja (não apresentar como nosso espaço).
+
+## Design com Impeccable
+
+Todo trabalho visual passa pela skill `impeccable`. `PRODUCT.md` e `DESIGN.md` ("O Selo da Graça") são a fonte de verdade. Fluxo por seção: `/impeccable shape` → `/nova-secao` → `/impeccable animate` → olhar em 375, 768 e 1440px e com reduced-motion → `/impeccable critique` → build + lint + commit. Ao fechar uma página: critique da página inteira → audit → polish. Detalhes e regras de qualidade em `docs/design-com-impeccable.md`.
 
 ## Regras para o Claude
 
