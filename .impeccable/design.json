@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-07T02:54:25.354Z",
+  "title": "Design System: Igreja Evangélica Dom de Amar",
+  "extensions": {
+    "colorMeta": {
+      "graca-red": {
+        "role": "primary",
+        "displayName": "Vermelho da Graça",
+        "canonical": "#de0101",
+        "tonalRamp": [
+          "oklch(18% 0.112 29)",
+          "oklch(27% 0.148 29)",
+          "oklch(36% 0.184 29)",
+          "oklch(46% 0.224 29)",
+          "oklch(57% 0.212 29)",
+          "oklch(69% 0.164 29)",
+          "oklch(82% 0.112 29)",
+          "oklch(95% 0.060 29)"
+        ]
+      },
+      "graca-red-bright": {
+        "role": "primary",
+        "displayName": "Vermelho Aceso",
+        "canonical": "#f0141a",
+        "tonalRamp": [
+          "oklch(18% 0.112 28)",
+          "oklch(27% 0.148 28)",
+          "oklch(36% 0.184 28)",
+          "oklch(46% 0.224 28)",
+          "oklch(57% 0.212 28)",
+          "oklch(69% 0.164 28)",
+          "oklch(82% 0.112 28)",
+          "oklch(95% 0.060 28)"
+        ]
+      },
+      "graca-red-deep": {
+        "role": "primary",
+        "displayName": "Vermelho Profundo",
+        "canonical": "#a90504",
+        "tonalRamp": [
+          "oklch(18% 0.093 28)",
+          "oklch(27% 0.123 28)",
+          "oklch(36% 0.153 28)",
+          "oklch(46% 0.187 28)",
+          "oklch(57% 0.177 28)",
+          "oklch(69% 0.137 28)",
+          "oklch(82% 0.093 28)",
+          "oklch(95% 0.050 28)"
+        ]
+      },
+      "wine-ember": {
+        "role": "secondary",
+        "displayName": "Vinho Brasa",
+        "canonical": "#8a0303",
+        "tonalRamp": [
+          "oklch(18% 0.079 27)",
+          "oklch(27% 0.105 27)",
+          "oklch(36% 0.130 27)",
+          "oklch(46% 0.159 27)",
+          "oklch(57% 0.150 27)",
+          "oklch(69% 0.116 27)",
+          "oklch(82% 0.079 27)",
+          "oklch(95% 0.043 27)"
+        ]
+      },
+      "wine": {
+        "role": "secondary",
+        "displayName": "Vinho",
+        "canonical": "#6f0101",
+        "tonalRamp": [
+          "oklch(18% 0.070 27)",
+          "oklch(27% 0.092 27)",
+          "oklch(36% 0.115 27)",
+          "oklch(46% 0.140 27)",
+          "oklch(57% 0.132 27)",
+          "oklch(69% 0.102 27)",
+          "oklch(82% 0.070 27)",
+          "oklch(95% 0.037 27)"
+        ]
+      },
+      "wine-night": {
+        "role": "secondary",
+        "displayName": "Vinho Noturno",
+        "canonical": "#2a0505",
+        "tonalRamp": [
+          "oklch(18% 0.028 25)",
+          "oklch(27% 0.037 25)",
+          "oklch(36% 0.046 25)",
+          "oklch(46% 0.056 25)",
+          "oklch(57% 0.053 25)",
+          "oklch(69% 0.041 25)",
+          "oklch(82% 0.028 25)",
+          "oklch(95% 0.015 25)"
+        ]
+      },
+      "night": {
+        "role": "secondary",
+        "displayName": "Noite",
+        "canonical": "#140708",
+        "tonalRamp": [
+          "oklch(18% 0.014 20)",
+          "oklch(27% 0.018 20)",
+          "oklch(36% 0.023 20)",
+          "oklch(46% 0.028 20)",
+          "oklch(57% 0.026 20)",
+          "oklch(69% 0.021 20)",
+          "oklch(82% 0.014 20)",
+          "oklch(95% 0.007 20)"
+        ]
+      },
+      "blush": {
+        "role": "tertiary",
+        "displayName": "Rubor",
+        "canonical": "#d08383",
+        "tonalRamp": [
+          "oklch(18% 0.042 18)",
+          "oklch(27% 0.056 18)",
+          "oklch(36% 0.069 18)",
+          "oklch(46% 0.084 18)",
+          "oklch(57% 0.080 18)",
+          "oklch(69% 0.061 18)",
+          "oklch(82% 0.042 18)",
+          "oklch(95% 0.022 18)"
+        ]
+      },
+      "blush-mist": {
+        "role": "tertiary",
+        "displayName": "Névoa Rosada",
+        "canonical": "#f7e3e1",
+        "tonalRamp": [
+          "oklch(18% 0.014 20)",
+          "oklch(27% 0.018 20)",
+          "oklch(36% 0.023 20)",
+          "oklch(46% 0.028 20)",
+          "oklch(57% 0.026 20)",
+          "oklch(69% 0.021 20)",
+          "oklch(82% 0.014 20)",
+          "oklch(95% 0.007 20)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#111111",
+        "tonalRamp": [
+          "oklch(18% 0.002 20)",
+          "oklch(27% 0.003 20)",
+          "oklch(36% 0.004 20)",
+          "oklch(46% 0.005 20)",
+          "oklch(57% 0.004 20)",
+          "oklch(69% 0.003 20)",
+          "oklch(82% 0.002 20)",
+          "oklch(95% 0.001 20)"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Tinta Suave",
+        "canonical": "#3d3536",
+        "tonalRamp": [
+          "oklch(18% 0.006 15)",
+          "oklch(27% 0.007 15)",
+          "oklch(36% 0.009 15)",
+          "oklch(46% 0.011 15)",
+          "oklch(57% 0.011 15)",
+          "oklch(69% 0.008 15)",
+          "oklch(82% 0.006 15)",
+          "oklch(95% 0.003 15)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Cinza Quente",
+        "canonical": "#6e6264",
+        "tonalRamp": [
+          "oklch(18% 0.007 10)",
+          "oklch(27% 0.009 10)",
+          "oklch(36% 0.011 10)",
+          "oklch(46% 0.014 10)",
+          "oklch(57% 0.013 10)",
+          "oklch(69% 0.010 10)",
+          "oklch(82% 0.007 10)",
+          "oklch(95% 0.004 10)"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Creme",
+        "canonical": "#fff8f3",
+        "tonalRamp": [
+          "oklch(18% 0.007 55)",
+          "oklch(27% 0.009 55)",
+          "oklch(36% 0.011 55)",
+          "oklch(46% 0.014 55)",
+          "oklch(57% 0.013 55)",
+          "oklch(69% 0.010 55)",
+          "oklch(82% 0.007 55)",
+          "oklch(95% 0.004 55)"
+        ]
+      },
+      "sand": {
+        "role": "neutral",
+        "displayName": "Areia",
+        "canonical": "#f4ebe4",
+        "tonalRamp": [
+          "oklch(18% 0.009 55)",
+          "oklch(27% 0.012 55)",
+          "oklch(36% 0.015 55)",
+          "oklch(46% 0.019 55)",
+          "oklch(57% 0.018 55)",
+          "oklch(69% 0.014 55)",
+          "oklch(82% 0.009 55)",
+          "oklch(95% 0.005 55)"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "Branco",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(18% 0.000 0)",
+          "oklch(27% 0.000 0)",
+          "oklch(36% 0.000 0)",
+          "oklch(46% 0.000 0)",
+          "oklch(57% 0.000 0)",
+          "oklch(69% 0.000 0)",
+          "oklch(82% 0.000 0)",
+          "oklch(95% 0.000 0)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "h1 do hero e aberturas de página."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Títulos de seção (h2)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Títulos de cartão e nome no header."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto corrido, até ~65ch."
+      },
+      "label": {
+        "displayName": "Eyebrow",
+        "purpose": "Caixa alta espaçada acima de cada título; ecoa o texto em arco do selo."
+      }
+    },
+    "shadows": [
+      {
+        "name": "brilho-botao",
+        "value": "0 10px 30px -10px rgb(222 1 1 / .7)",
+        "purpose": "Sob o botão primário; intensifica no hover."
+      },
+      {
+        "name": "selo-flutuante",
+        "value": "0 30px 80px -20px rgb(0 0 0 / .6)",
+        "purpose": "O selo sobre fundo escuro."
+      },
+      {
+        "name": "header-solido",
+        "value": "0 1px 0 rgb(0 0 0 / .06), 0 8px 30px -12px rgb(42 5 5 / .25)",
+        "purpose": "Separação do header ao rolar."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Entradas e transições de estado."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.65, 0, 0.35, 1)",
+        "purpose": "Movimentos de ida e volta."
+      },
+      {
+        "name": "duration-fast",
+        "value": "180ms",
+        "purpose": "Micro-interações."
+      },
+      {
+        "name": "duration-base",
+        "value": "320ms",
+        "purpose": "Hover, cor, sombra."
+      },
+      {
+        "name": "duration-reveal",
+        "value": "800ms",
+        "purpose": "Reveal no scroll."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão primário",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação principal: vir à igreja, contribuir.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Quero conhecer a igreja <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:12px 24px;border-radius:9999px;background:#de0101;color:#fff;font:600 .95rem/1 'Manrope Variable',system-ui,sans-serif;text-decoration:none;box-shadow:0 10px 30px -10px rgb(222 1 1/.7);transition:background-color 320ms cubic-bezier(.22,1,.36,1),box-shadow 320ms cubic-bezier(.22,1,.36,1),transform 180ms}.ds-btn-primary svg{transition:transform 320ms cubic-bezier(.22,1,.36,1)}.ds-btn-primary:hover{background:#f0141a;box-shadow:0 14px 36px -10px rgb(222 1 1/.9)}.ds-btn-primary:hover svg{transform:translateX(4px)}.ds-btn-primary:active{transform:scale(.98)}.ds-btn-primary:focus-visible{outline:3px solid #de0101;outline-offset:3px}"
+    },
+    {
+      "name": "Botão ghost (sobre escuro)",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Ação secundária no hero e faixas escuras.",
+      "html": "<div class=\"ds-dark\"><a class=\"ds-btn-ghost\" href=\"#\">Preciso de oração ou ajuda</a></div>",
+      "css": ".ds-dark{background:#140708;padding:24px;border-radius:20px}.ds-btn-ghost{display:inline-flex;align-items:center;min-height:48px;padding:12px 24px;border-radius:9999px;color:#fff8f3;border:1px solid rgb(255 248 243/.3);font:600 .95rem/1 'Manrope Variable',system-ui,sans-serif;text-decoration:none;transition:border-color 320ms,background-color 320ms}.ds-btn-ghost:hover{border-color:#fff8f3;background:rgb(255 248 243/.05)}.ds-btn-ghost:focus-visible{outline:3px solid #de0101;outline-offset:3px}"
+    },
+    {
+      "name": "Botão claro (sobre vinho)",
+      "kind": "button",
+      "refersTo": "button-light",
+      "description": "CTA sobre faixas vinho (Novo Templo, Contribua).",
+      "html": "<div class=\"ds-wine\"><a class=\"ds-btn-light\" href=\"#\">Ajude a construir</a></div>",
+      "css": ".ds-wine{background:#6f0101;padding:24px;border-radius:20px}.ds-btn-light{display:inline-flex;align-items:center;min-height:48px;padding:12px 24px;border-radius:9999px;background:#fff8f3;color:#6f0101;font:600 .95rem/1 'Manrope Variable',system-ui,sans-serif;text-decoration:none;transition:background-color 320ms}.ds-btn-light:hover{background:#fff}.ds-btn-light:focus-visible{outline:3px solid #fff8f3;outline-offset:3px}"
+    },
+    {
+      "name": "Navegação (header sólido)",
+      "kind": "nav",
+      "refersTo": "header-solid",
+      "description": "Links com sublinhado vermelho e CTA em pílula.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\">Visite</a><a href=\"#\">Assista Online</a><a href=\"#\">Cresça na Fé</a><a class=\"ds-nav-cta\" href=\"#\">Contribua</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:4px;padding:0 16px;height:72px;background:rgb(255 248 243/.9);box-shadow:0 1px 0 rgb(0 0 0/.06),0 8px 30px -12px rgb(42 5 5/.25);font:500 .875rem/1 'Manrope Variable',system-ui,sans-serif}.ds-nav a{position:relative;color:#111;text-decoration:none;padding:12px}.ds-nav a:not(.ds-nav-cta)::after{content:'';position:absolute;left:12px;right:12px;bottom:6px;height:2px;border-radius:2px;background:#de0101;transform:scaleX(0);transform-origin:left;transition:transform 320ms cubic-bezier(.22,1,.36,1)}.ds-nav a:not(.ds-nav-cta):hover::after{transform:scaleX(1)}.ds-nav-cta{margin-left:8px;background:#de0101;color:#fff!important;border-radius:9999px;padding:12px 20px!important;font-weight:600}.ds-nav-cta:hover{background:#f0141a}"
+    },
+    {
+      "name": "Cabeçalho de seção",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "Eyebrow em caixa alta + título serifado (The Arc Echo Rule).",
+      "html": "<header class=\"ds-sec\"><p class=\"ds-eyebrow\">Nossa história</p><h2 class=\"ds-h2\">Oito anos levantando uma casa de Graça</h2></header>",
+      "css": ".ds-sec{background:#fff8f3;padding:32px}.ds-eyebrow{margin:0;font:700 .75rem/1 'Manrope Variable',system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#a90504}.ds-h2{margin:12px 0 0;font:400 2.25rem/1.1 'Fraunces Variable',Georgia,serif;color:#111;text-wrap:balance}"
+    },
+    {
+      "name": "Cartão",
+      "kind": "card",
+      "refersTo": "",
+      "description": "Cartão macio para cultos, eventos e ministérios.",
+      "html": "<article class=\"ds-card\"><p class=\"ds-card-eyebrow\">Domingo · 18h</p><h3 class=\"ds-card-title\">Culto da Plenitude do Amor</h3><p class=\"ds-card-body\">Louvor, Palavra e comunhão para toda a família.</p></article>",
+      "css": ".ds-card{max-width:320px;background:#fff;border:1px solid #f4ebe4;border-radius:20px;padding:24px;box-shadow:0 18px 40px -24px rgb(111 1 1/.35);transition:transform 320ms cubic-bezier(.22,1,.36,1),box-shadow 320ms}.ds-card:hover{transform:translateY(-4px);box-shadow:0 26px 50px -24px rgb(111 1 1/.45)}.ds-card-eyebrow{margin:0;font:700 .75rem/1 'Manrope Variable',system-ui,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#a90504}.ds-card-title{margin:10px 0 0;font:600 1.25rem/1.25 'Fraunces Variable',Georgia,serif;color:#111}.ds-card-body{margin:8px 0 0;font:400 1rem/1.6 'Manrope Variable',system-ui,sans-serif;color:#3d3536}"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Selo da Graça",
+    "overview": "Tudo gira em torno do selo: o círculo branco com borda vermelha, o coração pintado em duas pinceladas e \"Dom de Amar\" escrito à mão. O site se comporta como um convite impresso e uma carta de amor, não como um portal corporativo. As formas recorrentes vêm do próprio selo: o círculo, a pincelada vermelha e o mini-coração entre dois traços. Elas funcionam como assinatura e pontuação, nunca como enfeite solto. O ritmo alterna faixas escuras e quentes, onde o selo brilha como uma brasa, com páginas creme serenas. O movimento é parte da identidade, mas tudo funciona estático com prefers-reduced-motion.",
+    "keyCharacteristics": [
+      "Selo do coração como assinatura e elemento de transição (hero → ícone do header).",
+      "Alternância entre faixas escuras vinho e superfícies creme.",
+      "Vermelho da Graça reservado para ação e emoção.",
+      "Serifada display calorosa + sans legível + eyebrow em caixa alta espaçada.",
+      "Formas macias: pílulas, cartões arredondados, sombras quentes e difusas.",
+      "Fotos reais da comunidade. Nenhuma imagem genérica."
+    ],
+    "rules": [
+      {
+        "name": "The Ember Rule",
+        "section": "colors",
+        "body": "O vermelho da Graça aparece como ponto de calor: CTA, pincelada, coração. Uma seção clara nunca é \"pintada\" de vermelho. Superfícies fortes usam o vinho, e o vermelho fica para o que pede ação."
+      },
+      {
+        "name": "The Warm Paper Rule",
+        "section": "colors",
+        "body": "Neutros são sempre quentes (creme, areia, tinta levemente avermelhada). Cinzas frios e azulados não entram."
+      },
+      {
+        "name": "The Arc Echo Rule",
+        "section": "typography",
+        "body": "Toda seção abre com um eyebrow em caixa alta espaçada, seguido do título serifado. É a mesma voz do \"IGREJA EVANGÉLICA\" sobre o coração."
+      },
+      {
+        "name": "The Script Stays Home Rule",
+        "section": "typography",
+        "body": "A letra cursiva pertence ao selo. Títulos, botões e navegação nunca usam fonte script."
+      },
+      {
+        "name": "The Warm Shadow Rule",
+        "section": "elevation",
+        "body": "Sombras levam a cor da marca (vinho ou vermelho) em baixa opacidade. Sombra cinza neutra não entra."
+      }
+    ],
+    "dos": [
+      "Do abrir cada seção com eyebrow + título serifado (The Arc Echo Rule).",
+      "Do usar o selo, o círculo, a pincelada e o mini-coração entre traços como assinatura e pontuação.",
+      "Do alternar faixas escuras vinho com superfícies creme para dar ritmo.",
+      "Do usar sombras quentes e tingidas e cantos macios (pílulas, lg/xl).",
+      "Do usar fotos reais da igreja, com recorte pensado para fotos verticais de celular.",
+      "Do garantir contraste AA: vermelho em texto pequeno usa graca-red-deep."
+    ],
+    "donts": [
+      "Don't pintar seções claras inteiras de vermelho. Superfície forte é vinho (The Ember Rule).",
+      "Don't usar fonte cursiva fora do selo (The Script Stays Home Rule).",
+      "Don't usar cinzas frios, sombras cinza puro ou fundo de página branco puro.",
+      "Don't usar a chama branca da arte de horários. A marca é o selo do coração.",
+      "Don't usar imagens de banco genéricas."
+    ]
+  }
+}
