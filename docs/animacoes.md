@@ -16,10 +16,43 @@ O init vive em `src/lib/animations/init.ts`, carregado uma vez pelo layout. Com 
 ## Regras
 
 - Anime só `transform`/`opacity` (e `clip-path` com moderação).
-- Reveals com `once: true`. Partículas e canvas pausam fora da tela.
+- **Narrativa toca uma vez; navegação acompanha o scroll** (ver Política de repetição). Partículas e canvas pausam fora da tela.
 - Nunca esconda conteúdo sem JS: o estado inicial "escondido" só é aplicado depois que o JS roda (classe `js` no `<html>`).
 - Durações de 0.6–0.9s, ease `power3.out` (CSS: `--ease-out`).
 - Teste em CPU 4× slowdown antes de commitar animação pesada.
+
+## Política de repetição
+
+Quem volta ao topo não deve assistir tudo de novo, de trás para frente. A regra:
+
+- **Movimento que conta uma história** (revelar, rasgar, cair) acontece **uma vez por carregamento**.
+- **Movimento que é navegação ou medida de posição** continua com scrub nos dois sentidos, porque informa onde a pessoa está.
+
+| Animação                             | Comportamento                                                      | Por quê                                                                     |
+| ------------------------------------ | ------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| reveal, split, brush                 | `once: true`                                                       | narrativa                                                                   |
+| Hero: pintura do selo                | uma vez; se a página abre com o hero fora da tela, pula para o fim | não pintar fora de vista                                                    |
+| Hero: selo → logo do header          | scrub nos dois sentidos                                            | navegação: no topo, o selo volta para casa (um hero sem selo fica quebrado) |
+| Aliança: véu fecha + rasga           | **só para frente**; depois colapsa sem pulo                        | o véu não se costura de volta (Mt 27.51)                                    |
+| História desktop: trilha + pincelada | scrub nos dois sentidos                                            | navegação: o conteúdo está na trilha                                        |
+| História: fotos que caem             | uma vez (`toggleActions: 'play none none none'`)                   | narrativa                                                                   |
+| História celular: linha vertical     | scrub                                                              | indicador de progresso                                                      |
+| Assista: vídeo "se aproxima"         | só para frente                                                     | é um reveal ligado ao dedo                                                  |
+| `data-parallax`                      | scrub                                                              | profundidade (hoje sem uso)                                                 |
+
+Não há memória entre carregamentos (sem `sessionStorage`): recarregar é intencional.
+
+### Helpers (`src/lib/animations/umaVez.ts`)
+
+- `soParaFrente(animacao, vars, suavidade)`: um ScrollTrigger sem animação acoplada. O `onUpdate` guarda o maior progresso e anima até ele, com a sensação de `scrub`. Retorna `{ st, concluida }`.
+- `semPulo(fn)`: mede a seção do meio da tela, roda `fn` (cria ou destrói pins) + `refresh()` e compensa a rolagem (`pularPara` em `lib/rolagem.ts`). Use ao criar um pin depois da carga (a pessoa pode já estar abaixo, vinda de `/#cultos`) e ao desfazer um pin acima da tela.
+- `jaPassou(el)`: o elemento está inteiro acima da tela. Nesse caso, não crie o pin: aplique direto o estado final.
+- `concluirAntesDeAncora(el, fn)`: clique (fase de captura, antes do Lenis) numa âncora interna que leva para depois de `el`, com a pessoa acima dele, chama `fn`. Assim a animação não toca fora de contexto no caminho e o destino já é medido sem o pin.
+- `lib/rolagem.ts`: `pularPara(y)` (sem animação, com `lenis.resize()` antes) e `quandoParar(fn)` (rolagem e inércia paradas por ~150 ms).
+
+### Âncoras
+
+O Lenis respeita o `scroll-margin-top` das seções (`scroll-mt-20`), então `smooth.ts` não passa `offset` (com os dois, o desconto dobrava e a seção parava 160px abaixo do topo).
 
 ## Carregamento (protege o LCP)
 
@@ -59,6 +92,8 @@ Transição entre o hero e o Quem somos, variante "o véu que se rasga" (Mt 27.5
 - **Pin de 0,65 tela (scrub):** a noite sai de trás → a borda rasgada acende no lugar da linha e o véu abre primeiro no alto (giro pelos cantos de baixo) → as metades saem para os lados → o versículo fica sozinho no creme.
 - **Borda rasgada:** fica dentro da borda interna de cada metade: faixa vermelha + creme além dos dentes (`fio` e `vao` no frontmatter), então as duas bordas aparecem mesmo com as metades sobrepostas.
 - **Header:** recebe `data-sobre-veu` (transparente) no início do pin, para o rasgo nascer na borda de cima.
+- **Uma vez:** chegada e pin usam `soParaFrente`, então subir no meio do pin não costura o véu. Depois do rasgo, quando a seção (com o espaço do pin) sai inteira por cima da tela e a rolagem para, os gatilhos são destruídos dentro de `semPulo` e fica `.alianca--rasgada` (o último quadro: o versículo no creme, sem as metades, a noite e a linha). Nada na tela se move.
+- **Entrada direta:** se o módulo inicia com a seção já acima da tela (âncora vinda de outra página, recarga no meio), não cria pin e aplica `.alianca--rasgada`. Clique numa âncora mais abaixo estando acima do véu também vai direto para esse estado (`concluirAntesDeAncora`).
 - **Reduced-motion / sem JS:** o HTML já é o estado final (véu assentado, versículo legível, onda creme). O módulo nem carrega com reduced-motion.
 - **Fallback:** se o `import()` falhar ou não marcar `data-pronto` em 6 s, a seção ganha `.alianca--estatica` e volta ao estado estático (nunca fica uma tela escura vazia).
 - A linha de luz não usa `vector-effect: non-scaling-stroke`: com ele o tracejado do DrawSVG é medido em pixels de tela e a linha sai com falhas.
@@ -69,7 +104,8 @@ Transição entre o hero e o Quem somos, variante "o véu que se rasga" (Mt 27.5
 - **Desktop + movimento:** a seção é fixada (pin) e a trilha corre na horizontal (scrub). A pincelada vermelha se desenha com o progresso, e as fotos impressas caem girando (`containerAnimation`).
 - **Celular:** a linha vertical vermelha desce com o scroll, e as fotos caem ao entrar.
 - **Reduced-motion / sem JS:** layout empilhado, estático (a classe `is-horizontal` só é aplicada pelo JS).
-- Depois de criar o pin: `ScrollTrigger.sort()` + `refresh()`, para os gatilhos das seções seguintes considerarem o espaço do pin.
+- Depois de criar o pin: `ScrollTrigger.sort()` + `refresh()`, para os gatilhos das seções seguintes considerarem o espaço do pin. No desktop, o pin é montado dentro de `semPulo` (ele nasce quando o navegador fica ocioso, às vezes depois do salto para `/#cultos`).
+- Trilha e pincelada continuam com scrub (navegação). As fotos caem uma vez.
 
 ## Helpers novos
 

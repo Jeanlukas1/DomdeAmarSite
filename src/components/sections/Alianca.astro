@@ -169,6 +169,13 @@ const vao = `M14 0 L9 0 ${borda} L7 100 L14 100 Z`;
   :global(.js-anim) .alianca:not(.alianca--estatica) [data-alianca-onda] {
     display: none;
   }
+  /* depois do rasgo (uma vez por carregamento): fica o último quadro, o versículo no creme.
+     O véu não é costurado de volta ao subir a página. */
+  .alianca--rasgada .alianca__metade,
+  .alianca--rasgada .alianca__noite,
+  .alianca--rasgada .alianca__linha {
+    display: none;
+  }
   /* sem movimento: a noite fica escondida sob o véu assentado */
   :global(html:not(.js-anim)) .alianca__noite,
   .alianca--estatica .alianca__noite {

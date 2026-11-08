@@ -99,20 +99,21 @@ const linkDe = (youtubeId: string | null) =>
 <script>
   import { quandoOcioso, reduceMotion } from '@/lib/agendar';
 
-  // o vídeo "se aproxima" enquanto entra na tela: começa um pouco menor e mais escuro
+  // o vídeo "se aproxima" enquanto entra na tela: começa um pouco menor e mais escuro. Ligado ao
+  // scroll só para frente: subir a página não o afasta de novo (docs/animacoes.md).
   const alvo = document.querySelector<HTMLElement>('[data-assista-video]');
   if (alvo && !reduceMotion()) {
     quandoOcioso(async () => {
       const { gsap } = await import('@/lib/animations/motion');
-      gsap.fromTo(
-        alvo,
-        { scale: 0.9, opacity: 0.55 },
-        {
-          scale: 1,
-          opacity: 1,
-          ease: 'none',
-          scrollTrigger: { trigger: alvo, start: 'top 95%', end: 'top 35%', scrub: true },
-        },
+      const { soParaFrente } = await import('@/lib/animations/umaVez');
+      soParaFrente(
+        gsap.fromTo(
+          alvo,
+          { scale: 0.9, opacity: 0.55 },
+          { scale: 1, opacity: 1, ease: 'none', paused: true },
+        ),
+        { trigger: alvo, start: 'top 95%', end: 'top 35%' },
+        0.4,
       );
     });
   }
