@@ -18,7 +18,7 @@
         "alt": "Irmãos orando juntos, de mãos estendidas, durante o culto de oração",
         "posicao": "50% 35%"
       },
-      "mock": true
+      "mock": false
     },
     {
       "id": "domingo-estudo",
@@ -38,7 +38,7 @@
         "alt": "Pregador no púlpito com um versículo de Provérbios projetado no telão",
         "posicao": "50% 40%"
       },
-      "mock": true
+      "mock": false
     },
     {
       "id": "domingo-plenitude",
@@ -58,7 +58,7 @@
         "alt": "Pregador ministrando com a banda ao fundo, durante o culto de domingo",
         "posicao": "50% 40%"
       },
-      "mock": true
+      "mock": false
     },
     {
       "id": "santa-ceia",
