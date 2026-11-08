@@ -12,7 +12,6 @@
       "substituiODia": false,
       "duracaoMin": 120,
       "recebeTema": false,
-      "nomeCurto": "",
       "foto": {
         "id": "oracao/oracao-38",
         "alt": "Irmãos orando juntos, de mãos estendidas, durante o culto de oração",
@@ -32,7 +31,6 @@
       "substituiODia": false,
       "duracaoMin": 120,
       "recebeTema": false,
-      "nomeCurto": "",
       "foto": {
         "id": "cultos-louvor/cultos-louvor-03",
         "alt": "Pregador no púlpito com um versículo de Provérbios projetado no telão",
@@ -52,7 +50,6 @@
       "substituiODia": false,
       "duracaoMin": 120,
       "recebeTema": true,
-      "nomeCurto": "",
       "foto": {
         "id": "cultos-louvor/cultos-louvor-06",
         "alt": "Pregador ministrando com a banda ao fundo, durante o culto de domingo",
@@ -63,7 +60,7 @@
     {
       "id": "santa-ceia",
       "ordem": 4,
-      "dia": "2º domingo do mês",
+      "dia": "No 2º domingo do mês ás",
       "diaSemana": "0",
       "hora": "10:00",
       "nome": "Santa Ceia e almoço ágape",
@@ -78,7 +75,7 @@
         "alt": "Irmãos reunidos em volta de um senhor sentado, sorrindo",
         "posicao": "50% 40%"
       },
-      "mock": true
+      "mock": false
     }
   ]
 }
