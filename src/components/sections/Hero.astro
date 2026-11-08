@@ -2,16 +2,28 @@
 import logoRaw from '@/assets/logo/logo.svg?raw';
 import Button from '@/components/ui/Button.astro';
 import Icon from '@/components/ui/Icon.astro';
-import { getHero, getIgreja, getOrdenados } from '@/lib/igreja';
-import { proximoCulto } from '@/lib/proximoCulto';
+import { getHero, getIgreja, getOrdenados, getPrincipal } from '@/lib/igreja';
+import { gradeSemanal, horaCurta } from '@/lib/encontros';
 
 const hero = await getHero();
 const igreja = await getIgreja();
 const cultos = await getOrdenados('cultos');
-const horaCurta = (hora: string) => hora.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
-// valor do build (sem JS); o navegador recalcula para "agora"
-const noBuild = proximoCulto(cultos)?.culto;
-const proximoTexto = noBuild ? `${noBuild.dia}, ${horaCurta(noBuild.hora)}` : '';
+const ui = await getPrincipal('ui');
+// sem JS: a grade semanal, sempre verdadeira ("Terça 19h · Domingo 9h e 18h"). O navegador troca
+// pelo próximo encontro de fato (com a Ceia no 1º domingo) — ver src/lib/encontros.ts.
+const grade = gradeSemanal(cultos, ui.diasSemana, ui.a11y.e);
+const encontros = cultos.map(
+  ({ id, diaSemana, hora, ocorrencia, substituiODia, duracaoMin, recebeTema, nomeCurto }) => ({
+    id,
+    diaSemana,
+    hora,
+    ocorrencia,
+    substituiODia,
+    duracaoMin,
+    recebeTema,
+    rotulo: `${ui.diasSemana[diaSemana]}, ${horaCurta(hora)}${nomeCurto ? ` · ${nomeCurto}` : ''}`,
+  }),
+);
 // SVG inline para poder animar cada camada (ids: borda, coracao, fita-esq, fita-dir, nome, dom, de, amar, arco-texto, slogan, mini-coracao)
 const logo = logoRaw.replace('<svg ', '<svg class="block h-auto w-full overflow-visible" ');
 const PARTICULAS = 14;
@@ -54,12 +66,8 @@ const PARTICULAS = 14;
       <!-- "quando e onde" logo no topo: o próximo culto é recalculado no navegador -->
       <a
         href={hero.proximo.href}
-        data-hero-proximo={JSON.stringify(
-          cultos.map(({ id, diaSemana, hora }) => ({ id, diaSemana, hora })),
-        )}
-        data-rotulos={JSON.stringify(
-          Object.fromEntries(cultos.map((c) => [c.id, `${c.dia}, ${horaCurta(c.hora)}`])),
-        )}
+        data-hero-proximo={JSON.stringify(encontros)}
+        data-rotulo={hero.proximo.rotulo}
         class="hero-in group mt-8 inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 py-2 pr-4 pl-2 text-sm text-blush-100 transition-colors duration-base hover:border-white/40 hover:bg-white/10"
         style="--d: 0.6s"
       >
@@ -68,7 +76,8 @@ const PARTICULAS = 14;
         </span>
         <span class="text-left leading-snug">
           <span class="font-semibold text-cream">
-            {hero.proximo.rotulo}: <span data-hero-proximo-quando>{proximoTexto}</span>
+            <span data-hero-proximo-rotulo>{hero.proximo.rotuloGrade}</span>:{' '}
+            <span data-hero-proximo-quando>{grade}</span>
           </span>
           <span class="block text-blush-100/90 sm:inline">
             <span class="hidden sm:inline" aria-hidden="true">
@@ -160,14 +169,22 @@ const PARTICULAS = 14;
   import { depoisDaPintura } from '@/lib/agendar';
   // o texto do hero (LCP) pinta primeiro; o selo (GSAP) carrega e começa no frame seguinte
   depoisDaPintura(() => import('@/lib/animations/hero'));
-  import { proximoCulto } from '@/lib/proximoCulto';
+  import { proximoEncontro, type Encontro } from '@/lib/encontros';
+  import { agoraDaPagina } from '@/lib/agoraDaPagina';
 
-  // atualiza "Próximo culto" para o momento da visita (o HTML traz o valor do build)
+  // troca a grade semanal (HTML) pelo próximo encontro de fato, no momento da visita. Roda antes
+  // de a linha aparecer (.hero-in entra aos 0,6 s), então não há troca visível.
   const link = document.querySelector<HTMLElement>('[data-hero-proximo]');
+  const rotulo = link?.querySelector('[data-hero-proximo-rotulo]');
   const alvo = link?.querySelector('[data-hero-proximo-quando]');
-  if (link && alvo) {
-    const r = proximoCulto(JSON.parse(link.dataset.heroProximo ?? '[]'));
-    const rotulos = JSON.parse(link.dataset.rotulos ?? '{}');
-    if (r && rotulos[r.culto.id]) alvo.textContent = rotulos[r.culto.id];
+  if (link && rotulo && alvo) {
+    const encontros: (Encontro & { rotulo: string })[] = JSON.parse(
+      link.dataset.heroProximo ?? '[]',
+    );
+    const r = proximoEncontro(encontros, agoraDaPagina());
+    if (r) {
+      rotulo.textContent = link.dataset.rotulo ?? '';
+      alvo.textContent = r.vez.encontro.rotulo;
+    }
   }
 </script>

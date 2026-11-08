@@ -57,7 +57,7 @@ src/
   content.config.ts              # schemas Zod (campo mock: boolean)
   design/tokens.json             # fonte única dos tokens
   lib/animations/                # reveal.ts, parallax.ts, split.ts, hero.ts, init.ts
-  lib/                           # proximoCulto.ts, pix.ts, seo.ts
+  lib/                           # encontros.ts, pix.ts, seo.ts
   layouts/BaseLayout.astro
   pages/index.astro, visite.astro, assista.astro, cresca.astro, mensagens/, contribua.astro, api/*.json.ts
   styles/global.css, tokens.css

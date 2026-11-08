@@ -73,7 +73,8 @@ const hero = defineCollection({
     texto: z.string(),
     ctaPrimario: link,
     ctaSecundario: link,
-    proximo: link,
+    /** próximo encontro; sem JS, mostra a grade semanal com `rotuloGrade` */
+    proximo: link.extend({ rotuloGrade: z.string() }),
     rolar: z.string(),
   }),
 });
@@ -156,6 +157,16 @@ const cultos = defineCollection({
     hora: z.string().regex(/^\d{2}:\d{2}$/),
     nome: z.string(),
     descricao: z.string(),
+    /** semanal ou n-ésimo dia da semana do mês ("1" = 1º domingo); ver src/lib/encontros.ts */
+    ocorrencia: z.enum(['semanal', '1', '2', '3', '4', 'ultima']).default('semanal'),
+    /** neste dia, os outros encontros não acontecem (ex.: a Santa Ceia) */
+    substituiODia: z.boolean().default(false),
+    /** minutos em que conta como "acontecendo agora" */
+    duracaoMin: z.coerce.number().int().min(30).default(120),
+    /** o tema da semana (cultos-secao → semana) é deste encontro */
+    recebeTema: z.boolean().default(false),
+    /** rótulo curto no hero (ex.: "Santa Ceia"); vazio nos encontros semanais */
+    nomeCurto: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
     foto,
     mock: z.boolean().default(false),
   }),
@@ -170,13 +181,16 @@ const cultosSecao = defineCollection({
     proximoRotulo: z.string(),
     quando: z.object({ agora: z.string(), hoje: z.string(), amanha: z.string() }),
     comoChegar: link,
+    /** aviso nos encontros cancelados pelo substituto do dia; {nome} e {hora} são trocados */
+    avisoSubstituido: z.string(),
+    /** tema do encontro que recebe o tema (o culto, o dia e a hora vêm do calendário) */
     semana: z.object({
       mock: z.boolean().default(false),
-      rotulo: z.string(),
+      /** AAAA-MM-DD: o dia do encontro deste tema; depois dele, o tema some até ser trocado */
+      data: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
       tema: z.string(),
       referencia: z.string().optional(),
       pregador: z.string(),
-      culto: z.string(),
     }),
   }),
 });
@@ -386,6 +400,8 @@ const ui = defineCollection({
       voltar: z.string(),
       cultos: z.string(),
     }),
+    /** domingo a sábado, como aparecem no site */
+    diasSemana: z.array(z.string()).length(7),
     a11y: z.object({
       pularConteudo: z.string(),
       navPrincipal: z.string(),
@@ -398,6 +414,7 @@ const ui = defineCollection({
       textoBiblico: z.string(),
       pregador: z.string(),
       as: z.string(),
+      e: z.string(),
     }),
   }),
 });

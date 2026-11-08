@@ -8,6 +8,11 @@
       "hora": "19:00",
       "nome": "Culto de Oração",
       "descricao": "Uma noite para entregar tudo nas mãos de Deus. Ninguém ora sozinho aqui.",
+      "ocorrencia": "semanal",
+      "substituiODia": false,
+      "duracaoMin": 120,
+      "recebeTema": false,
+      "nomeCurto": "",
       "foto": {
         "id": "oracao/oracao-38",
         "alt": "Irmãos orando juntos, de mãos estendidas, durante o culto de oração",
@@ -23,6 +28,11 @@
       "hora": "09:00",
       "nome": "Seminário dom de Amar",
       "descricao": "Bíblia aberta, perguntas bem-vindas. Uma manhã para entender a Graça com calma.",
+      "ocorrencia": "semanal",
+      "substituiODia": false,
+      "duracaoMin": 120,
+      "recebeTema": false,
+      "nomeCurto": "",
       "foto": {
         "id": "cultos-louvor/cultos-louvor-03",
         "alt": "Pregador no púlpito com um versículo de Provérbios projetado no telão",
@@ -38,9 +48,34 @@
       "hora": "18:00",
       "nome": "Culto da Plenitude do Amor de Deus",
       "descricao": "Louvor, Palavra e comunhão para toda a família. O nosso encontro principal.",
+      "ocorrencia": "semanal",
+      "substituiODia": false,
+      "duracaoMin": 120,
+      "recebeTema": true,
+      "nomeCurto": "",
       "foto": {
         "id": "cultos-louvor/cultos-louvor-06",
         "alt": "Pregador ministrando com a banda ao fundo, durante o culto de domingo",
+        "posicao": "50% 40%"
+      },
+      "mock": true
+    },
+    {
+      "id": "santa-ceia",
+      "ordem": 4,
+      "dia": "1º domingo do mês",
+      "diaSemana": "0",
+      "hora": "10:00",
+      "nome": "Santa Ceia e almoço ágape",
+      "descricao": "A mesa do Senhor e depois a nossa: partimos o pão e almoçamos juntos. Neste domingo não há o Seminário nem o culto da noite.",
+      "ocorrencia": "1",
+      "substituiODia": true,
+      "duracaoMin": 240,
+      "recebeTema": true,
+      "nomeCurto": "Santa Ceia",
+      "foto": {
+        "id": "comunhao/comunhao-11",
+        "alt": "Irmãos reunidos em volta de um senhor sentado, sorrindo",
         "posicao": "50% 40%"
       },
       "mock": true

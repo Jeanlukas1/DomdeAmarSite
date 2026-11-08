@@ -13,6 +13,27 @@ Quem não é técnico edita pelo painel em **`/keystatic`**:
 - **Regra para quem programa:** o painel regrava o arquivo inteiro e descarta campos que não conhece. Campo novo num desses arquivos precisa entrar em `src/content.config.ts` **e** em `keystatic.config.ts`.
 - Listas editadas pelo painel ficam no formato `{ "itens": [...] }`, e esses arquivos estão no `.prettierignore` (o painel usa a formatação dele).
 
+## Encontros e Santa Ceia (automático)
+
+O calendário vem de `src/lib/encontros.ts` (fuso de São Paulo, sem DOM, reaproveitável no app). Cada item de `cultos.json` tem:
+
+- `ocorrencia`: `semanal` ou `1`/`2`/`3`/`4`/`ultima` (n-ésimo dia da semana no mês). A Santa Ceia é `1` com `diaSemana: 0`, ou seja, o 1º domingo.
+- `substituiODia`: neste dia, os outros encontros não acontecem. Na Ceia, o Seminário (9h) e o Culto da Plenitude (18h) somem daquele domingo. A terça não muda.
+- `duracaoMin`: quanto tempo o encontro conta como "Acontecendo agora". O padrão é 120; a Ceia + almoço é 240 (10h–14h).
+- `recebeTema`: o tema da semana pertence a este encontro (Plenitude e Ceia). Na semana da Ceia, o destaque vira a Ceia sozinho.
+- `nomeCurto`: aparece no topo ao lado do horário ("Domingo, 10h · Santa Ceia").
+
+O que o site faz sozinho:
+
+- **Hero:** mostra o próximo encontro de fato. Sem JS, mostra a grade semanal ("Terça 19h · Domingo 9h e 18h").
+- **Cultos:** o card da Ceia aparece só na semana dela (do fim do domingo anterior até as 14h do domingo de Ceia), e os cards do Seminário e da Plenitude ganham o aviso `avisoSubstituido`. Sem JS, a Ceia aparece sempre, com a regra "1º domingo do mês".
+- **Destaque:** o culto, o dia e a hora vêm do calendário. O tema só aparece se `semana.data` for o dia desse encontro; depois dele, o destaque mostra só o próximo encontro até o tema ser trocado.
+- A Ceia **não** entra na Agenda (`eventos.json`) nem no JSON-LD (`OpeningHoursSpecification` não expressa "1º domingo").
+
+**O que você edita toda semana no Keystatic** (Cultos e agenda → Seção Cultos e destaque da semana): **dia do encontro deste tema**, tema, texto bíblico e pregador. Nada mais.
+
+Para conferir: `npm run checar:encontros` (casos de borda: virada de mês e de ano, dia 1 no domingo, sábado antes da Ceia, limites da duração). No dev, `?agora=2026-12-05T22:00` simula a data e a hora (horário de São Paulo).
+
 | Arquivo             | O que é                                                                                                                                                                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `igreja.json`       | nome, slogan, endereço, contatos, redes                                                                                                                                                                  |
@@ -23,8 +44,8 @@ Quem não é técnico edita pelo painel em **`/keystatic`**:
 | `quem-somos.json`   | título, carta, missão, visão, fotos (id em `src/assets/fotos` + `alt` + `posicao`)                                                                                                                       |
 | `pastores.json`     | liderança: nome, função, ordem (foto opcional)                                                                                                                                                           |
 | `historia.json`     | título, capítulos (marco, título, texto, 1–2 fotos), comparador antes/agora, chamada para ajudar a construir                                                                                             |
-| `cultos.json`       | cada culto: dia, `diaSemana` (0 = domingo), `hora` (HH:MM), nome, descrição, foto. O site marca sozinho o próximo culto                                                                                  |
-| `cultos-secao.json` | título da seção e o **destaque da semana** (tema, texto bíblico, pregador): troque toda semana                                                                                                           |
+| `cultos.json`       | cada encontro: dia (como aparece), `diaSemana` (0 = domingo), `hora`, nome, descrição, foto e a regra do calendário (ver **Encontros e Santa Ceia** abaixo). O site calcula sozinho o próximo encontro   |
+| `cultos-secao.json` | título da seção, aviso do domingo de Ceia e o **destaque da semana** (data, tema, texto bíblico, pregador): troque toda semana                                                                           |
 | `assista.json`      | vídeo em destaque (`youtubeId` = só o id de 11 caracteres; `null` mostra "em breve" + Facebook) e textos da seção                                                                                        |
 | `mensagens.json`    | pregações: título, referência, data (AAAA-MM-DD), pregador, `youtubeId`. A home mostra as 3 mais recentes                                                                                                |
 | `cresca.json`       | textos da seção Cresça na fé e do Estudo da Palavra                                                                                                                                                      |

@@ -10,7 +10,8 @@
     "preview": "astro preview",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "imagens": "node scripts/gerar-imagens.mjs"
+    "imagens": "node scripts/gerar-imagens.mjs",
+    "checar:encontros": "node scripts/checar-encontros.ts"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.4",

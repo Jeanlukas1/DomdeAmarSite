@@ -12,6 +12,7 @@ Cada item abaixo está marcado no arquivo com `mock: true` (ou `// MOCK`). Quand
 | `src/content/historia.json`     | `capitulos[].texto`, `intro`, `cta.texto` | história real (como começou, ano exato, marcos) e confirmar a ordem: fundação → 8 anos no templo novo → obra do novo templo |
 | `src/content/cultos.json`       | `descricao`                               | descrição real de cada culto                                                                                                |
 | `src/content/cultos-secao.json` | `semana`                                  | tema, texto bíblico e pregador da semana                                                                                    |
+| `src/content/cultos.json`       | `santa-ceia` (`descricao`, `foto`)        | texto real da Santa Ceia e do almoço ágape e uma foto da Ceia ou do almoço (hoje: uma foto de comunhão genérica)            |
 | `src/content/assista.json`      | `video`                                   | canal do YouTube e vídeo em destaque (`youtubeId`)                                                                          |
 | `src/content/mensagens.json`    | todos                                     | mensagens reais (título, texto bíblico, data, link)                                                                         |
 | `src/content/ministerios.json`  | todos                                     | ministérios que realmente existem, com nome e descrição                                                                     |

@@ -54,6 +54,8 @@ const ogImage = new URL(image, Astro.site);
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <script is:inline>
+      // `js`: há JavaScript (conteúdo que só faz sentido calculado, ex.: a Ceia na semana dela).
+      document.documentElement.classList.add('js');
       // Esconde elementos animáveis só se o JS de animação for rodar. Se o init (ou, na home,
       // o hero) não confirmar em 3s, desiste da animação e mostra tudo — nada fica invisível.
       if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {

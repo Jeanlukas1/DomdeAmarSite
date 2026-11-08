@@ -19,13 +19,15 @@
       "fecharMenu": "Fechar menu",
       "textoBiblico": "Texto bíblico",
       "pregador": "Pregador",
-      "as": "às"
+      "as": "às",
+      "e": "e"
     },
     "naoEncontrada": {
       "titulo": "Esta página se perdeu no caminho",
       "texto": "O endereço pode ter mudado ou não existir mais. Mas a porta da igreja continua aberta.",
       "voltar": "Voltar ao início",
       "cultos": "Ver horários dos cultos"
-    }
+    },
+    "diasSemana": ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
   }
 }
