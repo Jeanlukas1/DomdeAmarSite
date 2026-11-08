@@ -156,6 +156,12 @@ function iniciar() {
       'batida',
     );
 
+  // carregou já com o hero fora da tela (recarga no meio, âncora): não pinta 4,5 s fora de vista
+  if (secao.getBoundingClientRect().bottom <= 0) {
+    tl.progress(1, true);
+    limpar();
+  }
+
   // faíscas: explosão na batida e depois brasas subindo devagar
   const brasas = gsap.timeline({ paused: true, repeat: -1 });
   particulas.forEach((p) => {
