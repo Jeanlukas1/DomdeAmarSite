@@ -35,3 +35,4 @@
 - [2026-11-07 — sessão 07](sessoes/2026-11-07-sessao-07.md) — dados reais (contato, liderança, PIX), F5 e audit + polish
 - [2026-11-07 — sessão 08](sessoes/2026-11-07-sessao-08.md) — transição "A nova aliança" (véu que se rasga) e critique
 - [2026-11-07 — sessão 09](sessoes/2026-11-07-sessao-09.md) — véu na main, Santa Ceia automática e animações sem replay
+- [2026-11-07 — sessão 10](sessoes/2026-11-07-sessao-10.md) — edições do Keystatic, Santa Ceia no 2º domingo e limpeza do worktree do véu
