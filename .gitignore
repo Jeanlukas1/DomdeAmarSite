@@ -36,4 +36,6 @@ CLAUDE.local.md
 # .md fora de docs/ (o README do repositório continua versionado)
 /*.md
 !/README.md
+!/DESIGN.md
+!/PRODUCT.md
 .impeccable/**/*.md
