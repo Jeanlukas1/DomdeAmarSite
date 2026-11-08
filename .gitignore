@@ -27,3 +27,13 @@ Thumbs.db
 
 .vercel
 .env*
+
+# Claude Code (configuração, skills e agentes locais)
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+
+# .md fora de docs/ (o README do repositório continua versionado)
+/*.md
+!/README.md
+.impeccable/**/*.md
