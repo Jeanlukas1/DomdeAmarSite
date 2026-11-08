@@ -1,9 +1,9 @@
 ---
 // Cultos + destaque da semana. Os encontros como um convite impresso. O calendário real (fuso de
-// São Paulo, Santa Ceia no 1º domingo substituindo os encontros do dia) é calculado no navegador
+// São Paulo, Santa Ceia no 2º domingo substituindo os encontros do dia) é calculado no navegador
 // por src/lib/encontros.ts:
 //   - marca o próximo encontro (agora / hoje / amanhã);
-//   - mostra a Ceia só na semana dela (sem JS ela aparece sempre, com a regra "1º domingo do mês");
+//   - mostra a Ceia só na semana dela (sem JS ela aparece sempre, com a regra "2º domingo do mês");
 //   - avisa nos encontros que não acontecem naquele domingo;
 //   - o destaque usa o tema só se a data dele bater com o encontro calculado.
 import Button from '@/components/ui/Button.astro';
@@ -285,7 +285,9 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
       const q = <T extends HTMLElement>(sel: string) => box.querySelector<T>(sel)!;
       q('[data-destaque-data]').textContent =
         `${quando}, ${diaEMes(d.vez.data)} · ${horaCurta(enc.hora)}`;
-      q('[data-destaque-nome]').hidden = !d.temTema;
+      const nome = q('[data-destaque-nome]');
+      nome.textContent = ` · ${enc.nome}`;
+      nome.hidden = !d.temTema;
       const titulo = q('[data-destaque-titulo]');
       titulo.textContent = d.temTema ? (titulo.dataset.tema ?? '') : enc.nome;
       q('[data-destaque-tema]').hidden = !d.temTema;

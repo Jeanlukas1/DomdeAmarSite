@@ -157,7 +157,7 @@ const cultos = defineCollection({
     hora: z.string().regex(/^\d{2}:\d{2}$/),
     nome: z.string(),
     descricao: z.string(),
-    /** semanal ou n-ésimo dia da semana do mês ("1" = 1º domingo); ver src/lib/encontros.ts */
+    /** semanal ou n-ésimo dia da semana do mês ("2" = 2º domingo); ver src/lib/encontros.ts */
     ocorrencia: z.enum(['semanal', '1', '2', '3', '4', 'ultima']).default('semanal'),
     /** neste dia, os outros encontros não acontecem (ex.: a Santa Ceia) */
     substituiODia: z.boolean().default(false),

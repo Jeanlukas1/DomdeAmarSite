@@ -36,7 +36,7 @@ export async function jsonLdIgreja(site: URL) {
     },
     hasMap: end.googleMaps,
     sameAs: redes.map((r) => r.href),
-    // só os semanais: OpeningHoursSpecification não expressa "1º domingo do mês" (a Ceia)
+    // só os semanais: OpeningHoursSpecification não expressa "2º domingo do mês" (a Ceia)
     openingHoursSpecification: cultos
       .filter((c) => c.ocorrencia === 'semanal')
       .map((c) => ({

@@ -2,7 +2,7 @@
 
 Status: aprovado (plano da sessão 09)
 
-- **Objetivo:** quem chega sabe exatamente quando é o próximo encontro, inclusive no 1º domingo do mês, quando a Santa Ceia substitui os encontros do domingo.
+- **Objetivo:** quem chega sabe exatamente quando é o próximo encontro, inclusive no 2º domingo do mês, quando a Santa Ceia substitui os encontros do domingo.
 - **Lugar na história da página:** depois da História e antes do Visite. O convite impresso (cards) + o destaque da semana.
 - **Hierarquia:** título (h2) → convite com os encontros (o próximo em vinho, com o pulso) → destaque da semana (data · hora · encontro; tema em Fraunces; texto bíblico e pregador).
 - **Layout 375px:** linhas de convite (miniatura + dia/hora). Na semana da Ceia, ela vem primeiro.

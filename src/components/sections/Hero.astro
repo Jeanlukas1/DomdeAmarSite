@@ -10,7 +10,7 @@ const igreja = await getIgreja();
 const cultos = await getOrdenados('cultos');
 const ui = await getPrincipal('ui');
 // sem JS: a grade semanal, sempre verdadeira ("Terça 19h · Domingo 9h e 18h"). O navegador troca
-// pelo próximo encontro de fato (com a Ceia no 1º domingo) — ver src/lib/encontros.ts.
+// pelo próximo encontro de fato (com a Ceia no 2º domingo) — ver src/lib/encontros.ts.
 const grade = gradeSemanal(cultos, ui.diasSemana, ui.a11y.e);
 const encontros = cultos.map(
   ({ id, diaSemana, hora, ocorrencia, substituiODia, duracaoMin, recebeTema, nomeCurto }) => ({

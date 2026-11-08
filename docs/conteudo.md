@@ -17,7 +17,7 @@ Quem não é técnico edita pelo painel em **`/keystatic`**:
 
 O calendário vem de `src/lib/encontros.ts` (fuso de São Paulo, sem DOM, reaproveitável no app). Cada item de `cultos.json` tem:
 
-- `ocorrencia`: `semanal` ou `1`/`2`/`3`/`4`/`ultima` (n-ésimo dia da semana no mês). A Santa Ceia é `1` com `diaSemana: 0`, ou seja, o 1º domingo.
+- `ocorrencia`: `semanal` ou `1`/`2`/`3`/`4`/`ultima` (n-ésimo dia da semana no mês). A Santa Ceia é `2` com `diaSemana: 0`, ou seja, o 2º domingo.
 - `substituiODia`: neste dia, os outros encontros não acontecem. Na Ceia, o Seminário (9h) e o Culto da Plenitude (18h) somem daquele domingo. A terça não muda.
 - `duracaoMin`: quanto tempo o encontro conta como "Acontecendo agora". O padrão é 120; a Ceia + almoço é 240 (10h–14h).
 - `recebeTema`: o tema da semana pertence a este encontro (Plenitude e Ceia). Na semana da Ceia, o destaque vira a Ceia sozinho.
@@ -26,13 +26,13 @@ O calendário vem de `src/lib/encontros.ts` (fuso de São Paulo, sem DOM, reapro
 O que o site faz sozinho:
 
 - **Hero:** mostra o próximo encontro de fato. Sem JS, mostra a grade semanal ("Terça 19h · Domingo 9h e 18h").
-- **Cultos:** o card da Ceia aparece só na semana dela (do fim do domingo anterior até as 14h do domingo de Ceia), e os cards do Seminário e da Plenitude ganham o aviso `avisoSubstituido`. Sem JS, a Ceia aparece sempre, com a regra "1º domingo do mês".
+- **Cultos:** o card da Ceia aparece só na semana dela (do fim do domingo anterior até as 14h do domingo de Ceia), e os cards do Seminário e da Plenitude ganham o aviso `avisoSubstituido`. Sem JS, a Ceia aparece sempre, com a regra "2º domingo do mês".
 - **Destaque:** o culto, o dia e a hora vêm do calendário. O tema só aparece se `semana.data` for o dia desse encontro; depois dele, o destaque mostra só o próximo encontro até o tema ser trocado.
-- A Ceia **não** entra na Agenda (`eventos.json`) nem no JSON-LD (`OpeningHoursSpecification` não expressa "1º domingo").
+- A Ceia **não** entra na Agenda (`eventos.json`) nem no JSON-LD (`OpeningHoursSpecification` não expressa "2º domingo").
 
 **O que você edita toda semana no Keystatic** (Cultos e agenda → Seção Cultos e destaque da semana): **dia do encontro deste tema**, tema, texto bíblico e pregador. Nada mais.
 
-Para conferir: `npm run checar:encontros` (casos de borda: virada de mês e de ano, dia 1 no domingo, sábado antes da Ceia, limites da duração). No dev, `?agora=2026-12-05T22:00` simula a data e a hora (horário de São Paulo).
+Para conferir: `npm run checar:encontros` (casos de borda: virada de mês e de ano, dia 1 no domingo, sábado antes da Ceia, 1º domingo normal, limites da duração). No dev, `?agora=2026-12-12T22:00` simula a data e a hora (horário de São Paulo).
 
 | Arquivo             | O que é                                                                                                                                                                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -18,7 +18,7 @@ const grade: Encontro[] = [
     id: 'santa-ceia',
     diaSemana: 0,
     hora: '10:00',
-    ocorrencia: '1',
+    ocorrencia: '2',
     substituiODia: true,
     duracaoMin: 240,
     recebeTema: true,
@@ -37,160 +37,150 @@ interface Caso {
 }
 
 const casos: Caso[] = [
-  // sábado comum
-  {
-    agora: '2026-11-07T20:00',
-    proximo: 'domingo-estudo',
-    quando: 'amanha',
-    ceia: false,
-    avisos: [],
-    destaque: 'domingo-plenitude@2026-11-08',
-  },
-  // dia 1 é domingo
+  // dia 1 é domingo: é um domingo comum (a Ceia é no 2º)
   {
     agora: '2026-11-01T08:00',
+    proximo: 'domingo-estudo',
+    quando: 'hoje',
+    ceia: false,
+    avisos: [],
+    destaque: 'domingo-plenitude@2026-11-01',
+  },
+  // domingo anterior à Ceia, depois da Plenitude: a Ceia já aparece
+  {
+    agora: '2026-11-01T20:01',
+    proximo: 'terca-oracao',
+    quando: 'semana',
+    ceia: true,
+    avisos: ['domingo-estudo', 'domingo-plenitude'],
+    destaque: 'santa-ceia@2026-11-08',
+  },
+  // sábado à noite antes da Ceia
+  {
+    agora: '2026-11-07T20:00',
+    proximo: 'santa-ceia',
+    quando: 'amanha',
+    ceia: true,
+    avisos: ['domingo-estudo', 'domingo-plenitude'],
+    destaque: 'santa-ceia@2026-11-08',
+  },
+  // domingo de Ceia às 8h: não há Seminário
+  {
+    agora: '2026-11-08T08:00',
     proximo: 'santa-ceia',
     quando: 'hoje',
     ceia: true,
     avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2026-11-01',
+    destaque: 'santa-ceia@2026-11-08',
   },
   {
-    agora: '2026-11-01T11:30',
+    agora: '2026-11-08T11:30',
     proximo: 'santa-ceia',
     quando: 'agora',
     ceia: true,
     avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2026-11-01',
+    destaque: 'santa-ceia@2026-11-08',
   },
-  // depois da Ceia + almoço: não há Plenitude às 18h
+  // limites da duração (10h + 240 min = 14h); depois, não há Plenitude às 18h
   {
-    agora: '2026-11-01T14:30',
-    proximo: 'terca-oracao',
-    quando: 'semana',
-    ceia: false,
-    avisos: [],
-    destaque: 'domingo-plenitude@2026-11-08',
-  },
-  {
-    agora: '2026-11-01T18:30',
-    proximo: 'terca-oracao',
-    quando: 'semana',
-    ceia: false,
-    avisos: [],
-    destaque: 'domingo-plenitude@2026-11-08',
-  },
-  // domingo anterior à Ceia: a Plenitude ainda vem antes
-  {
-    agora: '2026-11-29T10:00',
-    proximo: 'domingo-estudo',
+    agora: '2026-11-08T13:59',
+    proximo: 'santa-ceia',
     quando: 'agora',
-    ceia: false,
-    avisos: [],
-    destaque: 'domingo-plenitude@2026-11-29',
-  },
-  {
-    agora: '2026-11-29T20:01',
-    proximo: 'terca-oracao',
-    quando: 'semana',
     ceia: true,
     avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2026-12-06',
+    destaque: 'santa-ceia@2026-11-08',
   },
-  // virada de mês
+  {
+    agora: '2026-11-08T14:01',
+    proximo: 'terca-oracao',
+    quando: 'semana',
+    ceia: false,
+    avisos: [],
+    destaque: 'domingo-plenitude@2026-11-15',
+  },
+  {
+    agora: '2026-11-08T18:30',
+    proximo: 'terca-oracao',
+    quando: 'semana',
+    ceia: false,
+    avisos: [],
+    destaque: 'domingo-plenitude@2026-11-15',
+  },
+  // virada de mês: o próximo domingo (6/12) é o 1º, comum
   {
     agora: '2026-11-30T10:00',
     proximo: 'terca-oracao',
     quando: 'amanha',
-    ceia: true,
-    avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2026-12-06',
+    ceia: false,
+    avisos: [],
+    destaque: 'domingo-plenitude@2026-12-06',
   },
-  // 1ª terça do mês: a oração não muda
   {
     agora: '2026-12-01T19:30',
     proximo: 'terca-oracao',
     quando: 'agora',
-    ceia: true,
-    avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2026-12-06',
-  },
-  {
-    agora: '2026-12-01T21:30',
-    proximo: 'santa-ceia',
-    quando: 'semana',
-    ceia: true,
-    avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2026-12-06',
-  },
-  // sábado à noite antes da Ceia
-  {
-    agora: '2026-12-05T22:00',
-    proximo: 'santa-ceia',
-    quando: 'amanha',
-    ceia: true,
-    avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2026-12-06',
-  },
-  // domingo de Ceia às 9h: não há Seminário
-  {
-    agora: '2026-12-06T09:00',
-    proximo: 'santa-ceia',
-    quando: 'hoje',
-    ceia: true,
-    avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2026-12-06',
-  },
-  // limites da duração (10h + 240 min = 14h)
-  {
-    agora: '2026-12-06T13:59',
-    proximo: 'santa-ceia',
-    quando: 'agora',
-    ceia: true,
-    avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2026-12-06',
-  },
-  {
-    agora: '2026-12-06T14:01',
-    proximo: 'terca-oracao',
-    quando: 'semana',
     ceia: false,
     avisos: [],
-    destaque: 'domingo-plenitude@2026-12-13',
+    destaque: 'domingo-plenitude@2026-12-06',
+  },
+  // 1º domingo de dezembro, à noite: a Ceia de 13/12 já aparece
+  {
+    agora: '2026-12-06T20:01',
+    proximo: 'terca-oracao',
+    quando: 'semana',
+    ceia: true,
+    avisos: ['domingo-estudo', 'domingo-plenitude'],
+    destaque: 'santa-ceia@2026-12-13',
   },
   {
     agora: '2026-12-08T19:30',
     proximo: 'terca-oracao',
     quando: 'agora',
-    ceia: false,
-    avisos: [],
-    destaque: 'domingo-plenitude@2026-12-13',
+    ceia: true,
+    avisos: ['domingo-estudo', 'domingo-plenitude'],
+    destaque: 'santa-ceia@2026-12-13',
   },
   {
-    agora: '2026-12-13T08:00',
+    agora: '2026-12-12T22:00',
+    proximo: 'santa-ceia',
+    quando: 'amanha',
+    ceia: true,
+    avisos: ['domingo-estudo', 'domingo-plenitude'],
+    destaque: 'santa-ceia@2026-12-13',
+  },
+  {
+    agora: '2026-12-13T09:00',
+    proximo: 'santa-ceia',
+    quando: 'hoje',
+    ceia: true,
+    avisos: ['domingo-estudo', 'domingo-plenitude'],
+    destaque: 'santa-ceia@2026-12-13',
+  },
+  // virada de ano: 3/1/2027 é o 1º domingo (comum); a Ceia é dia 10
+  {
+    agora: '2026-12-31T23:00',
+    proximo: 'domingo-estudo',
+    quando: 'semana',
+    ceia: false,
+    avisos: [],
+    destaque: 'domingo-plenitude@2027-01-03',
+  },
+  // dia 1 numa segunda: o 1º domingo é dia 7 e a Ceia, dia 14
+  {
+    agora: '2027-02-07T08:00',
     proximo: 'domingo-estudo',
     quando: 'hoje',
     ceia: false,
     avisos: [],
-    destaque: 'domingo-plenitude@2026-12-13',
+    destaque: 'domingo-plenitude@2027-02-07',
   },
-  // virada de ano: 1º domingo de 2027 é dia 3
   {
-    agora: '2026-12-31T23:00',
-    proximo: 'santa-ceia',
-    quando: 'semana',
-    ceia: true,
-    avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2027-01-03',
-  },
-  // dia 1 numa segunda: o 1º domingo é dia 7
-  {
-    agora: '2027-02-07T08:00',
+    agora: '2027-02-14T08:00',
     proximo: 'santa-ceia',
     quando: 'hoje',
     ceia: true,
     avisos: ['domingo-estudo', 'domingo-plenitude'],
-    destaque: 'santa-ceia@2027-02-07',
+    destaque: 'santa-ceia@2027-02-14',
   },
 ];
 
@@ -223,8 +213,8 @@ for (const c of casos) {
 }
 
 // tema só vale na data certa
-const comTema = destaqueDaSemana(grade, '2026-12-06', data('2026-12-05T22:00'));
-const semTema = destaqueDaSemana(grade, '2026-11-29', data('2026-12-05T22:00'));
+const comTema = destaqueDaSemana(grade, '2026-11-08', data('2026-11-07T20:00'));
+const semTema = destaqueDaSemana(grade, '2026-11-01', data('2026-11-07T20:00'));
 if (!comTema?.temTema || semTema?.temTema) {
   falhas++;
   console.log('FALHA tema com data');

@@ -212,7 +212,7 @@ export default config({
             ocorrencia: fields.select({
               label: 'Quando acontece',
               description:
-                'Ex.: a Santa Ceia é "Só no 1º" (1º domingo do mês). O site calcula as datas sozinho.',
+                'Ex.: a Santa Ceia é "Só no 2º" (2º domingo do mês). O site calcula as datas sozinho.',
               options: [
                 { label: 'Toda semana', value: 'semanal' },
                 { label: 'Só no 1º deste dia da semana no mês', value: '1' },

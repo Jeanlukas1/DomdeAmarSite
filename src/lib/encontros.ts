@@ -1,5 +1,5 @@
 // Calendário dos encontros no fuso de Jaconé (America/Sao_Paulo), independente do fuso do
-// visitante. Entende encontros semanais e mensais ("1º domingo do mês") e encontros que
+// visitante. Entende encontros semanais e mensais ("2º domingo do mês") e encontros que
 // substituem os outros do mesmo dia (a Santa Ceia). Puro e sem DOM: reaproveitável no app futuro
 // e rodável no Node (scripts/checar-encontros.ts) — por isso sem imports com "@/".
 
@@ -36,7 +36,7 @@ export type Quando = 'agora' | 'hoje' | 'amanha' | 'semana';
 
 const FUSO = 'America/Sao_Paulo';
 const DURACAO_PADRAO = 120;
-/** janela do cálculo: cobre qualquer "1º domingo" seguinte */
+/** janela do cálculo: cobre qualquer "n-ésimo domingo" seguinte */
 const JANELA_DIAS = 42;
 
 const pad = (n: number) => String(n).padStart(2, '0');

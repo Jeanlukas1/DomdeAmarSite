@@ -23,7 +23,7 @@ const cor = (nome) => tokens.color[nome];
 const hora = (h) => h.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
 // "Terça 19h · Domingo 9h e 18h"
 const porDia = new Map();
-// só os semanais: a Ceia (1º domingo) não entra na linha de horários
+// só os semanais: a Ceia (2º domingo) não entra na linha de horários
 for (const c of cultos.filter((c) => (c.ocorrencia ?? 'semanal') === 'semanal'))
   porDia.set(c.dia, [...(porDia.get(c.dia) ?? []), hora(c.hora)]);
 const horarios = [...porDia].map(([dia, hs]) => `${dia} ${hs.join(' e ')}`).join(' · ');
