@@ -34,3 +34,4 @@
 - [2026-11-07 — sessão 06](sessoes/2026-11-07-sessao-06.md) — polish + audit da home e F4 (Visite-nos, Contribua, Fale com a gente, Keystatic)
 - [2026-11-07 — sessão 07](sessoes/2026-11-07-sessao-07.md) — dados reais (contato, liderança, PIX), F5 e audit + polish
 - [2026-11-07 — sessão 08](sessoes/2026-11-07-sessao-08.md) — transição "A nova aliança" (véu que se rasga) e critique
+- [2026-11-07 — sessão 09](sessoes/2026-11-07-sessao-09.md) — véu na main, Santa Ceia automática e animações sem replay
