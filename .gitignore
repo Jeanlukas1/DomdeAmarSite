@@ -39,3 +39,6 @@ CLAUDE.local.md
 !/DESIGN.md
 !/PRODUCT.md
 .impeccable/**/*.md
+
+# rascunhos do processo eng (entradas de revisão, corpos de issue)
+.eng/
