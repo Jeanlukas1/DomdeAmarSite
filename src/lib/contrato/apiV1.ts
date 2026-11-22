@@ -193,8 +193,33 @@ function assuntos(itens: FontesApiV1['assuntos']): ApiV1['assuntos-de-contato'] 
   return itens.map((a) => ({ id: a.id, titulo: a.titulo, rotulo: a.rotulo, mensagem: a.mensagem }));
 }
 
+/**
+ * Encontros e eventos dividem o mesmo espaço de identificadores (o alvo de uma alteração é um
+ * deles). Um identificador repetido faz o build falhar, dizendo qual e onde.
+ */
+function checarIdentificadores({ encontros, eventos }: FontesApiV1) {
+  const vistos = new Map<string, string>();
+  const origens = [
+    { onde: 'encontros (src/content/cultos.json)', itens: encontros },
+    { onde: 'eventos (src/content/eventos.json)', itens: eventos },
+  ];
+  for (const { onde, itens } of origens) {
+    for (const { id } of itens) {
+      const anterior = vistos.get(id);
+      if (anterior) {
+        throw new Error(
+          `/api/v1: o identificador "${id}" se repete em ${anterior} e em ${onde}. ` +
+            'Encontros e eventos não podem ter identificadores iguais.',
+        );
+      }
+      vistos.set(id, onde);
+    }
+  }
+}
+
 /** Monta todos os arquivos de /api/v1, cada um validado pelo esquema do contrato. */
 export function montarApiV1(fontes: FontesApiV1): ApiV1 {
+  checarIdentificadores(fontes);
   return {
     igreja: esquemaApiV1.igreja.parse(igreja(fontes.igreja)),
     encontros: esquemaApiV1.encontros.parse(encontros(fontes.encontros)),

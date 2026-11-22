@@ -250,3 +250,27 @@ describe('assuntos-de-contato', () => {
     ]);
   });
 });
+
+describe('identificadores repetidos', () => {
+  it('falha dizendo qual identificador se repete entre encontros e eventos, e onde', () => {
+    const f = fontes();
+    f.eventos[0].id = 'ceia';
+    expect(() => montarApiV1(f)).toThrow(
+      /"ceia".*encontros \(src\/content\/cultos\.json\).*eventos \(src\/content\/eventos\.json\)/,
+    );
+  });
+
+  it('falha também quando o identificador se repete dentro dos eventos', () => {
+    const f = fontes();
+    f.eventos.push({ ...f.eventos[0] });
+    expect(() => montarApiV1(f)).toThrow(/"festa".*eventos \(src\/content\/eventos\.json\)/);
+  });
+});
+
+describe('fora do contrato', () => {
+  it('falha em vez de publicar um texto obrigatório vazio', () => {
+    const f = fontes();
+    f.eventos[0].descricao = '';
+    expect(() => montarApiV1(f)).toThrow();
+  });
+});
