@@ -1,8 +1,12 @@
 ---
-// Vídeo com "clique para assistir": só a foto-pôster carrega; o player do YouTube (no-cookie)
-// entra no clique. Sem youtubeId, mostra o estado "em breve" com link para o Facebook.
+// Vídeo em destaque da seção Assista (docs/secoes/assista.md). Só a foto-pôster carrega antes do
+// clique. YouTube: o player (no-cookie) entra no clique. Facebook: abre o vídeo numa aba nova.
+// Sem vídeo: o estado "em breve", com link para a página da igreja no Facebook.
+// Um link [data-tocar-youtube] em qualquer lugar da página toca aquele vídeo aqui (a lista).
 import Foto from '@/components/ui/Foto.astro';
 import Icon from '@/components/ui/Icon.astro';
+import { acaoDoVideo } from '@/lib/cultosGravados';
+import type { Video } from '@/lib/video';
 
 interface FotoRef {
   id: string;
@@ -11,22 +15,37 @@ interface FotoRef {
 }
 interface Props {
   titulo: string;
-  descricao: string;
-  youtubeId: string | null;
+  /** data · texto bíblico · pregador; null no estado "em breve" */
+  linha: string | null;
+  video: Video | null;
   poster: FotoRef;
   rotuloAssistir: string;
   emBreve: string;
   rotuloFacebook: string;
+  rotuloNovaAba: string;
+  /** página da igreja no Facebook (estado "em breve") */
   facebook: string;
 }
 
-const { titulo, descricao, youtubeId, poster, rotuloAssistir, emBreve, rotuloFacebook, facebook } =
-  Astro.props;
+const {
+  titulo,
+  linha,
+  video,
+  poster,
+  rotuloAssistir,
+  emBreve,
+  rotuloFacebook,
+  rotuloNovaAba,
+  facebook,
+} = Astro.props;
+// YouTube toca aqui; Facebook abre o vídeo; sem vídeo, a página da igreja (estado "em breve")
+const { href: linkFacebook, youtube } = acaoDoVideo(video, facebook);
 ---
 
 <div
   data-video
-  data-youtube={youtubeId ?? undefined}
+  data-youtube={youtube ?? undefined}
+  data-titulo={titulo}
   class="video relative isolate aspect-[4/5] overflow-hidden rounded-[2rem] bg-wine-950 sm:aspect-video"
 >
   <div data-video-poster class="absolute inset-0 -z-10">
@@ -43,9 +62,9 @@ const { titulo, descricao, youtubeId, poster, rotuloAssistir, emBreve, rotuloFac
       <h3 class="font-display text-[clamp(1.75rem,3.4vw,2.75rem)] leading-tight text-cream">
         {titulo}
       </h3>
-      <p class="mt-2 text-blush-100">{youtubeId ? descricao : emBreve}</p>
+      <p class="mt-2 text-blush-100">{linha ?? emBreve}</p>
     </div>
-    {youtubeId ? (
+    {youtube ? (
       <button
         type="button"
         data-video-play
@@ -61,7 +80,7 @@ const { titulo, descricao, youtubeId, poster, rotuloAssistir, emBreve, rotuloFac
       </button>
     ) : (
       <a
-        href={facebook}
+        href={linkFacebook}
         target="_blank"
         rel="noopener"
         class="group flex shrink-0 items-center gap-3 self-start rounded-full bg-cream py-2 pr-6 pl-2 font-semibold text-wine-900 transition-colors duration-base hover:bg-white sm:self-auto"
@@ -70,24 +89,45 @@ const { titulo, descricao, youtubeId, poster, rotuloAssistir, emBreve, rotuloFac
           <Icon name="facebook" />
         </span>
         {rotuloFacebook}
+        <span class="sr-only">
+          {video && `: ${titulo}`} {rotuloNovaAba}
+        </span>
       </a>
     )}
   </div>
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-video][data-youtube]').forEach((box) => {
-    const play = box.querySelector<HTMLButtonElement>('[data-video-play]');
-    play?.addEventListener('click', () => {
-      const iframe = document.createElement('iframe');
-      iframe.src = `https://www.youtube-nocookie.com/embed/${box.dataset.youtube}?autoplay=1&rel=0`;
-      iframe.title = play.textContent?.trim() ?? 'Vídeo';
-      iframe.allow =
-        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-      iframe.allowFullscreen = true;
-      iframe.className = 'absolute inset-0 h-full w-full';
-      box.replaceChildren(iframe);
-      iframe.focus();
+  import { reduceMotion } from '@/lib/agendar';
+  import { rolarAte } from '@/lib/rolagem';
+
+  /** Troca o conteúdo do destaque pelo player do YouTube e leva o foco para ele. */
+  function tocar(box: HTMLElement, id: string, titulo: string) {
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+    iframe.title = titulo;
+    iframe.allow =
+      'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+    iframe.className = 'absolute inset-0 h-full w-full';
+    box.replaceChildren(iframe);
+    iframe.focus({ preventScroll: true });
+  }
+
+  const box = document.querySelector<HTMLElement>('[data-video]');
+  if (box) {
+    box.querySelector('[data-video-play]')?.addEventListener('click', () => {
+      tocar(box, box.dataset.youtube!, box.dataset.titulo ?? '');
     });
-  });
+
+    // um culto gravado do YouTube na lista toca aqui, no lugar do destaque
+    document.querySelectorAll<HTMLAnchorElement>('a[data-tocar-youtube]').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        tocar(box, link.dataset.tocarYoutube!, link.dataset.titulo ?? '');
+        rolarAte(box, { suave: !reduceMotion() });
+      });
+    });
+  }
 </script>

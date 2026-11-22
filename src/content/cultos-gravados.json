@@ -6,7 +6,10 @@
       "referencia": "Efésios 2.8–9",
       "data": "2026-11-01",
       "pregador": "Pr. Marcelo Roque",
-      "youtubeId": null,
+      "video": {
+        "plataforma": "",
+        "endereco": ""
+      },
       "mock": true
     },
     {
@@ -15,7 +18,10 @@
       "referencia": "Hebreus 8.10–12",
       "data": "2026-10-25",
       "pregador": "Pr. Marcelo Roque",
-      "youtubeId": null,
+      "video": {
+        "plataforma": "",
+        "endereco": ""
+      },
       "mock": true
     },
     {
@@ -24,7 +30,10 @@
       "referencia": "Lucas 15.11–24",
       "data": "2026-10-18",
       "pregador": "Pr. Marcelo Roque",
-      "youtubeId": null,
+      "video": {
+        "plataforma": "",
+        "endereco": ""
+      },
       "mock": true
     }
   ]
