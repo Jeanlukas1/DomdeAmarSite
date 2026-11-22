@@ -45,6 +45,8 @@ erDiagram
 2. Uma alteração publicada aponta para um encontro ou evento existente, numa data em que ele ocorre. Há no máximo uma por alvo e data, e uma alteração `"alterado"` tem `novaHora`, `novoLocal` ou os dois. Uma alteração que não cumpre isso fica fora da publicação, com alerta no build.
 3. Um culto gravado publicado tem vídeo válido. Uma transmissão com vídeo inválido é publicada com `video: null`. Os dois casos geram alerta no build.
 4. `whatsapp` é `null` enquanto o contato da igreja estiver marcado como provisório.
+5. Em `contribuicao`, `pix` é `null` enquanto não houver chave ou enquanto ela estiver marcada como provisória, e `transferencia` é `null` enquanto não houver banco cadastrado.
+6. Um arquivo que não cumpre o esquema do contrato (por exemplo, um texto obrigatório vazio) faz o build falhar, em vez de ser publicado.
 
 ## Arquivos do repositório lidos pelo servidor do app
 
