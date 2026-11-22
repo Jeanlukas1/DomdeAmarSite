@@ -43,6 +43,24 @@ export const esquemaApiV1 = {
       provisorio: z.boolean(),
     }),
   ),
+  eventos: z.array(
+    z.strictObject({
+      id: texto,
+      titulo: texto,
+      descricao: texto,
+      local: texto,
+      data,
+      hora,
+      provisorio: z.boolean(),
+    }),
+  ),
+  'tema-da-semana': z.strictObject({
+    data,
+    tema: texto,
+    textoBiblico: textoOuNull,
+    pregador: texto,
+    provisorio: z.boolean(),
+  }),
 };
 
 export type ApiV1 = { [C in keyof typeof esquemaApiV1]: z.infer<(typeof esquemaApiV1)[C]> };
@@ -131,10 +149,34 @@ function encontros(itens: FontesApiV1['encontros']): ApiV1['encontros'] {
   }));
 }
 
+function eventos(itens: FontesApiV1['eventos']): ApiV1['eventos'] {
+  return itens.map((e) => ({
+    id: e.id,
+    titulo: e.titulo,
+    descricao: e.descricao,
+    local: e.local,
+    data: e.data,
+    hora: e.hora,
+    provisorio: e.mock,
+  }));
+}
+
+function temaDaSemana(t: FontesApiV1['tema']): ApiV1['tema-da-semana'] {
+  return {
+    data: t.data,
+    tema: t.tema,
+    textoBiblico: ouNull(t.referencia),
+    pregador: t.pregador,
+    provisorio: t.mock,
+  };
+}
+
 /** Monta todos os arquivos de /api/v1, cada um validado pelo esquema do contrato. */
 export function montarApiV1(fontes: FontesApiV1): ApiV1 {
   return {
     igreja: esquemaApiV1.igreja.parse(igreja(fontes.igreja)),
     encontros: esquemaApiV1.encontros.parse(encontros(fontes.encontros)),
+    eventos: esquemaApiV1.eventos.parse(eventos(fontes.eventos)),
+    'tema-da-semana': esquemaApiV1['tema-da-semana'].parse(temaDaSemana(fontes.tema)),
   };
 }

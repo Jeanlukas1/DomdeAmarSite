@@ -160,3 +160,51 @@ describe('encontros', () => {
     ]);
   });
 });
+
+describe('eventos', () => {
+  it('publica cada evento sem a foto, com mock virando provisorio', () => {
+    const f = fontes();
+    f.eventos.push({ ...f.eventos[0], id: 'mutirao', titulo: 'Mutirão', mock: true });
+    expect(publicar(f).eventos).toEqual([
+      {
+        id: 'festa',
+        titulo: 'Festa',
+        descricao: 'Uma festa.',
+        local: 'Templo',
+        data: '2026-12-24',
+        hora: '20:00',
+        provisorio: false,
+      },
+      {
+        id: 'mutirao',
+        titulo: 'Mutirão',
+        descricao: 'Uma festa.',
+        local: 'Templo',
+        data: '2026-12-24',
+        hora: '20:00',
+        provisorio: true,
+      },
+    ]);
+  });
+});
+
+describe('tema-da-semana', () => {
+  it('publica o tema cadastrado hoje, com a referência como textoBiblico', () => {
+    expect(publicar(fontes())['tema-da-semana']).toEqual({
+      data: '2026-11-15',
+      tema: 'Tapando as brechas',
+      textoBiblico: 'Juízes 13.1-5',
+      pregador: 'Pr. Fulano',
+      provisorio: false,
+    });
+  });
+
+  it('publica texto bíblico vazio como null e mantém o tema provisório', () => {
+    const f = fontes();
+    f.tema.referencia = '';
+    f.tema.mock = true;
+    const tema = publicar(f)['tema-da-semana'];
+    expect(tema.textoBiblico).toBeNull();
+    expect(tema.provisorio).toBe(true);
+  });
+});
