@@ -5,7 +5,8 @@
 // Um link [data-tocar-youtube] em qualquer lugar da página toca aquele vídeo aqui (a lista).
 import Foto from '@/components/ui/Foto.astro';
 import Icon from '@/components/ui/Icon.astro';
-import { idDoYoutube, type Video } from '@/lib/video';
+import { acaoDoVideo } from '@/lib/cultosGravados';
+import type { Video } from '@/lib/video';
 
 interface FotoRef {
   id: string;
@@ -37,8 +38,8 @@ const {
   rotuloNovaAba,
   facebook,
 } = Astro.props;
-const youtube = video?.plataforma === 'youtube' ? idDoYoutube(video.endereco) : null;
-const linkFacebook = video?.plataforma === 'facebook' ? video.endereco : video ? null : facebook;
+// YouTube toca aqui; Facebook abre o vídeo; sem vídeo, a página da igreja (estado "em breve")
+const { href: linkFacebook, youtube } = acaoDoVideo(video, facebook);
 ---
 
 <div
@@ -78,22 +79,20 @@ const linkFacebook = video?.plataforma === 'facebook' ? video.endereco : video ?
         <span class="sr-only">: {titulo}</span>
       </button>
     ) : (
-      linkFacebook && (
-        <a
-          href={linkFacebook}
-          target="_blank"
-          rel="noopener"
-          class="group flex shrink-0 items-center gap-3 self-start rounded-full bg-cream py-2 pr-6 pl-2 font-semibold text-wine-900 transition-colors duration-base hover:bg-white sm:self-auto"
-        >
-          <span class="grid size-11 place-items-center rounded-full bg-wine-900 text-cream">
-            <Icon name="facebook" />
-          </span>
-          {rotuloFacebook}
-          <span class="sr-only">
-            {video && `: ${titulo}`} {rotuloNovaAba}
-          </span>
-        </a>
-      )
+      <a
+        href={linkFacebook}
+        target="_blank"
+        rel="noopener"
+        class="group flex shrink-0 items-center gap-3 self-start rounded-full bg-cream py-2 pr-6 pl-2 font-semibold text-wine-900 transition-colors duration-base hover:bg-white sm:self-auto"
+      >
+        <span class="grid size-11 place-items-center rounded-full bg-wine-900 text-cream">
+          <Icon name="facebook" />
+        </span>
+        {rotuloFacebook}
+        <span class="sr-only">
+          {video && `: ${titulo}`} {rotuloNovaAba}
+        </span>
+      </a>
     )}
   </div>
 </div>

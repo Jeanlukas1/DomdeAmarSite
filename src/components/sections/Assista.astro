@@ -4,30 +4,20 @@
 import VideoDestaque from '@/components/islands/VideoDestaque.astro';
 import Icon from '@/components/ui/Icon.astro';
 import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
-import { escolherDestaque, videoDe } from '@/lib/cultosGravados';
+import { acaoDoVideo, escolherDestaque, listaSemDestaque } from '@/lib/cultosGravados';
 import { getCultosGravados, getIgreja, getPrincipal } from '@/lib/igreja';
-import { idDoYoutube } from '@/lib/video';
 
 const a = await getPrincipal('assista');
 const igreja = await getIgreja();
 const cultosGravados = await getCultosGravados();
 const destaque = escolherDestaque(cultosGravados);
-const lista = cultosGravados.filter((c) => c.id !== destaque?.id).slice(0, 3);
+const lista = listaSemDestaque(cultosGravados, destaque);
 
 const dataCurta = (iso: string) =>
   new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', timeZone: 'UTC' })
     .format(new Date(`${iso}T12:00:00Z`))
     .replace('.', '');
 const juntar = (...partes: string[]) => partes.filter(Boolean).join(' · ');
-
-/** YouTube toca no destaque; Facebook (ou sem vídeo: a página da igreja) abre numa aba nova. */
-const acaoDe = (c: (typeof cultosGravados)[number]) => {
-  const video = videoDe(c);
-  const youtube = video?.plataforma === 'youtube' ? idDoYoutube(video.endereco) : null;
-  return youtube
-    ? { href: video!.endereco, youtube }
-    : { href: video?.endereco ?? igreja.redes.facebook, youtube: null };
-};
 ---
 
 <section
@@ -58,7 +48,7 @@ const acaoDe = (c: (typeof cultosGravados)[number]) => {
       <h3 class="font-display text-2xl">{a.listaTitulo}</h3>
       <ol class="mt-6 border-b border-white/10" data-reveal-group>
         {lista.map((m) => {
-          const acao = acaoDe(m);
+          const acao = acaoDoVideo(m.video, igreja.redes.facebook);
           return (
             <li class="border-t border-white/10" data-reveal>
               <a
