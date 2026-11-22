@@ -2,6 +2,7 @@
 // Uma camada de tradução lê as coleções do site e monta cada arquivo, validado pelo esquema
 // abaixo. Um arquivo fora do contrato faz o build falhar, em vez de ser publicado.
 import { z } from 'astro/zod';
+import { conferirVideo } from '@/lib/video';
 
 // ── Esquema do contrato ────────────────────────────────────────────────────────
 
@@ -13,6 +14,9 @@ const textoOuNull = texto.nullable();
 const hora = z.string().regex(/^\d{2}:\d{2}$/);
 /** AAAA-MM-DD, horário de Brasília. */
 const data = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
+/** Vídeo de um culto gravado ou da transmissão: plataforma e endereço andam sempre juntos. */
+const video = z.strictObject({ plataforma: z.enum(['facebook', 'youtube']), endereco: z.url() });
 
 export const esquemaApiV1 = {
   igreja: z.strictObject({
@@ -61,6 +65,17 @@ export const esquemaApiV1 = {
     pregador: texto,
     provisorio: z.boolean(),
   }),
+  'cultos-gravados': z.array(
+    z.strictObject({
+      id: texto,
+      titulo: texto,
+      textoBiblico: textoOuNull,
+      pregador: textoOuNull,
+      data,
+      video,
+      provisorio: z.boolean(),
+    }),
+  ),
   contribuicao: z.strictObject({
     pix: z.strictObject({ chave: texto, tipo: texto, titular: texto }).nullable(),
     transferencia: z.strictObject({ banco: texto, agencia: texto, conta: texto }).nullable(),
@@ -114,6 +129,16 @@ export interface FontesApiV1 {
   }>;
   /** cultos-secao.json → semana */
   tema: { data: string; tema: string; referencia?: string; pregador: string; mock: boolean };
+  /** cultos-gravados.json, em qualquer ordem; o vídeo vem como o painel grava ("" = vazio) */
+  cultosGravados: Array<{
+    id: string;
+    titulo: string;
+    referencia: string;
+    data: string;
+    pregador: string;
+    video: { plataforma: string; endereco: string };
+    mock: boolean;
+  }>;
   /** contribua.json */
   contribuicao: {
     pix: { chave: string | null; tipo: string; titular: string; mock: boolean };
@@ -178,6 +203,36 @@ function temaDaSemana(t: FontesApiV1['tema']): ApiV1['tema-da-semana'] {
   };
 }
 
+/** Um culto gravado com vídeo inválido sai da publicação, com alerta; os outros continuam. */
+function cultosGravados(
+  itens: FontesApiV1['cultosGravados'],
+  alertar: Alertar,
+): ApiV1['cultos-gravados'] {
+  return itens
+    .flatMap((c) => {
+      const conferido = conferirVideo(c.video);
+      if ('motivo' in conferido) {
+        alertar(
+          `/api/v1: o culto gravado "${c.id}" (src/content/cultos-gravados.json) ficou fora ` +
+            `da publicação: ${conferido.motivo}.`,
+        );
+        return [];
+      }
+      return [
+        {
+          id: c.id,
+          titulo: c.titulo,
+          textoBiblico: ouNull(c.referencia),
+          pregador: ouNull(c.pregador),
+          data: c.data,
+          video: conferido.video,
+          provisorio: c.mock,
+        },
+      ];
+    })
+    .sort((a, b) => b.data.localeCompare(a.data));
+}
+
 /** PIX ausente ou provisório sai como null: uma chave falsa poderia desviar uma oferta. */
 function contribuicao({ pix, transferencia }: FontesApiV1['contribuicao']): ApiV1['contribuicao'] {
   return {
@@ -216,14 +271,26 @@ function checarIdentificadores({ encontros, eventos }: FontesApiV1) {
   }
 }
 
-/** Monta todos os arquivos de /api/v1, cada um validado pelo esquema do contrato. */
-export function montarApiV1(fontes: FontesApiV1): ApiV1 {
+/** Recebe os alertas do build (conteúdo retirado da publicação). */
+type Alertar = (mensagem: string) => void;
+
+/**
+ * Monta todos os arquivos de /api/v1, cada um validado pelo esquema do contrato. O que sai da
+ * publicação por não cumprir uma regra é avisado por `alertar` (no build, o console).
+ */
+export function montarApiV1(
+  fontes: FontesApiV1,
+  { alertar = console.warn }: { alertar?: Alertar } = {},
+): ApiV1 {
   checarIdentificadores(fontes);
   return {
     igreja: esquemaApiV1.igreja.parse(igreja(fontes.igreja)),
     encontros: esquemaApiV1.encontros.parse(encontros(fontes.encontros)),
     eventos: esquemaApiV1.eventos.parse(eventos(fontes.eventos)),
     'tema-da-semana': esquemaApiV1['tema-da-semana'].parse(temaDaSemana(fontes.tema)),
+    'cultos-gravados': esquemaApiV1['cultos-gravados'].parse(
+      cultosGravados(fontes.cultosGravados, alertar),
+    ),
     contribuicao: esquemaApiV1.contribuicao.parse(contribuicao(fontes.contribuicao)),
     'assuntos-de-contato': esquemaApiV1['assuntos-de-contato'].parse(assuntos(fontes.assuntos)),
   };

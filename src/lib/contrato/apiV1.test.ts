@@ -1,7 +1,7 @@
 // Ponto de teste P1 (spec 001): o conteúdo publicado em /api/v1.
 // Monta os arquivos a partir de conteúdo de teste (nunca o conteúdo real do site) e confere
 // cada um contra o esquema do contrato (docs/DATA-MODEL.md).
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { esquemaApiV1, montarApiV1, type FontesApiV1 } from './apiV1';
 
 function fontes(): FontesApiV1 {
@@ -72,6 +72,29 @@ function fontes(): FontesApiV1 {
       pix: { chave: '00000000000000', tipo: 'CNPJ', titular: 'Igreja de Teste', mock: false },
       transferencia: { banco: 'Banco X', agencia: '0001', conta: '123-4' },
     },
+    cultosGravados: [
+      {
+        id: 'antigo',
+        titulo: 'A nova aliança',
+        referencia: 'Hebreus 8.10-12',
+        data: '2026-10-25',
+        pregador: 'Pr. Fulano',
+        video: {
+          plataforma: 'facebook',
+          endereco: 'https://www.facebook.com/teste/videos/123456789',
+        },
+        mock: false,
+      },
+      {
+        id: 'recente',
+        titulo: 'Graça que alcança',
+        referencia: '',
+        data: '2026-11-01',
+        pregador: '',
+        video: { plataforma: 'youtube', endereco: 'https://www.youtube.com/watch?v=abcDEF12345' },
+        mock: true,
+      },
+    ],
     assuntos: [
       {
         id: 'oracao',
@@ -248,6 +271,89 @@ describe('assuntos-de-contato', () => {
         mensagem: 'Graça e Paz! Gostaria de pedir oração por:',
       },
     ]);
+  });
+});
+
+describe('cultos-gravados', () => {
+  it('publica do mais recente para o mais antigo, com vazios como null e mock virando provisorio', () => {
+    expect(publicar(fontes())['cultos-gravados']).toEqual([
+      {
+        id: 'recente',
+        titulo: 'Graça que alcança',
+        textoBiblico: null,
+        pregador: null,
+        data: '2026-11-01',
+        video: { plataforma: 'youtube', endereco: 'https://www.youtube.com/watch?v=abcDEF12345' },
+        provisorio: true,
+      },
+      {
+        id: 'antigo',
+        titulo: 'A nova aliança',
+        textoBiblico: 'Hebreus 8.10-12',
+        pregador: 'Pr. Fulano',
+        data: '2026-10-25',
+        video: {
+          plataforma: 'facebook',
+          endereco: 'https://www.facebook.com/teste/videos/123456789',
+        },
+        provisorio: false,
+      },
+    ]);
+  });
+});
+
+describe('cultos-gravados: vídeo inválido', () => {
+  const casos = [
+    {
+      caso: 'plataforma desconhecida',
+      video: { plataforma: 'vimeo', endereco: 'https://vimeo.com/123456' },
+      motivo: /plataforma/i,
+    },
+    {
+      caso: 'endereço de outra plataforma',
+      video: { plataforma: 'youtube', endereco: 'https://www.facebook.com/teste/videos/1' },
+      motivo: /youtube/i,
+    },
+    {
+      caso: 'endereço sem plataforma',
+      video: { plataforma: '', endereco: 'https://www.youtube.com/watch?v=abcDEF12345' },
+      motivo: /plataforma/i,
+    },
+    {
+      caso: 'sem vídeo nenhum',
+      video: { plataforma: '', endereco: '' },
+      motivo: /plataforma/i,
+    },
+    {
+      caso: 'endereço do YouTube que não é de um vídeo',
+      video: { plataforma: 'youtube', endereco: 'https://www.youtube.com/@igreja' },
+      motivo: /youtube/i,
+    },
+    {
+      caso: 'endereço que não é um endereço',
+      video: { plataforma: 'facebook', endereco: 'facebook.com/teste' },
+      motivo: /facebook/i,
+    },
+  ];
+
+  for (const { caso, video, motivo } of casos) {
+    it(`retira o culto gravado com ${caso}, alerta qual e por quê, e publica os outros`, () => {
+      const f = fontes();
+      f.cultosGravados[0].video = video;
+      const alertar = vi.fn();
+      const api = montarApiV1(f, { alertar });
+      expect(api['cultos-gravados'].map((c) => c.id)).toEqual(['recente']);
+      expect(alertar).toHaveBeenCalledTimes(1);
+      const [mensagem] = alertar.mock.calls[0] as [string];
+      expect(mensagem).toContain('"antigo"');
+      expect(mensagem).toMatch(motivo);
+    });
+  }
+
+  it('não alerta quando todos os vídeos são válidos', () => {
+    const alertar = vi.fn();
+    montarApiV1(fontes(), { alertar });
+    expect(alertar).not.toHaveBeenCalled();
   });
 });
 
