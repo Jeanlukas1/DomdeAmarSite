@@ -1,0 +1,140 @@
+// Contrato /api/v1 (docs/DATA-MODEL.md, ADR 0001): o formato próprio que o app lê.
+// Uma camada de tradução lê as coleções do site e monta cada arquivo, validado pelo esquema
+// abaixo. Um arquivo fora do contrato faz o build falhar, em vez de ser publicado.
+import { z } from 'astro/zod';
+
+// ── Esquema do contrato ────────────────────────────────────────────────────────
+
+/** Texto obrigatório: nunca vazio. */
+const texto = z.string().min(1);
+/** Texto opcional: ausente é null, nunca "". */
+const textoOuNull = texto.nullable();
+/** HH:MM, horário de Brasília. */
+const hora = z.string().regex(/^\d{2}:\d{2}$/);
+/** AAAA-MM-DD, horário de Brasília. */
+const data = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
+export const esquemaApiV1 = {
+  igreja: z.strictObject({
+    nome: texto,
+    endereco: z.strictObject({
+      rua: texto,
+      bairro: texto,
+      cidade: texto,
+      uf: texto,
+      cep: texto,
+      referencia: textoOuNull,
+    }),
+    whatsapp: z.string().regex(/^\d+$/).nullable(),
+    redes: z.strictObject({ facebook: z.url().nullable(), youtube: z.url().nullable() }),
+  }),
+  encontros: z.array(
+    z.strictObject({
+      id: texto,
+      nome: texto,
+      nomeCurto: textoOuNull,
+      descricao: texto,
+      diaSemana: z.number().int().min(0).max(6),
+      hora,
+      ocorrencia: z.enum(['semanal', '1', '2', '3', '4', 'ultima']),
+      substituiODia: z.boolean(),
+      duracaoMin: z.number().int().positive(),
+      recebeTema: z.boolean(),
+      provisorio: z.boolean(),
+    }),
+  ),
+};
+
+export type ApiV1 = { [C in keyof typeof esquemaApiV1]: z.infer<(typeof esquemaApiV1)[C]> };
+
+// ── Fontes: o formato interno do site (as coleções de src/content) ─────────────
+
+export interface FontesApiV1 {
+  igreja: {
+    nome: string;
+    endereco: {
+      rua: string;
+      bairro: string;
+      cidade: string;
+      uf: string;
+      cep: string;
+      referencia?: string;
+    };
+    contato: { whatsapp: string; mock: boolean };
+    redes: { facebook: string | null; instagram: string | null; youtube: string | null };
+  };
+  /** cultos.json, já na ordem do site */
+  encontros: Array<{
+    id: string;
+    nome: string;
+    nomeCurto?: string;
+    descricao: string;
+    diaSemana: number;
+    hora: string;
+    ocorrencia: 'semanal' | '1' | '2' | '3' | '4' | 'ultima';
+    substituiODia: boolean;
+    duracaoMin: number;
+    recebeTema: boolean;
+    mock: boolean;
+  }>;
+  /** eventos.json, já em ordem cronológica */
+  eventos: Array<{
+    id: string;
+    titulo: string;
+    descricao: string;
+    local: string;
+    data: string;
+    hora: string;
+    mock: boolean;
+  }>;
+  /** cultos-secao.json → semana */
+  tema: { data: string; tema: string; referencia?: string; pregador: string; mock: boolean };
+  /** contribua.json */
+  contribuicao: {
+    pix: { chave: string | null; tipo: string; titular: string; mock: boolean };
+    transferencia?: { banco: string; agencia: string; conta: string };
+  };
+  /** fale-conosco.json → assuntos */
+  assuntos: Array<{ id: string; titulo: string; texto: string; rotulo: string; mensagem: string }>;
+}
+
+// ── Tradução ───────────────────────────────────────────────────────────────────
+
+/** O painel grava campo vazio como "": no contrato, ausente é null. */
+function ouNull(valor: string | null | undefined): string | null {
+  return valor ? valor : null;
+}
+
+function igreja({ nome, endereco, contato, redes }: FontesApiV1['igreja']): ApiV1['igreja'] {
+  const { rua, bairro, cidade, uf, cep, referencia } = endereco;
+  return {
+    nome,
+    endereco: { rua, bairro, cidade, uf, cep, referencia: ouNull(referencia) },
+    whatsapp: contato.mock ? null : ouNull(contato.whatsapp.replace(/\D/g, '')),
+    redes: { facebook: ouNull(redes.facebook), youtube: ouNull(redes.youtube) },
+  };
+}
+
+function encontros(itens: FontesApiV1['encontros']): ApiV1['encontros'] {
+  return itens.map(({ mock, nomeCurto, ...e }) => ({
+    id: e.id,
+    nome: e.nome,
+    nomeCurto: ouNull(nomeCurto),
+    descricao: e.descricao,
+    diaSemana: e.diaSemana,
+    hora: e.hora,
+    ocorrencia: e.ocorrencia,
+    substituiODia: e.substituiODia,
+    duracaoMin: e.duracaoMin,
+    recebeTema: e.recebeTema,
+    provisorio: mock,
+  }));
+}
+
+/** Monta todos os arquivos de /api/v1, cada um validado pelo esquema do contrato. */
+export function montarApiV1(fontes: FontesApiV1): ApiV1 {
+  return {
+    igreja: esquemaApiV1.igreja.parse(igreja(fontes.igreja)),
+    encontros: esquemaApiV1.encontros.parse(encontros(fontes.encontros)),
+  };
+}

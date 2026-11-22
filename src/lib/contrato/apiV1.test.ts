@@ -1,0 +1,162 @@
+// Ponto de teste P1 (spec 001): o conteúdo publicado em /api/v1.
+// Monta os arquivos a partir de conteúdo de teste (nunca o conteúdo real do site) e confere
+// cada um contra o esquema do contrato (docs/DATA-MODEL.md).
+import { describe, expect, it } from 'vitest';
+import { esquemaApiV1, montarApiV1, type FontesApiV1 } from './apiV1';
+
+function fontes(): FontesApiV1 {
+  return {
+    igreja: {
+      nome: 'Igreja de Teste',
+      endereco: {
+        rua: 'Rua 1, Lote 2',
+        bairro: 'Centro',
+        cidade: 'Cidade',
+        uf: 'RJ',
+        cep: '28990-000',
+        referencia: 'Em frente à praça',
+      },
+      contato: { whatsapp: '+55 (21) 90000-0000', mock: false },
+      redes: {
+        facebook: 'https://www.facebook.com/teste',
+        instagram: 'https://www.instagram.com/teste',
+        youtube: null,
+      },
+    },
+    encontros: [
+      {
+        id: 'terca',
+        nome: 'Culto de Oração',
+        descricao: 'Noite de oração.',
+        diaSemana: 2,
+        hora: '19:00',
+        ocorrencia: 'semanal',
+        substituiODia: false,
+        duracaoMin: 120,
+        recebeTema: false,
+        mock: false,
+      },
+      {
+        id: 'ceia',
+        nome: 'Culto de Santa Ceia',
+        nomeCurto: 'Santa Ceia',
+        descricao: 'Ceia no segundo domingo.',
+        diaSemana: 0,
+        hora: '10:00',
+        ocorrencia: '2',
+        substituiODia: true,
+        duracaoMin: 240,
+        recebeTema: true,
+        mock: true,
+      },
+    ],
+    eventos: [
+      {
+        id: 'festa',
+        titulo: 'Festa',
+        descricao: 'Uma festa.',
+        local: 'Templo',
+        data: '2026-12-24',
+        hora: '20:00',
+        mock: false,
+      },
+    ],
+    tema: {
+      data: '2026-11-15',
+      tema: 'Tapando as brechas',
+      referencia: 'Juízes 13.1-5',
+      pregador: 'Pr. Fulano',
+      mock: false,
+    },
+    contribuicao: {
+      pix: { chave: '00000000000000', tipo: 'CNPJ', titular: 'Igreja de Teste', mock: false },
+      transferencia: { banco: 'Banco X', agencia: '0001', conta: '123-4' },
+    },
+    assuntos: [
+      {
+        id: 'oracao',
+        titulo: 'Pedido de oração',
+        texto: 'Texto que só o site mostra.',
+        rotulo: 'Pedir oração',
+        mensagem: 'Graça e Paz! Gostaria de pedir oração por:',
+      },
+    ],
+  };
+}
+
+/** Monta e confere cada arquivo contra o esquema do contrato. */
+function publicar(f: FontesApiV1) {
+  const api = montarApiV1(f);
+  for (const [colecao, esquema] of Object.entries(esquemaApiV1)) {
+    esquema.parse(api[colecao as keyof typeof api]);
+  }
+  return api;
+}
+
+describe('igreja', () => {
+  it('publica nome, endereço, WhatsApp em dígitos e só Facebook e YouTube', () => {
+    expect(publicar(fontes()).igreja).toEqual({
+      nome: 'Igreja de Teste',
+      endereco: {
+        rua: 'Rua 1, Lote 2',
+        bairro: 'Centro',
+        cidade: 'Cidade',
+        uf: 'RJ',
+        cep: '28990-000',
+        referencia: 'Em frente à praça',
+      },
+      whatsapp: '5521900000000',
+      redes: { facebook: 'https://www.facebook.com/teste', youtube: null },
+    });
+  });
+});
+
+describe('igreja: dados ausentes e provisórios', () => {
+  it('publica o WhatsApp como null enquanto o contato é provisório', () => {
+    const f = fontes();
+    f.igreja.contato.mock = true;
+    expect(publicar(f).igreja.whatsapp).toBeNull();
+  });
+
+  it('publica referência e WhatsApp vazios como null, nunca como ""', () => {
+    const f = fontes();
+    f.igreja.endereco.referencia = '';
+    f.igreja.contato.whatsapp = '';
+    const { igreja } = publicar(f);
+    expect(igreja.endereco.referencia).toBeNull();
+    expect(igreja.whatsapp).toBeNull();
+  });
+});
+
+describe('encontros', () => {
+  it('publica cada encontro na ordem do site, com mock virando provisorio', () => {
+    expect(publicar(fontes()).encontros).toEqual([
+      {
+        id: 'terca',
+        nome: 'Culto de Oração',
+        nomeCurto: null,
+        descricao: 'Noite de oração.',
+        diaSemana: 2,
+        hora: '19:00',
+        ocorrencia: 'semanal',
+        substituiODia: false,
+        duracaoMin: 120,
+        recebeTema: false,
+        provisorio: false,
+      },
+      {
+        id: 'ceia',
+        nome: 'Culto de Santa Ceia',
+        nomeCurto: 'Santa Ceia',
+        descricao: 'Ceia no segundo domingo.',
+        diaSemana: 0,
+        hora: '10:00',
+        ocorrencia: '2',
+        substituiODia: true,
+        duracaoMin: 240,
+        recebeTema: true,
+        provisorio: true,
+      },
+    ]);
+  });
+});
