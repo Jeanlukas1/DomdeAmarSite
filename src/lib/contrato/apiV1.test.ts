@@ -208,3 +208,45 @@ describe('tema-da-semana', () => {
     expect(tema.provisorio).toBe(true);
   });
 });
+
+describe('contribuicao', () => {
+  it('publica o PIX e a transferência sem os rótulos da página', () => {
+    expect(publicar(fontes()).contribuicao).toEqual({
+      pix: { chave: '00000000000000', tipo: 'CNPJ', titular: 'Igreja de Teste' },
+      transferencia: { banco: 'Banco X', agencia: '0001', conta: '123-4' },
+    });
+  });
+
+  it('publica o PIX como null sem chave ou com a chave provisória', () => {
+    const semChave = fontes();
+    semChave.contribuicao.pix.chave = null;
+    expect(publicar(semChave).contribuicao.pix).toBeNull();
+
+    const provisoria = fontes();
+    provisoria.contribuicao.pix.mock = true;
+    expect(publicar(provisoria).contribuicao.pix).toBeNull();
+  });
+
+  it('publica a transferência como null quando não há banco cadastrado', () => {
+    const semBloco = fontes();
+    delete semBloco.contribuicao.transferencia;
+    expect(publicar(semBloco).contribuicao.transferencia).toBeNull();
+
+    const bancoVazio = fontes();
+    bancoVazio.contribuicao.transferencia = { banco: '', agencia: '', conta: '' };
+    expect(publicar(bancoVazio).contribuicao.transferencia).toBeNull();
+  });
+});
+
+describe('assuntos-de-contato', () => {
+  it('publica id, título, rótulo e mensagem de cada assunto', () => {
+    expect(publicar(fontes())['assuntos-de-contato']).toEqual([
+      {
+        id: 'oracao',
+        titulo: 'Pedido de oração',
+        rotulo: 'Pedir oração',
+        mensagem: 'Graça e Paz! Gostaria de pedir oração por:',
+      },
+    ]);
+  });
+});

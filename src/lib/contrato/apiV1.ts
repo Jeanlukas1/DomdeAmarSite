@@ -61,6 +61,13 @@ export const esquemaApiV1 = {
     pregador: texto,
     provisorio: z.boolean(),
   }),
+  contribuicao: z.strictObject({
+    pix: z.strictObject({ chave: texto, tipo: texto, titular: texto }).nullable(),
+    transferencia: z.strictObject({ banco: texto, agencia: texto, conta: texto }).nullable(),
+  }),
+  'assuntos-de-contato': z.array(
+    z.strictObject({ id: texto, titulo: texto, rotulo: texto, mensagem: texto }),
+  ),
 };
 
 export type ApiV1 = { [C in keyof typeof esquemaApiV1]: z.infer<(typeof esquemaApiV1)[C]> };
@@ -171,6 +178,21 @@ function temaDaSemana(t: FontesApiV1['tema']): ApiV1['tema-da-semana'] {
   };
 }
 
+/** PIX ausente ou provisório sai como null: uma chave falsa poderia desviar uma oferta. */
+function contribuicao({ pix, transferencia }: FontesApiV1['contribuicao']): ApiV1['contribuicao'] {
+  return {
+    pix:
+      pix.chave && !pix.mock ? { chave: pix.chave, tipo: pix.tipo, titular: pix.titular } : null,
+    transferencia: transferencia?.banco
+      ? { banco: transferencia.banco, agencia: transferencia.agencia, conta: transferencia.conta }
+      : null,
+  };
+}
+
+function assuntos(itens: FontesApiV1['assuntos']): ApiV1['assuntos-de-contato'] {
+  return itens.map((a) => ({ id: a.id, titulo: a.titulo, rotulo: a.rotulo, mensagem: a.mensagem }));
+}
+
 /** Monta todos os arquivos de /api/v1, cada um validado pelo esquema do contrato. */
 export function montarApiV1(fontes: FontesApiV1): ApiV1 {
   return {
@@ -178,5 +200,7 @@ export function montarApiV1(fontes: FontesApiV1): ApiV1 {
     encontros: esquemaApiV1.encontros.parse(encontros(fontes.encontros)),
     eventos: esquemaApiV1.eventos.parse(eventos(fontes.eventos)),
     'tema-da-semana': esquemaApiV1['tema-da-semana'].parse(temaDaSemana(fontes.tema)),
+    contribuicao: esquemaApiV1.contribuicao.parse(contribuicao(fontes.contribuicao)),
+    'assuntos-de-contato': esquemaApiV1['assuntos-de-contato'].parse(assuntos(fontes.assuntos)),
   };
 }
