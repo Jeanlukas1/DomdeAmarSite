@@ -181,8 +181,7 @@ function temaDaSemana(t: FontesApiV1['tema']): ApiV1['tema-da-semana'] {
 /** PIX ausente ou provisório sai como null: uma chave falsa poderia desviar uma oferta. */
 function contribuicao({ pix, transferencia }: FontesApiV1['contribuicao']): ApiV1['contribuicao'] {
   return {
-    pix:
-      pix.chave && !pix.mock ? { chave: pix.chave, tipo: pix.tipo, titular: pix.titular } : null,
+    pix: pix.chave && !pix.mock ? { chave: pix.chave, tipo: pix.tipo, titular: pix.titular } : null,
     transferencia: transferencia?.banco
       ? { banco: transferencia.banco, agencia: transferencia.agencia, conta: transferencia.conta }
       : null,
