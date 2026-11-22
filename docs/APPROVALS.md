@@ -4,5 +4,6 @@ Registro das aprovações humanas que não têm um pull request próprio (backlo
 
 Só acrescente linhas ao final; nunca edite nem remova uma linha existente. Cada linha é escrita depois de uma aprovação explícita do humano na conversa.
 
-| Data | O que foi aprovado | Referência | Aprovado por |
-| ---- | ------------------ | ---------- | ------------ |
+| Data       | O que foi aprovado  | Referência         | Aprovado por |
+| ---------- | ------------------- | ------------------ | ------------ |
+| 2026-11-22 | Backlog da spec 001 | #3, tickets #4–#12 | Jeanlukas1   |
