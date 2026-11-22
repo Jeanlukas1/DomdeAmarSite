@@ -1,6 +1,6 @@
 # Assista — brief (cultos gravados com Facebook ou YouTube)
 
-Status: aguardando aprovação (issue #6; spec 001, R18 e R19)
+Status: aprovado (issue #6; spec 001, R18 e R19)
 
 - **Objetivo:** quem perdeu o culto, ou quer ouvir de novo, assiste ao culto gravado mais recente com um toque. O YouTube toca no próprio site, e o Facebook abre a página do vídeo numa aba nova. É um refinamento: o mundo visual, a faixa noite, o pôster e a animação de entrada continuam como estão.
 - **Destaque (o vídeo grande):** é o culto gravado mais recente que não seja provisório e tenha vídeo válido (`escolherDestaque`, em `src/lib/cultosGravados.ts`). Não tem cadastro próprio.

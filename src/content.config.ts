@@ -195,16 +195,6 @@ const cultosSecao = defineCollection({
   }),
 });
 
-/** id do vídeo no YouTube (só o id, não a URL); null/"" enquanto não houver */
-const youtubeId = z.preprocess(
-  (v) => (v === '' ? null : v),
-  z
-    .string()
-    .regex(/^[\w-]{11}$/)
-    .nullable()
-    .default(null),
-);
-
 const visite = defineCollection({
   loader: file('src/content/visite.json'),
   schema: z.object({
@@ -231,17 +221,16 @@ const assista = defineCollection({
     titulo: z.string(),
     destaque: z.string().optional(),
     texto: z.string(),
-    video: z.object({
-      mock: z.boolean().default(false),
-      titulo: z.string(),
-      descricao: z.string(),
-      youtubeId,
-      poster: foto,
-    }),
+    /** capa do vídeo em destaque (o vídeo vem do culto gravado mais recente) */
+    poster: foto,
+    /** título do vídeo enquanto não há culto gravado para destacar */
+    emBreveTitulo: z.string(),
     emBreve: z.string(),
     rotuloAssistir: z.string(),
     rotuloFacebook: z.string(),
-    mensagensTitulo: z.string(),
+    /** só para leitor de tela, nos links que abrem o Facebook */
+    rotuloNovaAba: z.string(),
+    listaTitulo: z.string(),
   }),
 });
 

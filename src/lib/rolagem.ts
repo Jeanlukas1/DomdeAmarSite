@@ -6,7 +6,7 @@ interface Pausavel {
   stop(): void;
   start(): void;
   resize?(): void;
-  scrollTo?(alvo: number, opcoes: { immediate?: boolean; force?: boolean }): void;
+  scrollTo?(alvo: number, opcoes?: { immediate?: boolean; force?: boolean }): void;
   isScrolling?: unknown;
 }
 
@@ -24,6 +24,17 @@ export function pularPara(y: number) {
     instancia.resize?.();
     instancia.scrollTo(y, { immediate: true, force: true });
   } else window.scrollTo(0, y);
+}
+
+/**
+ * Rola até `el`, descontando o header fixo. Suave, salvo com menos movimento, quando o salto é
+ * imediato.
+ */
+export function rolarAte(el: HTMLElement, { suave = true } = {}) {
+  const header = document.querySelector('header')?.getBoundingClientRect().height ?? 0;
+  const y = el.getBoundingClientRect().top + window.scrollY - header - 16;
+  if (instancia?.scrollTo) instancia.scrollTo(y, { immediate: !suave, force: true });
+  else window.scrollTo({ top: y, behavior: suave ? 'smooth' : 'auto' });
 }
 
 /** Chama `fn` quando a rolagem parar (sem inércia do Lenis) por ~150 ms. */

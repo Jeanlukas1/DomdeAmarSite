@@ -66,12 +66,6 @@ const campoHora = fields.text({
   },
 });
 
-const campoYoutube = fields.text({
-  label: 'Vídeo do YouTube (id)',
-  description:
-    'Só o código do vídeo: em youtube.com/watch?v=ABC123xyz00, é "ABC123xyz00". Deixe vazio se não houver.',
-});
-
 /** Vídeo de um culto gravado: a plataforma e o endereço público daquele vídeo nela. */
 const campoVideo = fields.object(
   {
@@ -354,23 +348,23 @@ export default config({
       format: { data: 'json' },
       schema: {
         principal: fields.object({
-          video: fields.object(
-            {
-              titulo: fields.text({ label: 'Título do vídeo' }),
-              descricao: fields.text({ label: 'Descrição' }),
-              youtubeId: campoYoutube,
-              poster: campoFoto('Foto de capa'),
-              mock: campoMock,
-            },
-            { label: 'Vídeo em destaque' },
-          ),
           titulo: fields.text({ label: 'Título da seção' }),
           destaque: fields.text({ label: 'Palavra com pincelada' }),
           texto: textoLongo('Texto de apoio'),
+          poster: campoFoto('Foto de capa do vídeo'),
+          emBreveTitulo: fields.text({
+            label: 'Título enquanto não há vídeo',
+            description:
+              'O vídeo em destaque é sempre o culto gravado mais recente que não seja provisório (cadastro "Cultos gravados"). Sem nenhum, aparece este título.',
+          }),
           emBreve: textoLongo('Aviso enquanto não há vídeo'),
           rotuloAssistir: fields.text({ label: 'Botão assistir' }),
           rotuloFacebook: fields.text({ label: 'Botão Facebook' }),
-          mensagensTitulo: fields.text({ label: 'Título da lista de mensagens' }),
+          rotuloNovaAba: fields.text({
+            label: 'Aviso de nova aba',
+            description: 'Lido só pelo leitor de tela nos links que abrem o Facebook.',
+          }),
+          listaTitulo: fields.text({ label: 'Título da lista de cultos gravados' }),
         }),
       },
     }),
