@@ -258,28 +258,40 @@ function cultosGravados(
 }
 
 /**
+ * Por que a alteração não pode ser publicada, ou undefined se pode. Cobre as regras de R10 e os
+ * campos que o esquema do contrato exige: uma alteração mal preenchida fora do painel (JSON
+ * editado à mão) sai com alerta, em vez de derrubar o build.
+ */
+function motivoDeDescarte(
+  a: FontesApiV1['alteracoes'][number],
+  { encontros, eventos }: FontesApiV1,
+  publicadas: ApiV1['alteracoes'],
+): string | undefined {
+  const encontro = encontros.find((e) => e.id === a.alvo);
+  const evento = eventos.find((e) => e.id === a.alvo);
+  if (!encontro && !evento) return `o alvo "${a.alvo}" não existe entre os encontros e eventos`;
+  const acontece = encontro ? aconteceEm(encontro, encontros, a.data) : evento?.data === a.data;
+  if (!acontece) return `"${a.alvo}" não acontece em ${a.data}`;
+  const repetida = publicadas.find((p) => p.alvo === a.alvo && p.data === a.data);
+  if (repetida) return `já há a alteração "${repetida.id}" para "${a.alvo}" em ${a.data}`;
+  if (a.situacao === 'alterado' && !a.novaHora && !a.novoLocal) {
+    return 'está como "alterado", mas sem nova hora e sem novo local';
+  }
+  if (!a.mensagem) return 'a mensagem está vazia';
+  if (a.novaHora && !/^\d{2}:\d{2}$/.test(a.novaHora)) {
+    return `a nova hora "${a.novaHora}" não está no formato HH:MM`;
+  }
+  return undefined;
+}
+
+/**
  * Uma alteração fora das regras do contrato sai da publicação, com alerta (R10); as outras
  * continuam. Entre duas para o mesmo alvo e data, fica a primeira na ordem do painel.
  */
-function alteracoes(
-  { alteracoes: itens, encontros, eventos }: FontesApiV1,
-  alertar: Alertar,
-): ApiV1['alteracoes'] {
+function alteracoes(fontes: FontesApiV1, alertar: Alertar): ApiV1['alteracoes'] {
   const publicadas: ApiV1['alteracoes'] = [];
-  for (const a of itens) {
-    const encontro = encontros.find((e) => e.id === a.alvo);
-    const evento = eventos.find((e) => e.id === a.alvo);
-    const repetida = publicadas.find((p) => p.alvo === a.alvo && p.data === a.data);
-    const motivo =
-      !encontro && !evento
-        ? `o alvo "${a.alvo}" não existe entre os encontros e eventos`
-        : !(encontro ? aconteceEm(encontro, encontros, a.data) : evento?.data === a.data)
-          ? `"${a.alvo}" não acontece em ${a.data}`
-          : repetida
-            ? `já há a alteração "${repetida.id}" para "${a.alvo}" em ${a.data}`
-            : a.situacao === 'alterado' && !a.novaHora && !a.novoLocal
-              ? 'está como "alterado", mas sem nova hora e sem novo local'
-              : undefined;
+  for (const a of fontes.alteracoes) {
+    const motivo = motivoDeDescarte(a, fontes, publicadas);
     if (motivo) {
       alertar(
         `/api/v1: a alteração "${a.id}" (src/content/alteracoes.json) ficou fora da ` +

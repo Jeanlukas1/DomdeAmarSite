@@ -490,6 +490,12 @@ describe('alteracoes: retiradas da publicação com alerta', () => {
       alteracao: { situacao: 'alterado' as const },
       motivo: /nova hora.*novo local/,
     },
+    { caso: 'a mensagem está vazia', alteracao: { mensagem: '' }, motivo: /mensagem/ },
+    {
+      caso: 'a nova hora não está no formato HH:MM',
+      alteracao: { situacao: 'alterado' as const, novaHora: '9h' },
+      motivo: /"9h".*HH:MM/,
+    },
   ];
 
   for (const { caso, alteracao, motivo } of casos) {
