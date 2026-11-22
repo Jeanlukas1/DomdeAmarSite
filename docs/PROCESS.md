@@ -10,29 +10,36 @@ Valores específicos deste projeto para o processo do plugin `eng`. As regras do
 
 ## Comandos
 
-| Finalidade           | Comando           |
-| -------------------- | ----------------- |
-| Testes (todos)       | a definir         |
-| Teste de um arquivo  | a definir         |
-| Lint                 | `npm run lint`    |
-| Verificação de tipos | `npx astro check` |
-| Build                | `npm run build`   |
+| Finalidade           | Comando                    |
+| -------------------- | -------------------------- |
+| Testes (todos)       | `npm test`                 |
+| Teste de um arquivo  | `npx vitest run <arquivo>` |
+| Lint                 | `npm run lint`             |
+| Verificação de tipos | `npx astro check`          |
+| Build                | `npm run build`            |
 
-O projeto ainda não tem testes automatizados. Hoje a verificação é feita com build, lint e inspeção no navegador ou com o Lighthouse.
+Os testes (Vitest) entram com a spec 001; até o ticket que os instala, `npm test` ainda não existe. O visual continua sendo conferido no navegador e com o Lighthouse.
 
 ## Caminhos críticos
 
 Uma mudança que toque qualquer caminho abaixo é de nível Crítico, qualquer que seja a etiqueta da issue. Use padrões glob.
 
-| Padrão                  | Motivo                          |
-| ----------------------- | ------------------------------- |
-| `.github/workflows/**`  | CI e deploy                     |
-| `.claude/settings.json` | regras de permissão do processo |
+| Padrão                  | Motivo                                                 |
+| ----------------------- | ------------------------------------------------------ |
+| `.github/workflows/**`  | CI e deploy                                            |
+| `.claude/settings.json` | regras de permissão do processo                        |
+| `package.json`          | dependências e scripts                                 |
+| `package-lock.json`     | versões das dependências                               |
+| `astro.config.*`        | build, adapter da Vercel e rotas sob demanda           |
+| `vercel.json`           | configuração de produção                               |
+| `keystatic.config.ts`   | painel: o que o administrador cadastra                 |
+| `src/content.config.ts` | esquema do conteúdo                                    |
+| `src/pages/api/**`      | contrato publicado para o app e entrada da transmissão |
 
-Acrescente aqui, quando existirem: migrações e esquema de banco, autenticação e permissões, manifestos de dependências, configuração de infraestrutura e de produção. A spec que escolher a stack do projeto faz esse acréscimo.
+Os arquivos de `src/content/` listados em `docs/DATA-MODEL.md` também são contrato com o servidor do app: uma mudança no formato deles é Crítica. Uma gravação de conteúdo pelo painel não passa por este processo.
 
 ## Regras de permissão pendentes
 
-A instalação de pacotes já pede confirmação. O deploy é feito pela Vercel a cada push na `main`, que também já pede confirmação. Não há banco de dados nem migrações. Se uma spec introduzir um deles, ou um comando de deploy próprio, ela acrescenta a regra `ask` correspondente em `.claude/settings.json`.
+A instalação de pacotes, o push na `main` (que publica pela Vercel) e o deploy manual (`npx vercel deploy`, `vercel deploy`) pedem confirmação. Não há banco de dados nem migrações; se uma spec introduzir um deles, ela acrescenta a regra `ask` correspondente em `.claude/settings.json`.
 
 O `.claude/settings.json` e o `CLAUDE.md` ficam fora do git por decisão do projeto (ver `.gitignore`). Por isso as regras de permissão e a seção "Engineering process" do `CLAUDE.md` existem só na máquina de quem fez o setup, e precisam ser recriadas em outra máquina (rode `/eng:setup` de novo).

@@ -8,12 +8,17 @@ Site oficial da Igreja Evangélica Dom de Amar (Jaconé, Saquarema/RJ). É está
 
 ## Usuários
 
-A preencher na primeira descoberta.
+- **Visitantes e frequentadores:** leem o site.
+- **Administrador:** o voluntário que mantém o site. É o único que usa o painel (Keystatic).
+- **App da igreja (DomdeAmarApp):** lê o conteúdo que o site publica em `/api/v1` e marca a transmissão pela entrada do site. O filmmaker marca "ao vivo" por uma tela do app, sem conta no painel.
+
+O vocabulário segue o `GLOSSARY.md` do repositório do app.
 
 ## Objetivos
 
 - Lighthouse mobile ≥ 95.
-- Conteúdo reaproveitável pelo app (lives).
+- Ser a fonte única do conteúdo do app: nada é cadastrado duas vezes.
+- Exigir o mínimo de pessoas não técnicas: o que puder ser automático é automático.
 
 ## Fora de escopo
 
