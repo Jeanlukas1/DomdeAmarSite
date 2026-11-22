@@ -4,6 +4,9 @@
 // ATENÇÃO: o Keystatic regrava o arquivo inteiro e DESCARTA campos que não estão aqui. Todo campo
 // novo em src/content.config.ts para um destes arquivos precisa entrar também neste schema.
 import { config, fields, singleton } from '@keystatic/core';
+import { createElement } from 'react';
+import cultosSalvos from './src/content/cultos.json';
+import eventosSalvos from './src/content/eventos.json';
 
 // ---------- campos reutilizados ----------
 
@@ -57,6 +60,53 @@ const campoId = fields.text({
   },
 });
 
+/**
+ * Identificador de encontro ou evento: é o alvo das alterações e o app guarda as referências a ele
+ * (R16).
+ */
+const campoIdPublicado = fields.text({
+  label: 'Identificador',
+  description:
+    'Sem espaços nem acentos, ex.: "culto-domingo". Não repita entre encontros e eventos. Depois de publicado, NÃO mude: o app e as alterações apontam para ele, e mudar quebra essas ligações.',
+  validation: {
+    isRequired: true,
+    pattern: { regex: /^[a-z0-9-]+$/, message: 'Use só letras minúsculas, números e hífen.' },
+  },
+});
+
+/**
+ * Identificador de uma alteração: criado junto com ela e só para leitura, para não mudar quando
+ * ela é editada (R15). O app usa o identificador para não avisar duas vezes.
+ */
+const campoIdGerado = (() => {
+  const base = fields.text({
+    label: 'Identificador',
+    description: 'Criado sozinho junto com a alteração. Não muda.',
+    defaultValue: () => `alteracao-${crypto.randomUUID().slice(0, 8)}`,
+    validation: { isRequired: true },
+  });
+  return {
+    ...base,
+    Input: (props: Parameters<typeof base.Input>[0]) =>
+      createElement(base.Input, { ...props, onChange: () => {} }),
+  };
+})();
+
+/**
+ * Alvos possíveis de uma alteração: os encontros e eventos salvos, lidos no build (como a lista
+ * de fotos). Um encontro ou evento recém-cadastrado aparece aqui depois da próxima publicação.
+ */
+const alvosDisponiveis = [
+  ...cultosSalvos.itens.map((c) => ({
+    label: `Encontro · ${c.dia} ${c.hora} · ${c.nome}`,
+    value: c.id,
+  })),
+  ...eventosSalvos.itens.map((e) => ({
+    label: `Evento · ${e.data} ${e.hora} · ${e.titulo}`,
+    value: e.id,
+  })),
+];
+
 const campoHora = fields.text({
   label: 'Horário',
   description: 'Formato HH:MM, ex.: 19:00',
@@ -105,7 +155,7 @@ export default config({
     brand: { name: 'Dom de Amar' },
     navigation: {
       'A igreja': ['igreja', 'pastores', 'ministerios'],
-      'Cultos e agenda': ['cultos', 'cultosSecao', 'eventos'],
+      'Cultos e agenda': ['cultos', 'cultosSecao', 'eventos', 'alteracoes'],
       Assista: ['assista', 'cultosGravados'],
       Contribua: ['contribua'],
     },
@@ -213,7 +263,7 @@ export default config({
       schema: {
         itens: fields.array(
           fields.object({
-            id: campoId,
+            id: campoIdPublicado,
             ordem: fields.integer({ label: 'Ordem', defaultValue: 1 }),
             dia: fields.text({ label: 'Dia (como aparece no site)', description: 'Ex.: Domingo' }),
             diaSemana: fields.select({
@@ -325,7 +375,7 @@ export default config({
       schema: {
         itens: fields.array(
           fields.object({
-            id: campoId,
+            id: campoIdPublicado,
             titulo: fields.text({ label: 'Título' }),
             data: fields.date({ label: 'Data', validation: { isRequired: true } }),
             hora: campoHora,
@@ -337,6 +387,69 @@ export default config({
           {
             label: 'Eventos',
             itemLabel: (p) => `${p.fields.data.value ?? ''} · ${p.fields.titulo.value}`,
+          },
+        ),
+      },
+    }),
+
+    alteracoes: singleton({
+      label: 'Alterações (cancelado ou mudou)',
+      path: 'src/content/alteracoes',
+      format: { data: 'json' },
+      schema: {
+        itens: fields.array(
+          fields.object({
+            id: campoIdGerado,
+            alvo: fields.select({
+              label: 'Encontro ou evento',
+              description:
+                'Um encontro ou evento recém-cadastrado aparece nesta lista depois que o site publicar (cerca de 1 minuto).',
+              options: alvosDisponiveis,
+              defaultValue: alvosDisponiveis[0]?.value ?? '',
+            }),
+            data: fields.date({
+              label: 'Data',
+              description:
+                'Um dia em que esse encontro ou evento acontece. Uma data em que ele não acontece não aparece no app.',
+              validation: { isRequired: true },
+            }),
+            situacao: fields.select({
+              label: 'Situação',
+              options: [
+                { label: 'Cancelado', value: 'cancelado' },
+                { label: 'Alterado (mudou de horário ou de local)', value: 'alterado' },
+              ],
+              defaultValue: 'cancelado',
+            }),
+            novaHora: fields.text({
+              label: 'Novo horário',
+              description:
+                'Formato HH:MM, ex.: 19:30. Só se mudou. Em "Alterado", preencha o novo horário, o novo local ou os dois.',
+              validation: {
+                pattern: { regex: /^(\d{2}:\d{2})?$/, message: 'Use HH:MM, ex.: 09:00' },
+              },
+            }),
+            novoLocal: fields.text({ label: 'Novo local', description: 'Só se mudou.' }),
+            mensagem: fields.text({
+              label: 'Mensagem',
+              description:
+                'O que a igreja precisa saber, ex.: "Culto cancelado por causa da chuva."',
+              multiline: true,
+              validation: { isRequired: true },
+            }),
+            avisar: fields.checkbox({
+              label: 'Avisar no celular de quem tem o app',
+              description: 'Desligado: a alteração aparece no app, mas ninguém recebe aviso.',
+              defaultValue: false,
+            }),
+          }),
+          {
+            label: 'Alterações',
+            itemLabel: (p) =>
+              `${p.fields.data.value ?? ''} · ${
+                alvosDisponiveis.find((a) => a.value === p.fields.alvo.value)?.label ??
+                p.fields.alvo.value
+              } · ${p.fields.situacao.value}`,
           },
         ),
       },
