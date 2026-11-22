@@ -1,7 +1,7 @@
 // Calendário dos encontros no fuso de Jaconé (America/Sao_Paulo), independente do fuso do
 // visitante. Entende encontros semanais e mensais ("2º domingo do mês") e encontros que
 // substituem os outros do mesmo dia (a Santa Ceia). Puro e sem DOM: reaproveitável no app futuro
-// e rodável no Node (scripts/checar-encontros.ts) — por isso sem imports com "@/".
+// e testável isolado (encontros.test.ts) — por isso sem imports com "@/".
 
 export type Ocorrencia = 'semanal' | '1' | '2' | '3' | '4' | 'ultima';
 

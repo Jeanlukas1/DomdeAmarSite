@@ -11,7 +11,7 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "imagens": "node scripts/gerar-imagens.mjs",
-    "checar:encontros": "node scripts/checar-encontros.ts"
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.4",
@@ -41,6 +41,7 @@
     "prettier-plugin-astro": "^1.1.2",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "~6.0",
-    "typescript-eslint": "^8.72.1"
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.1"
   }
 }
