@@ -24,16 +24,16 @@ npm install
 npm run dev        # gera os tokens e sobe o servidor de desenvolvimento
 ```
 
-| Comando                    | O que faz                                                           |
-| -------------------------- | ------------------------------------------------------------------- |
-| `npm run dev`              | Servidor de desenvolvimento                                         |
-| `npm run build`            | Tokens + `astro check` + build de produção (rode antes de publicar) |
-| `npm run preview`          | Serve o build gerado em `dist/`                                     |
-| `npm run lint`             | ESLint + Prettier (checagem)                                        |
-| `npm run format`           | Formata o código com Prettier                                       |
-| `npm run tokens`           | Gera `src/styles/tokens.css` a partir de `src/design/tokens.json`   |
-| `npm run imagens`          | Gera a imagem de compartilhamento e o ícone da Apple                |
-| `npm run checar:encontros` | Confere o cálculo do próximo encontro (cultos e Santa Ceia)         |
+| Comando           | O que faz                                                           |
+| ----------------- | ------------------------------------------------------------------- |
+| `npm run dev`     | Servidor de desenvolvimento                                         |
+| `npm run build`   | Tokens + `astro check` + build de produção (rode antes de publicar) |
+| `npm run preview` | Serve o build gerado em `dist/`                                     |
+| `npm run lint`    | ESLint + Prettier (checagem)                                        |
+| `npm run format`  | Formata o código com Prettier                                       |
+| `npm run tokens`  | Gera `src/styles/tokens.css` a partir de `src/design/tokens.json`   |
+| `npm run imagens` | Gera a imagem de compartilhamento e o ícone da Apple                |
+| `npm test`        | Testes automatizados (calendário dos encontros e Santa Ceia)        |
 
 ## Estrutura
 

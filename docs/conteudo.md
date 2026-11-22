@@ -32,7 +32,7 @@ O que o site faz sozinho:
 
 **O que você edita toda semana no Keystatic** (Cultos e agenda → Seção Cultos e destaque da semana): **dia do encontro deste tema**, tema, texto bíblico e pregador. Nada mais.
 
-Para conferir: `npm run checar:encontros` (casos de borda: virada de mês e de ano, dia 1 no domingo, sábado antes da Ceia, 1º domingo normal, limites da duração). No dev, `?agora=2026-12-12T22:00` simula a data e a hora (horário de São Paulo).
+Para conferir: `npm test` (testes do calendário, com os casos de borda: virada de mês e de ano, dia 1 no domingo, sábado antes da Ceia, 1º domingo normal, limites da duração). No dev, `?agora=2026-12-12T22:00` simula a data e a hora (horário de São Paulo).
 
 | Arquivo             | O que é                                                                                                                                                                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

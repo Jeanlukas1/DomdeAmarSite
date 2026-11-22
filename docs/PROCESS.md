@@ -18,7 +18,7 @@ Valores específicos deste projeto para o processo do plugin `eng`. As regras do
 | Verificação de tipos | `npx astro check`          |
 | Build                | `npm run build`            |
 
-Os testes (Vitest) entram com a spec 001; até o ticket que os instala, `npm test` ainda não existe. O visual continua sendo conferido no navegador e com o Lighthouse.
+Os testes automatizados usam o Vitest, só no desenvolvimento, com a mesma configuração de Vite do Astro. O visual continua sendo conferido no navegador e com o Lighthouse.
 
 ## Caminhos críticos
 
