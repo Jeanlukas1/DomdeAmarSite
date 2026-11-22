@@ -12,7 +12,10 @@ export const prerender = true;
 export const getStaticPaths: GetStaticPaths = () =>
   Object.keys(esquemaApiV1).map((colecao) => ({ params: { colecao } }));
 
-/** Monta os arquivos uma vez por build: assim cada alerta aparece uma vez só. */
+/**
+ * Monta os arquivos uma vez por build: assim cada alerta aparece uma vez só. No dev, monta a cada
+ * pedido, para refletir o que o painel acabou de gravar.
+ */
 async function montar() {
   const [igreja, encontros, eventos, cultosGravados, cultosSecao, contribua, faleConosco] =
     await Promise.all([
@@ -38,7 +41,7 @@ async function montar() {
 let api: Promise<ApiV1> | undefined;
 
 export const GET: APIRoute = async ({ params }) => {
-  api ??= montar();
+  if (!import.meta.env.PROD || !api) api = montar();
   return new Response(JSON.stringify((await api)[params.colecao as Colecao]), {
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
   });
