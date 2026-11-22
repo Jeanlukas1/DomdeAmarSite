@@ -245,15 +245,26 @@ const assista = defineCollection({
   }),
 });
 
-const mensagens = defineCollection({
-  loader: lista('src/content/mensagens.json'),
+/**
+ * Vídeo como o painel grava: plataforma e endereço, "" quando vazios. Aceita qualquer texto de
+ * propósito: um vídeo inválido não derruba o build, sai da publicação com alerta (R11, ver
+ * src/lib/video.ts).
+ */
+const videoDoPainel = z
+  .object({ plataforma: z.string().default(''), endereco: z.string().default('') })
+  .default({ plataforma: '', endereco: '' });
+
+const cultosGravados = defineCollection({
+  loader: lista('src/content/cultos-gravados.json'),
   schema: z.object({
     titulo: z.string(),
-    referencia: z.string(),
+    /** texto bíblico; "" quando não há */
+    referencia: z.string().default(''),
     /** AAAA-MM-DD */
     data: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    pregador: z.string(),
-    youtubeId,
+    /** "" quando não há */
+    pregador: z.string().default(''),
+    video: videoDoPainel,
     mock: z.boolean().default(false),
   }),
 });
@@ -444,7 +455,7 @@ export const collections = {
   cultosSecao,
   visite,
   assista,
-  mensagens,
+  cultosGravados,
   cresca,
   ministerios,
   agenda,

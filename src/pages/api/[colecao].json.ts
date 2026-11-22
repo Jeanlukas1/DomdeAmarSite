@@ -1,13 +1,14 @@
 // Endpoints JSON estáticos para o futuro app (lives): /api/cultos.json, /api/eventos.json…
 // Gerados no build a partir das mesmas coleções do site — uma fonte só.
 import type { APIRoute, GetStaticPaths } from 'astro';
-import { getEventos, getIgreja, getMensagens, getOrdenados } from '@/lib/igreja';
+import { getCultosGravados, getEventos, getIgreja, getOrdenados } from '@/lib/igreja';
 
 const fontes = {
   igreja: () => getIgreja(),
   cultos: () => getOrdenados('cultos'),
   eventos: () => getEventos(),
-  mensagens: () => getMensagens(Infinity),
+  // endereço antigo (R9): some só depois que o app ler /api/v1; agora vem dos cultos gravados
+  mensagens: () => getCultosGravados(),
   ministerios: () => getOrdenados('ministerios'),
   pastores: () => getOrdenados('pastores'),
 } as const;

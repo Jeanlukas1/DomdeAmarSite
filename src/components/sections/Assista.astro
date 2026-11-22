@@ -3,18 +3,18 @@
 import VideoDestaque from '@/components/islands/VideoDestaque.astro';
 import Icon from '@/components/ui/Icon.astro';
 import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
-import { getIgreja, getMensagens, getPrincipal } from '@/lib/igreja';
+import { videoDe } from '@/lib/cultosGravados';
+import { getCultosGravados, getIgreja, getPrincipal } from '@/lib/igreja';
 
 const a = await getPrincipal('assista');
 const igreja = await getIgreja();
-const mensagens = await getMensagens(3);
+const mensagens = await getCultosGravados(3);
 
 const dataCurta = (iso: string) =>
   new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', timeZone: 'UTC' })
     .format(new Date(`${iso}T12:00:00Z`))
     .replace('.', '');
-const linkDe = (youtubeId: string | null) =>
-  youtubeId ? `https://www.youtube.com/watch?v=${youtubeId}` : igreja.redes.facebook;
+const linkDe = (m: (typeof mensagens)[number]) => videoDe(m)?.endereco ?? igreja.redes.facebook;
 ---
 
 <section
@@ -46,7 +46,7 @@ const linkDe = (youtubeId: string | null) =>
         {mensagens.map((m) => (
           <li class="border-t border-white/10" data-reveal>
             <a
-              href={linkDe(m.youtubeId)}
+              href={linkDe(m)}
               target="_blank"
               rel="noopener"
               class="group grid grid-cols-[auto_1fr_auto] items-center gap-x-5 gap-y-1 py-5 sm:grid-cols-[6rem_1fr_auto_auto] sm:gap-x-8"

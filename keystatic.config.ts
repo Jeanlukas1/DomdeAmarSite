@@ -72,6 +72,27 @@ const campoYoutube = fields.text({
     'Só o código do vídeo: em youtube.com/watch?v=ABC123xyz00, é "ABC123xyz00". Deixe vazio se não houver.',
 });
 
+/** Vídeo de um culto gravado: a plataforma e o endereço público daquele vídeo nela. */
+const campoVideo = fields.object(
+  {
+    plataforma: fields.select({
+      label: 'Plataforma',
+      options: [
+        { label: '(sem vídeo)', value: '' },
+        { label: 'Facebook', value: 'facebook' },
+        { label: 'YouTube', value: 'youtube' },
+      ],
+      defaultValue: '',
+    }),
+    endereco: fields.text({
+      label: 'Endereço do vídeo',
+      description:
+        'Copie o endereço da página do vídeo, ex.: https://www.facebook.com/…/videos/… ou https://www.youtube.com/watch?v=…. Um vídeo sem plataforma, ou com endereço de outra plataforma, não aparece no site nem no app.',
+    }),
+  },
+  { label: 'Vídeo' },
+);
+
 const DIAS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
 const textoLongo = (label: string, description?: string) =>
@@ -91,7 +112,7 @@ export default config({
     navigation: {
       'A igreja': ['igreja', 'pastores', 'ministerios'],
       'Cultos e agenda': ['cultos', 'cultosSecao', 'eventos'],
-      Assista: ['assista', 'mensagens'],
+      Assista: ['assista', 'cultosGravados'],
       Contribua: ['contribua'],
     },
   },
@@ -354,9 +375,9 @@ export default config({
       },
     }),
 
-    mensagens: singleton({
-      label: 'Mensagens recentes',
-      path: 'src/content/mensagens',
+    cultosGravados: singleton({
+      label: 'Cultos gravados',
+      path: 'src/content/cultos-gravados',
       format: { data: 'json' },
       schema: {
         itens: fields.array(
@@ -364,13 +385,13 @@ export default config({
             id: campoId,
             titulo: fields.text({ label: 'Título' }),
             referencia: fields.text({ label: 'Texto bíblico' }),
-            data: fields.date({ label: 'Data', validation: { isRequired: true } }),
             pregador: fields.text({ label: 'Pregador' }),
-            youtubeId: campoYoutube,
+            data: fields.date({ label: 'Data', validation: { isRequired: true } }),
+            video: campoVideo,
             mock: campoMock,
           }),
           {
-            label: 'Mensagens',
+            label: 'Cultos gravados',
             itemLabel: (p) => `${p.fields.data.value ?? ''} · ${p.fields.titulo.value}`,
           },
         ),

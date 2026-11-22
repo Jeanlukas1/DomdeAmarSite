@@ -94,9 +94,9 @@ export async function getOrdenados<C extends Ordenada>(
     .sort((a, b) => a.ordem - b.ordem);
 }
 
-/** Mensagens da mais recente para a mais antiga. */
-export async function getMensagens(limite = 3) {
-  const itens = await getCollection('mensagens');
+/** Cultos gravados, do mais recente para o mais antigo. */
+export async function getCultosGravados(limite = Infinity) {
+  const itens = await getCollection('cultosGravados');
   return itens
     .map((i) => ({ id: i.id, ...i.data }))
     .sort((a, b) => b.data.localeCompare(a.data))
