@@ -1,10 +1,9 @@
 {
   "principal": {
-    "aoVivo": true,
+    "aoVivo": false,
+    "data": "2026-11-22",
     "video": {
-      "plataforma": "",
-      "endereco": ""
-    },
-    "data": "2026-11-22"
+      "plataforma": ""
+    }
   }
 }
