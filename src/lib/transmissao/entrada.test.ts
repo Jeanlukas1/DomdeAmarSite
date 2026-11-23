@@ -227,3 +227,168 @@ describe('toque repetido e vídeo (R27)', () => {
     expect(transmissao(github)).toEqual({ aoVivo: true, data: '2026-11-22', video: FACEBOOK });
   });
 });
+
+describe('culto gravado do dia (R28)', () => {
+  type Culto = Record<string, unknown> & { data: string };
+  const cultos = (g: GithubFalso) =>
+    (g.ler('src/content/cultos-gravados.json') as { itens: Culto[] }).itens;
+  const doDia = (g: GithubFalso, data = '2026-11-22') => cultos(g).filter((c) => c.data === data);
+
+  const temaDeHoje = {
+    'src/content/cultos-secao.json': {
+      principal: {
+        semana: {
+          data: '2026-11-22',
+          tema: 'Tapando as brechas',
+          referencia: 'Juízes 13.1-5',
+          pregador: 'Pr. Marcelo',
+          mock: false,
+        },
+        titulo: 'Encontros',
+      },
+    },
+  };
+
+  it('com tema de hoje: cria o culto gravado no mesmo commit, com os dados do tema', async () => {
+    const github = criarGithubFalso(repositorio(temaDeHoje));
+    const r = await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(r.status).toBe(200);
+    expect(github.commitsNovos()).toBe(1);
+    const [culto] = doDia(github);
+    expect(culto).toMatchObject({
+      titulo: 'Tapando as brechas',
+      referencia: 'Juízes 13.1-5',
+      pregador: 'Pr. Marcelo',
+      data: '2026-11-22',
+      video: YOUTUBE,
+      mock: false,
+    });
+    expect(culto.id).toMatch(/^[a-z0-9-]+$/);
+    expect(doDia(github)).toHaveLength(1);
+    expect(doDia(github, '2026-11-15')).toHaveLength(1);
+  });
+
+  it('sem tema de hoje: o título é o do encontro cuja janela contém a marcação', async () => {
+    const github = criarGithubFalso(repositorio());
+    await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(doDia(github)[0]).toMatchObject({
+      titulo: 'Culto da Manhã',
+      referencia: '',
+      pregador: '',
+      mock: false,
+    });
+  });
+
+  it('sem tema e fora de toda janela: o título é o do primeiro encontro de hoje', async () => {
+    const github = criarGithubFalso(repositorio());
+    await marcar(github, pedido({ corpo: { video: YOUTUBE } }), new Date('2026-11-22T17:00:00Z'));
+    expect(doDia(github)[0]).toMatchObject({ titulo: 'Culto da Manhã' });
+  });
+
+  it('um encontro cancelado hoje não dá o título', async () => {
+    const github = criarGithubFalso(
+      repositorio({
+        'src/content/alteracoes.json': {
+          itens: [
+            {
+              id: 'alteracao-1',
+              alvo: 'domingo-manha',
+              data: '2026-11-22',
+              situacao: 'cancelado',
+              novaHora: '',
+              novoLocal: '',
+              mensagem: 'Cancelado',
+              avisar: false,
+            },
+          ],
+        },
+      }),
+    );
+    await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(doDia(github)[0]).toMatchObject({ titulo: 'Culto da Noite' });
+  });
+
+  it('sem tema: um evento de hoje cuja janela contém a marcação dá o título', async () => {
+    const github = criarGithubFalso(
+      repositorio({
+        'src/content/eventos.json': {
+          itens: [
+            { id: 'vigilia', titulo: 'Vigília de Sábado', data: '2026-11-21', hora: '20:00' },
+          ],
+        },
+      }),
+    );
+    // sábado, 21/11, às 21h em Brasília: não há encontro no sábado
+    await marcar(github, pedido({ corpo: { video: YOUTUBE } }), new Date('2026-11-22T00:00:00Z'));
+    expect(doDia(github, '2026-11-21')[0]).toMatchObject({ titulo: 'Vigília de Sábado' });
+  });
+
+  it('sem tema e sem encontro nem evento no dia: o título é o padrão do painel', async () => {
+    const github = criarGithubFalso(repositorio());
+    // sábado, 21/11, às 10h em Brasília
+    await marcar(github, pedido({ corpo: { video: YOUTUBE } }), new Date('2026-11-21T13:00:00Z'));
+    expect(doDia(github, '2026-11-21')[0]).toMatchObject({
+      titulo: 'Culto ao vivo',
+      referencia: '',
+      pregador: '',
+    });
+  });
+
+  it('sem vídeo, não cria culto gravado', async () => {
+    const github = criarGithubFalso(repositorio(temaDeHoje));
+    await marcar(github, pedido());
+    expect(doDia(github)).toHaveLength(0);
+  });
+
+  it('quando um toque seguinte traz o vídeo, cria o culto gravado nesse commit', async () => {
+    const github = criarGithubFalso(repositorio(temaDeHoje));
+    await marcar(github, pedido());
+    await marcar(github, pedido({ corpo: { video: FACEBOOK } }));
+    expect(github.commitsNovos()).toBe(2);
+    expect(doDia(github)).toHaveLength(1);
+    expect(doDia(github)[0]).toMatchObject({ video: FACEBOOK });
+  });
+
+  it('com um culto gravado de hoje já cadastrado, não cria outro', async () => {
+    const existente = {
+      id: 'ja-cadastrado',
+      titulo: 'Já cadastrado',
+      referencia: '',
+      data: '2026-11-22',
+      pregador: '',
+      video: FACEBOOK,
+      mock: false,
+    };
+    const github = criarGithubFalso(
+      repositorio({ 'src/content/cultos-gravados.json': { itens: [existente] } }),
+    );
+    const r = await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(r.status).toBe(200);
+    expect(cultos(github)).toEqual([existente]);
+    expect(transmissao(github)).toMatchObject({ aoVivo: true, video: YOUTUBE });
+  });
+
+  it('o identificador novo não repete o de um culto gravado que já existe', async () => {
+    const github = criarGithubFalso(
+      repositorio({
+        ...temaDeHoje,
+        'src/content/cultos-gravados.json': {
+          itens: [
+            {
+              id: 'tapando-as-brechas-2026-11-22',
+              titulo: 'Outro',
+              referencia: '',
+              data: '2026-11-01',
+              pregador: '',
+              video: FACEBOOK,
+              mock: false,
+            },
+          ],
+        },
+      }),
+    );
+    await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    const ids = cultos(github).map((c) => c.id);
+    expect(new Set(ids).size).toBe(2);
+  });
+});

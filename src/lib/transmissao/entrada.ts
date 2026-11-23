@@ -6,11 +6,21 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { dataEmSaoPaulo } from '@/lib/encontros';
 import { conferirVideo, type Video } from '@/lib/video';
+import { cultoDoDia, type ConteudoDoDia, type CultoGravadoDoPainel } from './cultoDoDia';
 import { clienteGithub, FalhaDoGithub, type ClienteGithub } from './github';
 
 const ARQ = {
   transmissao: 'src/content/transmissao.json',
+  cultosGravados: 'src/content/cultos-gravados.json',
+  cultosSecao: 'src/content/cultos-secao.json',
+  encontros: 'src/content/cultos.json',
+  eventos: 'src/content/eventos.json',
+  alteracoes: 'src/content/alteracoes.json',
+  assista: 'src/content/assista.json',
 } as const;
+
+/** O conteúdo de um arquivo do repositório não serve para a marcação. */
+export class ConteudoInvalido extends Error {}
 
 /** Vídeo como o painel grava: "" quando vazio. */
 type VideoDoPainel = { plataforma: string; endereco: string };
@@ -74,18 +84,75 @@ function marcar(atual: TransmissaoDoPainel, hoje: string, video: Video | null) {
 
 const mesmo = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
 
+/** Lê e interpreta um arquivo JSON do painel naquele commit. */
+async function lerJson<T>(github: ClienteGithub, commit: string, caminho: string): Promise<T> {
+  const texto = await github.ler(commit, caminho);
+  if (texto === undefined) throw new ConteudoInvalido(`${caminho} não existe na main`);
+  try {
+    return JSON.parse(texto) as T;
+  } catch {
+    throw new ConteudoInvalido(`${caminho} não é JSON`);
+  }
+}
+
+/** O conteúdo de que o culto gravado do dia precisa, lido no mesmo commit. */
+async function lerConteudoDoDia(
+  github: ClienteGithub,
+  commit: string,
+  cultos: CultoGravadoDoPainel[],
+): Promise<ConteudoDoDia> {
+  type Itens<K extends keyof ConteudoDoDia> = { itens: ConteudoDoDia[K] };
+  const [secao, encontros, eventos, alteracoes, assista] = await Promise.all([
+    lerJson<{ principal: { semana?: ConteudoDoDia['tema'] } }>(github, commit, ARQ.cultosSecao),
+    lerJson<Itens<'encontros'>>(github, commit, ARQ.encontros),
+    lerJson<Itens<'eventos'>>(github, commit, ARQ.eventos),
+    lerJson<Itens<'alteracoes'>>(github, commit, ARQ.alteracoes),
+    lerJson<{ principal: { tituloCultoGravadoPadrao?: string } }>(github, commit, ARQ.assista),
+  ]);
+  const tituloPadrao = assista.principal.tituloCultoGravadoPadrao;
+  if (!tituloPadrao) {
+    throw new ConteudoInvalido(`${ARQ.assista} não tem o título padrão do culto gravado`);
+  }
+  return {
+    tema: secao.principal.semana,
+    encontros: encontros.itens,
+    eventos: eventos.itens,
+    alteracoes: alteracoes.itens,
+    tituloPadrao,
+    idsExistentes: cultos.map((c) => c.id),
+  };
+}
+
 /**
- * Lê a ponta da `main`, calcula o que muda e grava num commit só. Devolve se gravou (false: nada
- * a mudar).
+ * Lê a ponta da `main`, calcula o que muda e grava num commit só: a transmissão e, quando ela
+ * tem vídeo e ainda não há culto gravado de hoje, esse culto gravado. Devolve se gravou (false:
+ * nada a mudar).
  */
-async function gravarMarcacao(github: ClienteGithub, hoje: string, video: Video | null) {
+async function gravarMarcacao(
+  github: ClienteGithub,
+  agora: Date,
+  hoje: string,
+  video: Video | null,
+) {
   const pai = await github.ponta();
-  const texto = await github.ler(pai, ARQ.transmissao);
-  if (texto === undefined) throw new FalhaDoGithub(`${ARQ.transmissao} não existe na main`);
-  const arquivo = JSON.parse(texto) as { principal: TransmissaoDoPainel };
+  const arquivo = await lerJson<{ principal: TransmissaoDoPainel }>(github, pai, ARQ.transmissao);
   const nova = marcar(arquivo.principal, hoje, video);
   if (mesmo(nova, arquivo.principal)) return false;
   const arquivos = { [ARQ.transmissao]: emJson({ ...arquivo, principal: nova }) };
+
+  const videoDaLive = videoValido(nova.video);
+  if (videoDaLive) {
+    const gravados = await lerJson<{ itens: CultoGravadoDoPainel[] }>(
+      github,
+      pai,
+      ARQ.cultosGravados,
+    );
+    if (!gravados.itens.some((c) => c.data === hoje)) {
+      const conteudo = await lerConteudoDoDia(github, pai, gravados.itens);
+      const culto = cultoDoDia(conteudo, agora, hoje, videoDaLive);
+      arquivos[ARQ.cultosGravados] = emJson({ ...gravados, itens: [culto, ...gravados.itens] });
+    }
+  }
   return github.gravar(pai, arquivos, `content: mark transmissao live on ${hoje}`);
 }
 
@@ -129,10 +196,15 @@ export async function marcarTransmissao(
   const hoje = dataEmSaoPaulo(agora);
   const github = clienteGithub(ambiente.repo, ambiente.token, ambiente.fetch);
   try {
-    const gravou = await gravarMarcacao(github, hoje, lido.video);
+    const gravou = await gravarMarcacao(github, agora, hoje, lido.video);
     return responder(200, { ok: true, data: hoje, gravou });
   } catch (erro) {
-    if (!(erro instanceof FalhaDoGithub)) throw erro;
-    return responder(502, { erro: `o GitHub falhou; nada foi gravado (${erro.message})` });
+    if (erro instanceof FalhaDoGithub) {
+      return responder(502, { erro: `o GitHub falhou; nada foi gravado (${erro.message})` });
+    }
+    if (erro instanceof ConteudoInvalido) {
+      return responder(500, { erro: `nada foi gravado: ${erro.message}` });
+    }
+    throw erro;
   }
 }
