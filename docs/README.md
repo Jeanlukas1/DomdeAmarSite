@@ -21,7 +21,7 @@
 - [x] F4 — Conteúdo, Visite-nos, Contribua, Fale com a gente (WhatsApp), Keystatic
 - [x] F5 — Performance, SEO, acessibilidade
 - [x] F6 — Deploy (https://domdeamar.vercel.app, deploy automático, painel /keystatic em produção)
-- [ ] F7 — Extensão do site para o app (spec 001): #4 a #9 mesclados, #10 em PR, faltam #11 e #12
+- [ ] F7 — Extensão do site para o app (spec 001): #4 a #10 mesclados e #10 configurado em produção, faltam #11 (aguarda o servidor do app) e #12 (portão liberado)
 
 ## Sessões
 
@@ -40,3 +40,4 @@
 - [2026-11-22 — sessão 11](sessoes/2026-11-22-sessao-11.md) — #8: o site respeita as alterações (cancelado, horário ou local alterado)
 - [2026-11-22 — sessão 12](sessoes/2026-11-22-sessao-12.md) — #9: cadastrar e publicar a transmissão
 - [2026-11-22 — sessão 13](sessoes/2026-11-22-sessao-13.md) — #10: entrada que marca a transmissão ao vivo
+- [2026-11-22 — sessão 14](sessoes/2026-11-22-sessao-14.md) — configuração de produção do Keystatic e da transmissão; portão do #12 liberado
