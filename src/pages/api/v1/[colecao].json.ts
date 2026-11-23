@@ -3,7 +3,14 @@
 // Um arquivo fora do contrato ou um identificador repetido faz o build falhar.
 import type { APIRoute, GetStaticPaths } from 'astro';
 import { esquemaApiV1, montarApiV1, type ApiV1 } from '@/lib/contrato/apiV1';
-import { getCultosGravados, getEventos, getIgreja, getOrdenados, getPrincipal } from '@/lib/igreja';
+import {
+  getAlteracoes,
+  getCultosGravados,
+  getEventos,
+  getIgreja,
+  getOrdenados,
+  getPrincipal,
+} from '@/lib/igreja';
 
 type Colecao = keyof ApiV1;
 
@@ -17,21 +24,31 @@ export const getStaticPaths: GetStaticPaths = () =>
  * pedido, para refletir o que o painel acabou de gravar.
  */
 async function montar() {
-  const [igreja, encontros, eventos, cultosGravados, cultosSecao, contribua, faleConosco] =
-    await Promise.all([
-      getIgreja(),
-      getOrdenados('cultos'),
-      getEventos(),
-      getCultosGravados(),
-      getPrincipal('cultosSecao'),
-      getPrincipal('contribua'),
-      getPrincipal('faleConosco'),
-    ]);
+  const [
+    igreja,
+    encontros,
+    eventos,
+    alteracoes,
+    cultosGravados,
+    cultosSecao,
+    contribua,
+    faleConosco,
+  ] = await Promise.all([
+    getIgreja(),
+    getOrdenados('cultos'),
+    getEventos(),
+    getAlteracoes(),
+    getCultosGravados(),
+    getPrincipal('cultosSecao'),
+    getPrincipal('contribua'),
+    getPrincipal('faleConosco'),
+  ]);
   return montarApiV1({
     igreja,
     encontros,
     eventos,
     tema: cultosSecao.semana,
+    alteracoes,
     cultosGravados,
     contribuicao: contribua,
     assuntos: faleConosco.assuntos,

@@ -95,6 +95,28 @@ function fontes(): FontesApiV1 {
         mock: true,
       },
     ],
+    alteracoes: [
+      {
+        id: 'alt-terca',
+        alvo: 'terca',
+        data: '2026-11-24',
+        situacao: 'cancelado',
+        novaHora: '',
+        novoLocal: '',
+        mensagem: 'Culto cancelado por causa da chuva.',
+        avisar: true,
+      },
+      {
+        id: 'alt-festa',
+        alvo: 'festa',
+        data: '2026-12-24',
+        situacao: 'alterado',
+        novaHora: '19:00',
+        novoLocal: '',
+        mensagem: 'A festa começa mais cedo.',
+        avisar: false,
+      },
+    ],
     assuntos: [
       {
         id: 'oracao',
@@ -354,6 +376,162 @@ describe('cultos-gravados: vídeo inválido', () => {
     const alertar = vi.fn();
     montarApiV1(fontes(), { alertar });
     expect(alertar).not.toHaveBeenCalled();
+  });
+});
+
+describe('alteracoes', () => {
+  it('publica cada alteração com as chaves do contrato e os vazios como null', () => {
+    expect(publicar(fontes()).alteracoes).toEqual([
+      {
+        id: 'alt-terca',
+        alvo: 'terca',
+        data: '2026-11-24',
+        situacao: 'cancelado',
+        novaHora: null,
+        novoLocal: null,
+        mensagem: 'Culto cancelado por causa da chuva.',
+        avisar: true,
+      },
+      {
+        id: 'alt-festa',
+        alvo: 'festa',
+        data: '2026-12-24',
+        situacao: 'alterado',
+        novaHora: '19:00',
+        novoLocal: null,
+        mensagem: 'A festa começa mais cedo.',
+        avisar: false,
+      },
+    ]);
+  });
+
+  it('publica uma lista vazia quando não há alterações', () => {
+    const f = fontes();
+    f.alteracoes = [];
+    expect(publicar(f).alteracoes).toEqual([]);
+  });
+
+  it('não alerta quando todas as alterações cumprem as regras', () => {
+    const alertar = vi.fn();
+    montarApiV1(fontes(), { alertar });
+    expect(alertar).not.toHaveBeenCalled();
+  });
+});
+
+describe('alteracoes: retiradas da publicação com alerta', () => {
+  type Alteracao = FontesApiV1['alteracoes'][number];
+  const base: Alteracao = {
+    id: 'alt-nova',
+    alvo: 'terca',
+    data: '2026-11-17',
+    situacao: 'cancelado',
+    novaHora: '',
+    novoLocal: '',
+    mensagem: 'Sem culto hoje.',
+    avisar: false,
+  };
+  /** Um encontro semanal de domingo: no segundo domingo, a Santa Ceia o substitui. */
+  const domingo: FontesApiV1['encontros'][number] = {
+    id: 'domingo',
+    nome: 'Culto de Domingo',
+    descricao: 'Culto da noite.',
+    diaSemana: 0,
+    hora: '18:00',
+    ocorrencia: 'semanal',
+    substituiODia: false,
+    duracaoMin: 120,
+    recebeTema: true,
+    mock: false,
+  };
+
+  /** Acrescenta a alteração às de teste e devolve os ids publicados e os alertas. */
+  function publicarCom(alteracao: Partial<Alteracao>) {
+    const f = fontes();
+    f.encontros.push(domingo);
+    f.alteracoes.push({ ...base, ...alteracao });
+    const alertar = vi.fn();
+    const api = montarApiV1(f, { alertar });
+    esquemaApiV1.alteracoes.parse(api.alteracoes);
+    return {
+      ids: api.alteracoes.map((a) => a.id),
+      alertas: alertar.mock.calls.map(([m]) => m as string),
+    };
+  }
+
+  const casos = [
+    { caso: 'o alvo não existe', alteracao: { alvo: 'quarta' }, motivo: /"quarta".*não existe/ },
+    {
+      caso: 'a data não cai no dia da semana do encontro',
+      alteracao: { data: '2026-11-18' },
+      motivo: /não acontece em 2026-11-18/,
+    },
+    {
+      caso: 'a data não é o segundo domingo, para a Santa Ceia',
+      alteracao: { alvo: 'ceia', data: '2026-11-15' },
+      motivo: /não acontece em 2026-11-15/,
+    },
+    {
+      caso: 'o dia é substituído pela Santa Ceia',
+      alteracao: { alvo: 'domingo', data: '2026-11-08' },
+      motivo: /não acontece em 2026-11-08/,
+    },
+    {
+      caso: 'a data não é a do evento',
+      alteracao: { alvo: 'festa', data: '2026-12-25' },
+      motivo: /não acontece em 2026-12-25/,
+    },
+    {
+      caso: 'já há outra alteração para o mesmo alvo e a mesma data',
+      alteracao: { data: '2026-11-24' },
+      motivo: /"alt-terca"/,
+    },
+    {
+      caso: '"alterado" vem sem nova hora e sem novo local',
+      alteracao: { situacao: 'alterado' as const },
+      motivo: /nova hora.*novo local/,
+    },
+    { caso: 'a mensagem está vazia', alteracao: { mensagem: '' }, motivo: /mensagem/ },
+    {
+      caso: 'a nova hora não está no formato HH:MM',
+      alteracao: { situacao: 'alterado' as const, novaHora: '9h' },
+      motivo: /"9h".*HH:MM/,
+    },
+  ];
+
+  for (const { caso, alteracao, motivo } of casos) {
+    it(`retira a alteração quando ${caso}, alerta qual e por quê, e publica as outras`, () => {
+      const { ids, alertas } = publicarCom(alteracao);
+      expect(ids).toEqual(['alt-terca', 'alt-festa']);
+      expect(alertas).toHaveLength(1);
+      expect(alertas[0]).toContain('"alt-nova"');
+      expect(alertas[0]).toMatch(motivo);
+    });
+  }
+
+  const validas = [
+    { caso: 'a Santa Ceia no segundo domingo', alteracao: { alvo: 'ceia', data: '2026-11-08' } },
+    { caso: 'o domingo fora da Santa Ceia', alteracao: { alvo: 'domingo', data: '2026-11-15' } },
+    {
+      caso: 'um "alterado" só com novo local',
+      alteracao: { situacao: 'alterado' as const, novoLocal: 'Na praça' },
+    },
+  ];
+
+  for (const { caso, alteracao } of validas) {
+    it(`publica ${caso}`, () => {
+      const { ids, alertas } = publicarCom(alteracao);
+      expect(ids).toEqual(['alt-terca', 'alt-festa', 'alt-nova']);
+      expect(alertas).toEqual([]);
+    });
+  }
+
+  it('o restante do conteúdo é publicado normalmente', () => {
+    const f = fontes();
+    f.alteracoes[0].alvo = 'quarta';
+    const api = montarApiV1(f, { alertar: vi.fn() });
+    expect(api.encontros).toHaveLength(2);
+    expect(api.eventos).toHaveLength(1);
+    expect(api.alteracoes.map((a) => a.id)).toEqual(['alt-festa']);
   });
 });
 

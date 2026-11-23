@@ -2,6 +2,7 @@
 // Uma camada de tradução lê as coleções do site e monta cada arquivo, validado pelo esquema
 // abaixo. Um arquivo fora do contrato faz o build falhar, em vez de ser publicado.
 import { z } from 'astro/zod';
+import { aconteceEm } from '@/lib/encontros';
 import { conferirVideo } from '@/lib/video';
 
 // ── Esquema do contrato ────────────────────────────────────────────────────────
@@ -65,6 +66,18 @@ export const esquemaApiV1 = {
     pregador: texto,
     provisorio: z.boolean(),
   }),
+  alteracoes: z.array(
+    z.strictObject({
+      id: texto,
+      alvo: texto,
+      data,
+      situacao: z.enum(['cancelado', 'alterado']),
+      novaHora: hora.nullable(),
+      novoLocal: textoOuNull,
+      mensagem: texto,
+      avisar: z.boolean(),
+    }),
+  ),
   'cultos-gravados': z.array(
     z.strictObject({
       id: texto,
@@ -138,6 +151,17 @@ export interface FontesApiV1 {
     pregador: string;
     video: { plataforma: string; endereco: string };
     mock: boolean;
+  }>;
+  /** alteracoes.json, na ordem do painel; o painel grava campo vazio como "" */
+  alteracoes: Array<{
+    id: string;
+    alvo: string;
+    data: string;
+    situacao: 'cancelado' | 'alterado';
+    novaHora: string;
+    novoLocal: string;
+    mensagem: string;
+    avisar: boolean;
   }>;
   /** contribua.json */
   contribuicao: {
@@ -233,6 +257,62 @@ function cultosGravados(
     .sort((a, b) => b.data.localeCompare(a.data));
 }
 
+/**
+ * Por que a alteração não pode ser publicada, ou undefined se pode. Cobre as regras de R10 e os
+ * campos que o esquema do contrato exige: uma alteração mal preenchida fora do painel (JSON
+ * editado à mão) sai com alerta, em vez de derrubar o build.
+ */
+function motivoDeDescarte(
+  a: FontesApiV1['alteracoes'][number],
+  { encontros, eventos }: FontesApiV1,
+  publicadas: ApiV1['alteracoes'],
+): string | undefined {
+  const encontro = encontros.find((e) => e.id === a.alvo);
+  const evento = eventos.find((e) => e.id === a.alvo);
+  if (!encontro && !evento) return `o alvo "${a.alvo}" não existe entre os encontros e eventos`;
+  const acontece = encontro ? aconteceEm(encontro, encontros, a.data) : evento?.data === a.data;
+  if (!acontece) return `"${a.alvo}" não acontece em ${a.data}`;
+  const repetida = publicadas.find((p) => p.alvo === a.alvo && p.data === a.data);
+  if (repetida) return `já há a alteração "${repetida.id}" para "${a.alvo}" em ${a.data}`;
+  if (a.situacao === 'alterado' && !a.novaHora && !a.novoLocal) {
+    return 'está como "alterado", mas sem nova hora e sem novo local';
+  }
+  if (!a.mensagem) return 'a mensagem está vazia';
+  if (a.novaHora && !/^\d{2}:\d{2}$/.test(a.novaHora)) {
+    return `a nova hora "${a.novaHora}" não está no formato HH:MM`;
+  }
+  return undefined;
+}
+
+/**
+ * Uma alteração fora das regras do contrato sai da publicação, com alerta (R10); as outras
+ * continuam. Entre duas para o mesmo alvo e data, fica a primeira na ordem do painel.
+ */
+function alteracoes(fontes: FontesApiV1, alertar: Alertar): ApiV1['alteracoes'] {
+  const publicadas: ApiV1['alteracoes'] = [];
+  for (const a of fontes.alteracoes) {
+    const motivo = motivoDeDescarte(a, fontes, publicadas);
+    if (motivo) {
+      alertar(
+        `/api/v1: a alteração "${a.id}" (src/content/alteracoes.json) ficou fora da ` +
+          `publicação: ${motivo}.`,
+      );
+      continue;
+    }
+    publicadas.push({
+      id: a.id,
+      alvo: a.alvo,
+      data: a.data,
+      situacao: a.situacao,
+      novaHora: ouNull(a.novaHora),
+      novoLocal: ouNull(a.novoLocal),
+      mensagem: a.mensagem,
+      avisar: a.avisar,
+    });
+  }
+  return publicadas;
+}
+
 /** PIX ausente ou provisório sai como null: uma chave falsa poderia desviar uma oferta. */
 function contribuicao({ pix, transferencia }: FontesApiV1['contribuicao']): ApiV1['contribuicao'] {
   return {
@@ -288,6 +368,7 @@ export function montarApiV1(
     encontros: esquemaApiV1.encontros.parse(encontros(fontes.encontros)),
     eventos: esquemaApiV1.eventos.parse(eventos(fontes.eventos)),
     'tema-da-semana': esquemaApiV1['tema-da-semana'].parse(temaDaSemana(fontes.tema)),
+    alteracoes: esquemaApiV1.alteracoes.parse(alteracoes(fontes, alertar)),
     'cultos-gravados': esquemaApiV1['cultos-gravados'].parse(
       cultosGravados(fontes.cultosGravados, alertar),
     ),

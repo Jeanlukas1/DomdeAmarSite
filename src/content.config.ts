@@ -258,6 +258,28 @@ const cultosGravados = defineCollection({
   }),
 });
 
+/**
+ * Alteração de um encontro ou evento numa data (R15). O arquivo é contrato com o servidor do app:
+ * usa as chaves publicadas em /api/v1/alteracoes (docs/DATA-MODEL.md). As regras de R10 (alvo,
+ * data, repetição) não derrubam o build: a alteração sai da publicação com alerta.
+ */
+const alteracoes = defineCollection({
+  loader: lista('src/content/alteracoes.json'),
+  schema: z.object({
+    /** id de um encontro (cultos.json) ou evento (eventos.json) */
+    alvo: z.string().default(''),
+    /** AAAA-MM-DD */
+    data: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    situacao: z.enum(['cancelado', 'alterado']),
+    /** HH:MM; "" quando não muda */
+    novaHora: z.string().default(''),
+    /** "" quando não muda */
+    novoLocal: z.string().default(''),
+    mensagem: z.string().default(''),
+    avisar: z.boolean().default(false),
+  }),
+});
+
 const cresca = defineCollection({
   loader: file('src/content/cresca.json'),
   schema: z.object({
@@ -445,6 +467,7 @@ export const collections = {
   visite,
   assista,
   cultosGravados,
+  alteracoes,
   cresca,
   ministerios,
   agenda,

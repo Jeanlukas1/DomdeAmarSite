@@ -80,6 +80,23 @@ function cai(e: Encontro, dia: number, diaSemana: number, diasNoMes: number) {
 }
 
 /**
+ * O encontro acontece de fato nesta data (AAAA-MM-DD)? Cai pela regra dele e não é substituído
+ * por outro encontro do mesmo dia (a Santa Ceia). `encontros` é a lista inteira, para achar o
+ * substituto.
+ */
+export function aconteceEm(encontro: Encontro, encontros: Encontro[], data: string) {
+  const [ano, mes, dia] = data.split('-').map(Number);
+  const d = new Date(Date.UTC(ano, mes - 1, dia));
+  if (d.getUTCFullYear() !== ano || d.getUTCMonth() !== mes - 1 || d.getUTCDate() !== dia) {
+    return false;
+  }
+  const diasNoMes = new Date(Date.UTC(ano, mes, 0)).getUTCDate();
+  const caiNoDia = (e: Encontro) => cai(e, dia, d.getUTCDay(), diasNoMes);
+  if (!caiNoDia(encontro)) return false;
+  return !!encontro.substituiODia || !encontros.some((e) => e.substituiODia && caiNoDia(e));
+}
+
+/**
  * Todas as vezes dos próximos `dias` dias (a partir de hoje), já com as substituições aplicadas.
  * `substituidas` guarda as que não acontecem, com quem as substituiu.
  */

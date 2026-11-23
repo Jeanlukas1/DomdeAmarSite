@@ -103,6 +103,12 @@ export async function getCultosGravados(limite = Infinity) {
     .slice(0, limite);
 }
 
+/** Alterações de encontros e eventos, na ordem do painel. */
+export async function getAlteracoes() {
+  const itens = await getCollection('alteracoes');
+  return itens.map((i) => ({ id: i.id, ...i.data }));
+}
+
 /** Eventos em ordem cronológica (o navegador esconde os que já passaram). */
 export async function getEventos() {
   const itens = await getCollection('eventos');
