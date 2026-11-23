@@ -80,6 +80,7 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
       data-cultos
       data-encontros={JSON.stringify(encontros)}
       data-alteracoes={JSON.stringify(alteracoes)}
+      data-as={ui.a11y.as}
       data-quando-agora={s.quando.agora}
       data-quando-hoje={s.quando.hoje}
       data-quando-amanha={s.quando.amanha}
@@ -338,7 +339,7 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
       const partes = [
         rotulo?.textContent,
         texto,
-        novaHora && `${box?.dataset.as ?? ''} ${horaCurta(novaHora)}`,
+        novaHora && `${lista.dataset.as ?? ''} ${horaCurta(novaHora)}`,
       ];
       if (rotulo) rotulo.textContent = partes.filter(Boolean).join(' · ');
     }
@@ -374,7 +375,9 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
             a.situacao === 'cancelado' ? rotulos.cancelado : rotulos.alterado;
           q('[data-alteracao-linha]').textContent = linhaDaAlteracao(a, dias, box.dataset.as);
           q('[data-alteracao-mensagem]').textContent = a.mensagem;
-          q<HTMLElement>('[data-alteracao-data]').hidden = false;
+          const data = q<HTMLElement>('[data-alteracao-data]');
+          data.dataset.alteracaoData = a.data;
+          data.hidden = false;
         }
       }
     }

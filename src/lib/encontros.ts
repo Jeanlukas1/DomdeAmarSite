@@ -235,13 +235,13 @@ export function situacaoDaSemana<T extends Encontro>(
 ) {
   const { hoje, vezes, substituidas, canceladas } = calendario(encontros, agora, alteracoes);
   const futuras = vezes.filter((v) => v.fim > hoje.minutos);
-  const comAlteracao = [...futuras.filter((v) => v.alteracao), ...canceladas]
+  const vezesAlteradas = [...futuras.filter((v) => v.alteracao), ...canceladas]
     .filter((v) => v.fim > hoje.minutos)
     .sort((a, b) => a.inicio - b.inicio);
 
   const base = encontros.map((encontro) => {
     const proxima = futuras.find((v) => v.encontro === encontro);
-    const alteradas = comAlteracao.filter((v) => v.encontro === encontro);
+    const alteradas = vezesAlteradas.filter((v) => v.encontro === encontro);
     const cancelada = alteradas.find((v) => v.alteracao?.situacao === 'cancelado');
     const primeira =
       cancelada && (!proxima || cancelada.inicio < proxima.inicio) ? cancelada : proxima;
