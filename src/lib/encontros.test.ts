@@ -265,3 +265,53 @@ describe('calendário com alterações', () => {
     expect(r && `${r.vez.encontro.id}@${r.vez.data}`).toBe('domingo-plenitude@2026-11-15');
   });
 });
+
+describe('mudança de horário', () => {
+  it('adiada: às 10h o Seminário passado para as 11h ainda não começou', () => {
+    const agora = emSaoPaulo('2026-11-15T10:00');
+    const r = proximoEncontro(grade, agora, [alterado('domingo-estudo', '2026-11-15', '11:00')]);
+    expect({
+      proximo: r && `${r.vez.encontro.id}@${r.vez.data}`,
+      hora: r?.vez.hora,
+      quando: r?.quando,
+      mudou: r?.vez.alteracao?.situacao,
+    }).toEqual({
+      proximo: 'domingo-estudo@2026-11-15',
+      hora: '11:00',
+      quando: 'hoje',
+      mudou: 'alterado',
+    });
+  });
+
+  it('antecipada: às 17h a Plenitude passada para as 16h já está acontecendo', () => {
+    const agora = emSaoPaulo('2026-11-15T17:00');
+    const r = proximoEncontro(grade, agora, [
+      alterado('domingo-plenitude', '2026-11-15', '16:00'),
+    ]);
+    expect([r?.vez.encontro.id, r?.vez.hora, r?.quando]).toEqual([
+      'domingo-plenitude',
+      '16:00',
+      'agora',
+    ]);
+  });
+
+  it('passada para depois de outro encontro do dia, troca a ordem', () => {
+    const agora = emSaoPaulo('2026-11-15T08:00');
+    const r = proximoEncontro(grade, agora, [alterado('domingo-estudo', '2026-11-15', '19:00')]);
+    expect(r?.vez.encontro.id).toBe('domingo-plenitude');
+  });
+
+  it('só o local mudou: mantém o horário e leva a alteração junto', () => {
+    const agora = emSaoPaulo('2026-11-15T08:00');
+    const r = proximoEncontro(grade, agora, [
+      alterado('domingo-estudo', '2026-11-15', null, 'Praça de Jaconé'),
+    ]);
+    expect([r?.vez.hora, r?.vez.alteracao?.novoLocal]).toEqual(['09:00', 'Praça de Jaconé']);
+  });
+
+  it('a alteração vale só na data dela: no domingo seguinte, o horário de sempre', () => {
+    const agora = emSaoPaulo('2026-11-21T20:00');
+    const r = proximoEncontro(grade, agora, [alterado('domingo-estudo', '2026-11-15', '11:00')]);
+    expect([r?.vez.data, r?.vez.hora, r?.vez.alteracao]).toEqual(['2026-11-22', '09:00', undefined]);
+  });
+});

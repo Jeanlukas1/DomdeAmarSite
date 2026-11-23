@@ -44,6 +44,8 @@ export interface Vez<T extends Encontro = Encontro> {
   diaSemana: number;
   /** 0 = hoje, 1 = amanhã… */
   diasAte: number;
+  /** "HH:MM" desta vez: a do encontro, ou a nova hora de uma alteração */
+  hora: string;
   inicio: number;
   fim: number;
   /** a alteração desta data, se houver */
@@ -114,6 +116,13 @@ export function aconteceEm(encontro: Encontro, encontros: Encontro[], data: stri
   return !!encontro.substituiODia || !encontros.some((e) => e.substituiODia && caiNoDia(e));
 }
 
+/** A vez no horário novo (a duração do encontro se mantém). */
+function comAlteracao<T extends Encontro>(vez: Vez<T>, alteracao: Alteracao): Vez<T> {
+  if (!alteracao.novaHora) return { ...vez, alteracao };
+  const inicio = vez.diasAte * 1440 + minutosDe(alteracao.novaHora);
+  return { ...vez, alteracao, hora: alteracao.novaHora, inicio, fim: inicio + vez.fim - vez.inicio };
+}
+
 /**
  * Todas as vezes dos próximos `dias` dias (a partir de hoje), já com as substituições aplicadas.
  * `substituidas` guarda as que não acontecem, com quem as substituiu.
@@ -148,6 +157,7 @@ export function calendario<T extends Encontro>(
           data,
           diaSemana,
           diasAte: i,
+          hora: encontro.hora,
           inicio,
           fim: inicio + (encontro.duracaoMin ?? DURACAO_PADRAO),
         };
@@ -160,8 +170,9 @@ export function calendario<T extends Encontro>(
         continue;
       }
       const alteracao = alteracoes.find((a) => a.alvo === vez.encontro.id && a.data === data);
-      if (alteracao?.situacao === 'cancelado') canceladas.push({ ...vez, alteracao });
-      else vezes.push(vez);
+      if (!alteracao) vezes.push(vez);
+      else if (alteracao.situacao === 'cancelado') canceladas.push({ ...vez, alteracao });
+      else vezes.push(comAlteracao(vez, alteracao));
     }
   }
   vezes.sort((a, b) => a.inicio - b.inicio);
