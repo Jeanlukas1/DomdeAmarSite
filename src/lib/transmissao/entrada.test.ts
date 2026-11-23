@@ -143,3 +143,87 @@ describe('data de hoje no horário de Brasília (R24)', () => {
     expect(r.corpo).not.toContain(SEGREDO);
   });
 });
+
+describe('vídeo inválido (R25)', () => {
+  const invalidos: Array<[string, unknown]> = [
+    [
+      'plataforma desconhecida',
+      { video: { plataforma: 'vimeo', endereco: 'https://vimeo.com/1' } },
+    ],
+    ['endereço de outra plataforma', { video: { ...FACEBOOK, plataforma: 'youtube' } }],
+    ['endereço que não é endereço', { video: { plataforma: 'facebook', endereco: 'live' } }],
+    ['vídeo sem endereço', { video: { plataforma: 'facebook' } }],
+    ['vídeo que não é objeto', { video: 'https://www.facebook.com/igreja/videos/123' }],
+    ['corpo que não é JSON', '{ao vivo'],
+    ['corpo que não é objeto', [FACEBOOK]],
+  ];
+  for (const [caso, corpo] of invalidos) {
+    it(`${caso}: responde 400 e não grava nada`, async () => {
+      const github = criarGithubFalso(repositorio());
+      const r = await marcar(github, pedido({ corpo }));
+      expect(r.status).toBe(400);
+      expect(github.commitsNovos()).toBe(0);
+    });
+  }
+
+  it('o segredo é conferido antes do corpo: segredo errado com vídeo inválido dá 401', async () => {
+    const github = criarGithubFalso(repositorio());
+    const r = await marcar(github, pedido({ autorizacao: 'Bearer x', corpo: '{ao vivo' }));
+    expect(r.status).toBe(401);
+  });
+});
+
+describe('toque repetido e vídeo (R27)', () => {
+  const hojeAoVivo = (video = SEM_VIDEO) =>
+    repositorio({
+      'src/content/transmissao.json': { principal: { aoVivo: true, data: '2026-11-22', video } },
+    });
+
+  it('já ao vivo hoje e sem nada novo: responde 200 sem commit', async () => {
+    const github = criarGithubFalso(hojeAoVivo());
+    const r = await marcar(github, pedido());
+    expect(r.status).toBe(200);
+    expect(github.commitsNovos()).toBe(0);
+  });
+
+  it('dois toques seguidos fazem um commit só', async () => {
+    const github = criarGithubFalso(repositorio());
+    await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    const r = await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(r.status).toBe(200);
+    expect(github.commitsNovos()).toBe(1);
+  });
+
+  it('acrescenta o vídeo quando a transmissão de hoje ainda não tem vídeo', async () => {
+    const github = criarGithubFalso(hojeAoVivo());
+    const r = await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(r.status).toBe(200);
+    expect(transmissao(github)).toEqual({ aoVivo: true, data: '2026-11-22', video: YOUTUBE });
+  });
+
+  it('não troca um vídeo que a transmissão de hoje já tem', async () => {
+    const github = criarGithubFalso(hojeAoVivo(FACEBOOK));
+    const r = await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(r.status).toBe(200);
+    expect(github.commitsNovos()).toBe(0);
+    expect(transmissao(github)).toEqual({ aoVivo: true, data: '2026-11-22', video: FACEBOOK });
+  });
+
+  it('o vídeo de uma transmissão de outro dia não fica: vale o do pedido', async () => {
+    const github = criarGithubFalso(repositorio());
+    await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(transmissao(github)).toEqual({ aoVivo: true, data: '2026-11-22', video: YOUTUBE });
+  });
+
+  it('hoje, mas desmarcada no painel: volta a ficar ao vivo e mantém o vídeo de hoje', async () => {
+    const github = criarGithubFalso(
+      repositorio({
+        'src/content/transmissao.json': {
+          principal: { aoVivo: false, data: '2026-11-22', video: FACEBOOK },
+        },
+      }),
+    );
+    await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(transmissao(github)).toEqual({ aoVivo: true, data: '2026-11-22', video: FACEBOOK });
+  });
+});

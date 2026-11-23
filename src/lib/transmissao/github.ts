@@ -77,7 +77,11 @@ export function clienteGithub(repo: Repo, token: string, f: typeof fetch = fetch
         'criar a árvore',
       );
       const commit = await json<{ sha: string }>(
-        await enviar('/git/commits', 'POST', { message: mensagem, tree: arvore.sha, parents: [pai] }),
+        await enviar('/git/commits', 'POST', {
+          message: mensagem,
+          tree: arvore.sha,
+          parents: [pai],
+        }),
         'criar o commit',
       );
       const movida = await enviar('/git/refs/heads/main', 'PATCH', {
