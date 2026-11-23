@@ -76,4 +76,7 @@ O `video` é opcional. O corpo pode ser `{}`.
 | `200`    | a transmissão de hoje está gravada como ao vivo (gravou agora ou já estava) |
 | `400`    | corpo inválido ou vídeo inválido; nada foi gravado                          |
 | `401`    | segredo ausente ou errado; nada foi gravado                                 |
-| `502`    | o GitHub falhou; nada foi gravado                                           |
+| `502`    | o GitHub falhou ou não está configurado; nada foi gravado                   |
+| `500`    | um arquivo de conteúdo da `main` está incompleto; nada foi gravado          |
+
+O corpo da resposta é JSON: `{ "ok": true, "data": "AAAA-MM-DD", "gravou": true|false }` no sucesso (`gravou: false` quando já estava tudo marcado) e `{ "erro": "…" }` nas recusas e falhas. Uma data, um `aoVivo` ou outra chave enviada no corpo é ignorada. Um vídeo que a transmissão de hoje já tem não é trocado; o de uma transmissão de outro dia é descartado. Quando a transmissão de hoje fica com vídeo e não há culto gravado com a data de hoje, o mesmo commit acrescenta um em `src/content/cultos-gravados.json`, com `mock: false`, `referencia` e `pregador` em `""` quando não vêm do tema, e um `id` no formato `<titulo-em-slug>-AAAA-MM-DD`. Se a `main` andar entre a leitura e a gravação, a entrada refaz tudo sobre a ponta nova, até três vezes além da primeira; depois disso, responde `502`.

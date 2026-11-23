@@ -481,6 +481,12 @@ export default config({
             description: 'Lido só pelo leitor de tela nos links que abrem o Facebook.',
           }),
           listaTitulo: fields.text({ label: 'Título da lista de cultos gravados' }),
+          tituloCultoGravadoPadrao: fields.text({
+            label: 'Título padrão do culto gravado da live',
+            description:
+              'Quando a live é marcada com vídeo, o culto gravado do dia é criado sozinho, com o título do tema da semana (se for de hoje) ou do encontro do dia. Sem nenhum dos dois, ele recebe este título.',
+            validation: { isRequired: true },
+          }),
         }),
       },
     }),

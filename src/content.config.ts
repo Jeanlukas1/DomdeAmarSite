@@ -231,6 +231,11 @@ const assista = defineCollection({
     /** só para leitor de tela, nos links que abrem o Facebook */
     rotuloNovaAba: z.string(),
     listaTitulo: z.string(),
+    /**
+     * título do culto gravado que a marcação da transmissão cria quando não há tema de hoje nem
+     * encontro ou evento no dia (R28, src/lib/transmissao)
+     */
+    tituloCultoGravadoPadrao: z.string().min(1),
   }),
 });
 

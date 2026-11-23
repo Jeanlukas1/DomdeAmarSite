@@ -46,6 +46,6 @@ filmmaker ──(app) ──> servidor do app ──POST /api/v1/transmissao─�
 
 ## Edição de conteúdo
 
-O **Keystatic** (`keystatic.config.ts`, painel em `/keystatic`) edita os arquivos de `src/content/`. Ele e a entrada da transmissão são as únicas rotas sob demanda, por isso React, Keystatic e o adapter da Vercel só entram no `astro dev` e no build da Vercel (`VERCEL=1`). O `npm run build` local continua 100% estático, e o `npm run preview` e o Lighthouse ficam iguais. Ver `docs/conteudo.md`.
+O **Keystatic** (`keystatic.config.ts`, painel em `/keystatic`) edita os arquivos de `src/content/`. Ele e a entrada da transmissão são as únicas rotas sob demanda, por isso React, Keystatic e o adapter da Vercel só entram no `astro dev` e no build da Vercel (`VERCEL=1`). A entrada da transmissão (`src/rotas/transmissao.ts`, com a lógica em `src/lib/transmissao/`) é registrada só no build da Vercel: o `astro dev` não a tem, para nunca gravar na `main` de produção a partir de uma máquina local. O `npm run build` local continua 100% estático, e o `npm run preview` e o Lighthouse ficam iguais. Ver `docs/conteudo.md`.
 
 Pedidos de oração e "quero fazer parte" **não** usam formulário: abrem o WhatsApp com a mensagem pronta (decisão da F4, sem Web3Forms). Enquanto o número for mock, os botões levam ao Facebook.
