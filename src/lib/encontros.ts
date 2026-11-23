@@ -85,6 +85,12 @@ export function agoraEmSaoPaulo(agora: Date) {
   };
 }
 
+/** A data de hoje no fuso da igreja, "AAAA-MM-DD". */
+export function dataEmSaoPaulo(agora: Date) {
+  const { ano, mes, dia } = agoraEmSaoPaulo(agora);
+  return `${ano}-${pad(mes)}-${pad(dia)}`;
+}
+
 const minutosDe = (hora: string) => {
   const [h, m] = hora.split(':').map(Number);
   return h * 60 + m;
@@ -326,3 +332,15 @@ export const diaEMes = (data: string) =>
   new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(
     new Date(`${data}T12:00:00Z`),
   );
+
+/**
+ * A data e só o que mudou, para a marca da alteração (docs/secoes/alteracoes.md):
+ * "domingo, 15 de novembro · às 11h · Praça de Jaconé". `dias` = nomes de domingo a sábado.
+ */
+export function linhaDaAlteracao(a: Alteracao, dias: string[], as = 'às') {
+  const diaSemana = new Date(`${a.data}T12:00:00Z`).getUTCDay();
+  const partes = [`${dias[diaSemana].toLowerCase()}, ${diaEMes(a.data)}`];
+  if (a.situacao === 'alterado' && a.novaHora) partes.push(`${as} ${horaCurta(a.novaHora)}`);
+  if (a.situacao === 'alterado' && a.novoLocal) partes.push(a.novoLocal);
+  return partes.join(' · ');
+}

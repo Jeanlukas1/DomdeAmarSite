@@ -6,6 +6,7 @@ import {
   destaqueDaSemana,
   eventoComAlteracao,
   gradeSemanal,
+  linhaDaAlteracao,
   proximoEncontro,
   situacaoDaSemana,
   type Alteracao,
@@ -416,5 +417,23 @@ describe('alterações de eventos e na virada do mês', () => {
     const agora = emSaoPaulo('2026-11-30T10:00');
     const r = proximoEncontro(grade, agora, [cancelado('terca-oracao', '2026-12-01')]);
     expect(r && `${r.vez.encontro.id}@${r.vez.data}`).toBe('domingo-estudo@2026-12-06');
+  });
+});
+
+describe('linha da alteração', () => {
+  const dias = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+
+  it('diz a data e só o que mudou', () => {
+    expect([
+      linhaDaAlteracao(cancelado('domingo-estudo', '2026-11-15'), dias, 'às'),
+      linhaDaAlteracao(alterado('domingo-estudo', '2026-11-15', '11:00', 'Praça'), dias, 'às'),
+      linhaDaAlteracao(alterado('terca-oracao', '2026-12-01', null, 'Praça'), dias, 'às'),
+      linhaDaAlteracao(alterado('terca-oracao', '2026-12-01', '19:30'), dias, 'às'),
+    ]).toEqual([
+      'domingo, 15 de novembro',
+      'domingo, 15 de novembro · às 11h · Praça',
+      'terça, 1 de dezembro · Praça',
+      'terça, 1 de dezembro · às 19h30',
+    ]);
   });
 });

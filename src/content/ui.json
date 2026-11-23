@@ -28,6 +28,11 @@
       "voltar": "Voltar ao início",
       "cultos": "Ver horários dos cultos"
     },
-    "diasSemana": ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
+    "diasSemana": ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+    "alteracoes": {
+      "cancelado": "Cancelado",
+      "alterado": "Alterado",
+      "horarioAlterado": "horário alterado"
+    }
   }
 }
