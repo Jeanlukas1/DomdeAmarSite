@@ -267,8 +267,10 @@ export function destaqueDaSemana<T extends Encontro>(
   encontros: T[],
   temaData: string | undefined,
   agora = new Date(),
+  alteracoes: Alteracao[] = [],
 ) {
-  const { hoje, vezes } = calendario(encontros, agora);
+  // uma vez cancelada não é anunciada: o destaque passa para a seguinte
+  const { hoje, vezes } = calendario(encontros, agora, alteracoes);
   const vez = vezes.find((v) => v.encontro.recebeTema && v.fim > hoje.minutos);
   return vez && { vez, quando: quandoDe(vez, hoje.minutos), temTema: vez.data === temaData };
 }

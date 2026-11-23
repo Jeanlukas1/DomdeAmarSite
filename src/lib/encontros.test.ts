@@ -363,5 +363,19 @@ describe('alterações na grade e no destaque', () => {
       avisos: SUBSTITUIDOS,
     });
   });
+
+  it('o destaque da semana pula a Plenitude cancelada e acompanha a mudança de horário', () => {
+    const agora = emSaoPaulo('2026-11-14T20:00');
+    const pulou = destaqueDaSemana(grade, '2026-11-15', agora, [
+      cancelado('domingo-plenitude', '2026-11-15'),
+    ]);
+    const mudou = destaqueDaSemana(grade, '2026-11-15', agora, [
+      alterado('domingo-plenitude', '2026-11-15', '19:30'),
+    ]);
+    expect({
+      pulou: pulou && `${pulou.vez.data} ${pulou.temTema}`,
+      mudou: mudou && `${mudou.vez.data} ${mudou.vez.hora} ${mudou.vez.alteracao?.situacao}`,
+    }).toEqual({ pulou: '2026-11-22 false', mudou: '2026-11-15 19:30 alterado' });
+  });
 });
 
