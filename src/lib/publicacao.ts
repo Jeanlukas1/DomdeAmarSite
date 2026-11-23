@@ -21,6 +21,7 @@ async function montar() {
     cultosSecao,
     contribua,
     faleConosco,
+    transmissao,
   ] = await Promise.all([
     getIgreja(),
     getOrdenados('cultos'),
@@ -30,6 +31,7 @@ async function montar() {
     getPrincipal('cultosSecao'),
     getPrincipal('contribua'),
     getPrincipal('faleConosco'),
+    getPrincipal('transmissao'),
   ]);
   return montarApiV1({
     igreja,
@@ -38,6 +40,7 @@ async function montar() {
     tema: cultosSecao.semana,
     alteracoes,
     cultosGravados,
+    transmissao,
     contribuicao: contribua,
     assuntos: faleConosco.assuntos,
   });

@@ -117,6 +117,7 @@ function fontes(): FontesApiV1 {
         avisar: false,
       },
     ],
+    transmissao: { aoVivo: false, data: '', video: { plataforma: '', endereco: '' } },
     assuntos: [
       {
         id: 'oracao',
@@ -533,6 +534,89 @@ describe('alteracoes: retiradas da publicação com alerta', () => {
     expect(api.eventos).toHaveLength(1);
     expect(api.alteracoes.map((a) => a.id)).toEqual(['alt-festa']);
   });
+});
+
+describe('transmissao', () => {
+  it('publica sem vídeo, com a data vazia como null e "ao vivo" desligado', () => {
+    const alertar = vi.fn();
+    expect(montarApiV1(fontes(), { alertar }).transmissao).toEqual({
+      aoVivo: false,
+      data: null,
+      video: null,
+    });
+    expect(alertar).not.toHaveBeenCalled();
+  });
+
+  it('publica ao vivo, com a data e o vídeo válido', () => {
+    const f = fontes();
+    f.transmissao = {
+      aoVivo: true,
+      data: '2026-11-22',
+      video: {
+        plataforma: 'facebook',
+        endereco: 'https://www.facebook.com/teste/videos/987654321',
+      },
+    };
+    const alertar = vi.fn();
+    expect(publicar(f).transmissao).toEqual({
+      aoVivo: true,
+      data: '2026-11-22',
+      video: {
+        plataforma: 'facebook',
+        endereco: 'https://www.facebook.com/teste/videos/987654321',
+      },
+    });
+    montarApiV1(f, { alertar });
+    expect(alertar).not.toHaveBeenCalled();
+  });
+
+  it('aceita a data ausente, como o painel grava uma data vazia', () => {
+    const f = fontes();
+    f.transmissao = { aoVivo: false, video: { plataforma: '', endereco: '' } };
+    expect(publicar(f).transmissao.data).toBeNull();
+  });
+});
+
+describe('transmissao: vídeo inválido', () => {
+  const casos = [
+    {
+      caso: 'plataforma desconhecida',
+      video: { plataforma: 'vimeo', endereco: 'https://vimeo.com/123456' },
+      motivo: /plataforma/i,
+    },
+    {
+      caso: 'endereço de outra plataforma',
+      video: { plataforma: 'youtube', endereco: 'https://www.facebook.com/teste/videos/1' },
+      motivo: /youtube/i,
+    },
+    {
+      caso: 'endereço sem plataforma',
+      video: { plataforma: '', endereco: 'https://www.youtube.com/watch?v=abcDEF12345' },
+      motivo: /plataforma/i,
+    },
+    {
+      caso: 'plataforma sem endereço',
+      video: { plataforma: 'facebook', endereco: '' },
+      motivo: /facebook/i,
+    },
+  ];
+
+  for (const { caso, video, motivo } of casos) {
+    it(`publica o vídeo como null com ${caso}, alerta por quê, e publica o resto`, () => {
+      const f = fontes();
+      f.transmissao = { aoVivo: true, data: '2026-11-22', video };
+      const alertar = vi.fn();
+      const api = montarApiV1(f, { alertar });
+      expect(api.transmissao).toEqual({ aoVivo: true, data: '2026-11-22', video: null });
+      esquemaApiV1.transmissao.parse(api.transmissao);
+      expect(alertar).toHaveBeenCalledTimes(1);
+      const [mensagem] = alertar.mock.calls[0] as [string];
+      expect(mensagem).toContain('src/content/transmissao.json');
+      expect(mensagem).toMatch(motivo);
+      expect(api.encontros).toHaveLength(2);
+      expect(api['cultos-gravados']).toHaveLength(2);
+    });
+  }
 });
 
 describe('identificadores repetidos', () => {

@@ -50,7 +50,7 @@ erDiagram
 
 ## Arquivos do repositório lidos pelo servidor do app
 
-O servidor do app lê estes arquivos direto do histórico do repositório do site (`Jeanlukas1/DomdeAmarSite`, ramo `main`), nos dois pontos que o webhook informa. Eles seguem o envelope do painel: um cadastro único fica em `{ "principal": { … } }` e uma lista em `{ "itens": [ … ] }`. O painel grava campo vazio como `""`; quem lê trata `""` como ausente.
+O servidor do app lê estes arquivos direto do histórico do repositório do site (`Jeanlukas1/DomdeAmarSite`, ramo `main`), nos dois pontos que o webhook informa. Eles seguem o envelope do painel: um cadastro único fica em `{ "principal": { … } }` e uma lista em `{ "itens": [ … ] }`. O painel grava campo vazio como `""` (uma data vazia, como a de `transmissao.json`, some do arquivo); quem lê trata `""` e a chave ausente como ausente.
 
 | Arquivo                        | Envelope    | Chaves em que o servidor pode confiar                                                                                    |
 | ------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------ |
