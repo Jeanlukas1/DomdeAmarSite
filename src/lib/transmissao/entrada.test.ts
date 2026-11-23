@@ -392,3 +392,107 @@ describe('culto gravado do dia (R28)', () => {
     expect(new Set(ids).size).toBe(2);
   });
 });
+
+describe('main que andou no meio (R29)', () => {
+  const eventoDoPainel = (n: number) => ({
+    itens: [{ id: `evento-${n}`, titulo: `Evento ${n}`, data: '2026-12-01', hora: '19:00' }],
+  });
+
+  /** O painel grava `vezes` vezes, cada uma logo antes de a entrada tentar mover a `main`. */
+  function painelNoMeio(github: GithubFalso, vezes: number) {
+    let n = 0;
+    github.antesDeMover = () => {
+      if (n < vezes) github.gravarComoPainel('src/content/eventos.json', eventoDoPainel(++n));
+    };
+  }
+
+  it('andou uma vez: refaz sobre a ponta nova e as duas gravações ficam', async () => {
+    const github = criarGithubFalso(repositorio());
+    painelNoMeio(github, 1);
+    const r = await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(r.status).toBe(200);
+    expect(github.commitsNovos()).toBe(2);
+    expect(github.ler('src/content/eventos.json')).toEqual(eventoDoPainel(1));
+    expect(transmissao(github)).toMatchObject({ aoVivo: true, video: YOUTUBE });
+  });
+
+  it('andou três vezes: refaz as três vezes e nada se perde', async () => {
+    const github = criarGithubFalso(repositorio());
+    painelNoMeio(github, 3);
+    const r = await marcar(github, pedido());
+    expect(r.status).toBe(200);
+    expect(github.commitsNovos()).toBe(4);
+    expect(github.ler('src/content/eventos.json')).toEqual(eventoDoPainel(3));
+    expect(transmissao(github)).toMatchObject({ aoVivo: true, data: '2026-11-22' });
+  });
+
+  it('andou quatro vezes: desiste com 502, sem gravar a transmissão', async () => {
+    const github = criarGithubFalso(repositorio());
+    painelNoMeio(github, 4);
+    const r = await marcar(github, pedido());
+    expect(r.status).toBe(502);
+    expect(github.commitsNovos()).toBe(4);
+    expect(transmissao(github)).toMatchObject({ aoVivo: false });
+  });
+
+  it('se o painel já marcou a transmissão no meio, responde 200 sem commit novo', async () => {
+    const github = criarGithubFalso(repositorio());
+    github.antesDeMover = () => {
+      github.antesDeMover = undefined;
+      github.gravarComoPainel('src/content/transmissao.json', {
+        principal: { aoVivo: true, data: '2026-11-22', video: SEM_VIDEO },
+      });
+    };
+    const r = await marcar(github, pedido());
+    expect(r.status).toBe(200);
+    expect(github.commitsNovos()).toBe(1);
+  });
+});
+
+describe('falha do GitHub (R26)', () => {
+  const etapas = [
+    'GET /git/ref/heads/main',
+    'GET /contents/src/content/transmissao.json',
+    'GET /contents/src/content/cultos-gravados.json',
+    'GET /contents/src/content/assista.json',
+    'GET /git/commits/',
+    'POST /git/trees',
+    'POST /git/commits',
+    'PATCH /git/refs/heads/main',
+  ];
+  for (const etapa of etapas) {
+    it(`falha em "${etapa}": responde 502 e nada fica gravado`, async () => {
+      const github = criarGithubFalso(repositorio());
+      github.falharEm = etapa;
+      const r = await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+      expect(r.status).toBe(502);
+      expect(github.commitsNovos()).toBe(0);
+      expect(transmissao(github)).toMatchObject({ aoVivo: false });
+      expect(r.corpo).not.toContain(TOKEN);
+    });
+  }
+
+  it('sem o token configurado: responde 502 e não chama o GitHub', async () => {
+    const github = criarGithubFalso(repositorio());
+    const resposta = await marcarTransmissao(pedido(), DOMINGO_10H30, {
+      segredo: SEGREDO,
+      token: undefined,
+      repo: { owner: 'dono', name: 'site' },
+      fetch: github.fetch,
+    });
+    expect(resposta.status).toBe(502);
+    expect(github.autorizacoes).toHaveLength(0);
+  });
+
+  it('sem o segredo configurado, recusa até um pedido com "Bearer " vazio', async () => {
+    const github = criarGithubFalso(repositorio());
+    const resposta = await marcarTransmissao(pedido({ autorizacao: 'Bearer ' }), DOMINGO_10H30, {
+      segredo: '',
+      token: TOKEN,
+      repo: { owner: 'dono', name: 'site' },
+      fetch: github.fetch,
+    });
+    expect(resposta.status).toBe(401);
+    expect(github.commitsNovos()).toBe(0);
+  });
+});

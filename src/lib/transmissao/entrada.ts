@@ -19,6 +19,9 @@ const ARQ = {
   assista: 'src/content/assista.json',
 } as const;
 
+/** Quantas vezes a gravação é refeita quando a `main` andou no meio (R29). */
+const REFAZER_ATE = 3;
+
 /** O conteúdo de um arquivo do repositório não serve para a marcação. */
 export class ConteudoInvalido extends Error {}
 
@@ -125,8 +128,8 @@ async function lerConteudoDoDia(
 
 /**
  * Lê a ponta da `main`, calcula o que muda e grava num commit só: a transmissão e, quando ela
- * tem vídeo e ainda não há culto gravado de hoje, esse culto gravado. Devolve se gravou (false:
- * nada a mudar).
+ * tem vídeo e ainda não há culto gravado de hoje, esse culto gravado. Devolve "gravou", "nada" (nada
+ * a mudar) ou "andou" (a `main` andou antes de mover; nada foi gravado).
  */
 async function gravarMarcacao(
   github: ClienteGithub,
@@ -137,7 +140,7 @@ async function gravarMarcacao(
   const pai = await github.ponta();
   const arquivo = await lerJson<{ principal: TransmissaoDoPainel }>(github, pai, ARQ.transmissao);
   const nova = marcar(arquivo.principal, hoje, video);
-  if (mesmo(nova, arquivo.principal)) return false;
+  if (mesmo(nova, arquivo.principal)) return 'nada';
   const arquivos = { [ARQ.transmissao]: emJson({ ...arquivo, principal: nova }) };
 
   const videoDaLive = videoValido(nova.video);
@@ -153,7 +156,8 @@ async function gravarMarcacao(
       arquivos[ARQ.cultosGravados] = emJson({ ...gravados, itens: [culto, ...gravados.itens] });
     }
   }
-  return github.gravar(pai, arquivos, `content: mark transmissao live on ${hoje}`);
+  const movida = await github.gravar(pai, arquivos, `content: mark transmissao live on ${hoje}`);
+  return movida ? 'gravou' : 'andou';
 }
 
 export interface AmbienteDaEntrada {
@@ -196,7 +200,18 @@ export async function marcarTransmissao(
   const hoje = dataEmSaoPaulo(agora);
   const github = clienteGithub(ambiente.repo, ambiente.token, ambiente.fetch);
   try {
-    const gravou = await gravarMarcacao(github, agora, hoje, lido.video);
+    // Se a `main` andou no meio (o painel gravou), recomeça da ponta nova: a outra gravação
+    // fica, e a marcação é recalculada sobre ela. Até três vezes além da primeira.
+    let resultado = await gravarMarcacao(github, agora, hoje, lido.video);
+    for (let refeitas = 0; resultado === 'andou' && refeitas < REFAZER_ATE; refeitas++) {
+      resultado = await gravarMarcacao(github, agora, hoje, lido.video);
+    }
+    if (resultado === 'andou') {
+      return responder(502, {
+        erro: 'a main mudou várias vezes durante a gravação; nada foi gravado, tente de novo',
+      });
+    }
+    const gravou = resultado === 'gravou';
     return responder(200, { ok: true, data: hoje, gravou });
   } catch (erro) {
     if (erro instanceof FalhaDoGithub) {
