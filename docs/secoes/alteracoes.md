@@ -42,3 +42,7 @@ Os textos fixos ("Cancelado", "Alterado", "horário alterado", "às", "na/no") f
 - Avisos, transmissão ao vivo, nenhuma mudança no painel.
 - Desempenho: JSON pequeno nos atributos que já existem e alguns elementos a mais; sem fonte, imagem ou biblioteca nova. Conferir o Lighthouse mobile ≥ 95 da home.
 - Conferência no navegador em 375, 768 e 1440 px e com menos movimento, simulando datas com `?agora=` no `npm run dev`.
+
+## Nota de implementação
+
+- O local novo aparece sem artigo ("domingo, 15 de novembro · às 11h · Praça de Jaconé"): o site não tem como saber se o nome do lugar pede "na" ou "no". Por isso `ui.json` → `alteracoes` não tem "na/no". (#8)
