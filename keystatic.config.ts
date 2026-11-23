@@ -116,26 +116,29 @@ const campoHora = fields.text({
   },
 });
 
-/** Vídeo de um culto gravado: a plataforma e o endereço público daquele vídeo nela. */
-const campoVideo = fields.object(
-  {
-    plataforma: fields.select({
-      label: 'Plataforma',
-      options: [
-        { label: '(sem vídeo)', value: '' },
-        { label: 'Facebook', value: 'facebook' },
-        { label: 'YouTube', value: 'youtube' },
-      ],
-      defaultValue: '',
-    }),
-    endereco: fields.text({
-      label: 'Endereço do vídeo',
-      description:
-        'Copie o endereço da página do vídeo, ex.: https://www.facebook.com/…/videos/… ou https://www.youtube.com/watch?v=…. Um vídeo sem plataforma, ou com endereço de outra plataforma, não aparece no site nem no app.',
-    }),
-  },
-  { label: 'Vídeo' },
-);
+/**
+ * Vídeo de um culto gravado ou da transmissão: a plataforma e o endereço público daquele vídeo
+ * nela. `aviso` diz o que acontece com um vídeo inválido.
+ */
+const campoVideo = (aviso: string) =>
+  fields.object(
+    {
+      plataforma: fields.select({
+        label: 'Plataforma',
+        options: [
+          { label: '(sem vídeo)', value: '' },
+          { label: 'Facebook', value: 'facebook' },
+          { label: 'YouTube', value: 'youtube' },
+        ],
+        defaultValue: '',
+      }),
+      endereco: fields.text({
+        label: 'Endereço do vídeo',
+        description: `Copie o endereço da página do vídeo, ex.: https://www.facebook.com/…/videos/… ou https://www.youtube.com/watch?v=…. ${aviso}`,
+      }),
+    },
+    { label: 'Vídeo' },
+  );
 
 const DIAS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -156,7 +159,7 @@ export default config({
     navigation: {
       'A igreja': ['igreja', 'pastores', 'ministerios'],
       'Cultos e agenda': ['cultos', 'cultosSecao', 'eventos', 'alteracoes'],
-      Assista: ['assista', 'cultosGravados'],
+      Assista: ['assista', 'cultosGravados', 'transmissao'],
       Contribua: ['contribua'],
     },
   },
@@ -494,13 +497,41 @@ export default config({
             referencia: fields.text({ label: 'Texto bíblico' }),
             pregador: fields.text({ label: 'Pregador' }),
             data: fields.date({ label: 'Data', validation: { isRequired: true } }),
-            video: campoVideo,
+            video: campoVideo(
+              'Um vídeo sem plataforma, ou com endereço de outra plataforma, não aparece no site nem no app.',
+            ),
             mock: campoMock,
           }),
           {
             label: 'Cultos gravados',
             itemLabel: (p) => `${p.fields.data.value ?? ''} · ${p.fields.titulo.value}`,
           },
+        ),
+      },
+    }),
+
+    transmissao: singleton({
+      label: 'Transmissão ao vivo',
+      path: 'src/content/transmissao',
+      format: { data: 'json' },
+      schema: {
+        principal: fields.object(
+          {
+            aoVivo: fields.checkbox({
+              label: 'Ao vivo',
+              description:
+                'Ligado: o app mostra a transmissão como ao vivo. Na hora da live, ela é marcada pelo app; aqui é para conferir ou corrigir. O site não mostra a transmissão.',
+              defaultValue: false,
+            }),
+            data: fields.date({
+              label: 'Data',
+              description: 'O dia da transmissão, no horário de Brasília.',
+            }),
+            video: campoVideo(
+              'Opcional. Um vídeo sem plataforma, ou com endereço de outra plataforma, não vai para o app.',
+            ),
+          },
+          { label: 'Transmissão' },
         ),
       },
     }),
