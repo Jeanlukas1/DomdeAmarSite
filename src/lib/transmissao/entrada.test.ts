@@ -472,6 +472,17 @@ describe('falha do GitHub (R26)', () => {
     });
   }
 
+  it('a rede cai no caminho até o GitHub: responde 502, sem mostrar o token', async () => {
+    const resposta = await marcarTransmissao(pedido(), DOMINGO_10H30, {
+      segredo: SEGREDO,
+      token: TOKEN,
+      repo: { owner: 'dono', name: 'site' },
+      fetch: () => Promise.reject(new TypeError('fetch failed')),
+    });
+    expect(resposta.status).toBe(502);
+    expect(await resposta.text()).not.toContain(TOKEN);
+  });
+
   it('sem o token configurado: responde 502 e não chama o GitHub', async () => {
     const github = criarGithubFalso(repositorio());
     const resposta = await marcarTransmissao(pedido(), DOMINGO_10H30, {

@@ -25,16 +25,23 @@ export interface ClienteGithub {
 
 export function clienteGithub(repo: Repo, token: string, f: typeof fetch = fetch): ClienteGithub {
   const base = `https://api.github.com/repos/${repo.owner}/${repo.name}`;
-  const chamar = (caminho: string, init: RequestInit & { accept?: string } = {}) =>
-    f(`${base}${caminho}`, {
-      ...init,
-      headers: {
-        Accept: init.accept ?? 'application/vnd.github+json',
-        Authorization: `Bearer ${token}`,
-        'X-GitHub-Api-Version': '2022-11-28',
-        ...(init.body ? { 'Content-Type': 'application/json' } : {}),
-      },
-    });
+  const chamar = async (caminho: string, init: RequestInit & { accept?: string } = {}) => {
+    const { accept, ...resto } = init;
+    try {
+      return await f(`${base}${caminho}`, {
+        ...resto,
+        headers: {
+          Accept: accept ?? 'application/vnd.github+json',
+          Authorization: `Bearer ${token}`,
+          'X-GitHub-Api-Version': '2022-11-28',
+          ...(init.body ? { 'Content-Type': 'application/json' } : {}),
+        },
+      });
+    } catch {
+      // a rede caiu ou o GitHub não respondeu; o erro original não vai para a resposta
+      throw new FalhaDoGithub('o GitHub não respondeu');
+    }
+  };
   const json = async <T>(r: Response, oQue: string): Promise<T> => {
     if (!r.ok) throw new FalhaDoGithub(`${oQue}: o GitHub respondeu ${r.status}`);
     return (await r.json()) as T;
