@@ -4,6 +4,41 @@
 // gravado do dia) num commit só na `main`, pela API REST do GitHub. Sem framework: a rota em
 // src/rotas/transmissao.ts só lê o ambiente e chama esta função.
 import { createHash, timingSafeEqual } from 'node:crypto';
+import { dataEmSaoPaulo } from '@/lib/encontros';
+import { clienteGithub, FalhaDoGithub, type ClienteGithub } from './github';
+
+const ARQ = {
+  transmissao: 'src/content/transmissao.json',
+} as const;
+
+interface TransmissaoDoPainel {
+  aoVivo: boolean;
+  data?: string;
+  video: { plataforma: string; endereco: string };
+}
+
+/** Como o painel grava o JSON: duas casas de recuo e quebra de linha no fim. */
+const emJson = (v: unknown) => `${JSON.stringify(v, null, 2)}\n`;
+
+/**
+ * Lê a ponta da `main`, calcula o que muda e grava num commit só. Devolve se gravou (false: nada
+ * a mudar).
+ */
+async function gravarMarcacao(github: ClienteGithub, hoje: string) {
+  const pai = await github.ponta();
+  const texto = await github.ler(pai, ARQ.transmissao);
+  if (texto === undefined) throw new FalhaDoGithub(`${ARQ.transmissao} não existe na main`);
+  const arquivo = JSON.parse(texto) as { principal: TransmissaoDoPainel };
+  const atual = arquivo.principal;
+  const nova: TransmissaoDoPainel = {
+    ...atual,
+    aoVivo: true,
+    data: hoje,
+    video: atual.data === hoje ? atual.video : { plataforma: '', endereco: '' },
+  };
+  const arquivos = { [ARQ.transmissao]: emJson({ ...arquivo, principal: nova }) };
+  return github.gravar(pai, arquivos, `content: mark transmissao live on ${hoje}`);
+}
 
 export interface AmbienteDaEntrada {
   /** o segredo da entrada (Authorization: Bearer <segredo>); sem ele, tudo é recusado */
@@ -39,6 +74,14 @@ export async function marcarTransmissao(
   if (!segredoConfere(pedido.headers.get('authorization'), ambiente.segredo)) {
     return responder(401, { erro: 'segredo ausente ou errado' });
   }
-  void agora;
-  return responder(200, { ok: true });
+  if (!ambiente.token) return responder(502, { erro: 'a gravação no GitHub não está configurada' });
+  const hoje = dataEmSaoPaulo(agora);
+  const github = clienteGithub(ambiente.repo, ambiente.token, ambiente.fetch);
+  try {
+    const gravou = await gravarMarcacao(github, hoje);
+    return responder(200, { ok: true, data: hoje, gravou });
+  } catch (erro) {
+    if (!(erro instanceof FalhaDoGithub)) throw erro;
+    return responder(502, { erro: `o GitHub falhou; nada foi gravado (${erro.message})` });
+  }
 }

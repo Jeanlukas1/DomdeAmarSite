@@ -105,3 +105,41 @@ describe('segredo da entrada (R25)', () => {
     expect(transmissao(github)).toEqual({ aoVivo: false, data: '2026-11-15', video: FACEBOOK });
   });
 });
+
+describe('data de hoje no horário de Brasília (R24)', () => {
+  it('grava a transmissão como ao vivo, com a data de hoje, e responde 200', async () => {
+    const github = criarGithubFalso(repositorio());
+    const r = await marcar(github, pedido());
+    expect(r.status).toBe(200);
+    expect(github.commitsNovos()).toBe(1);
+    expect(transmissao(github)).toEqual({ aoVivo: true, data: '2026-11-22', video: SEM_VIDEO });
+  });
+
+  it('às 23h30 de Brasília (já 2h30 do dia seguinte em UTC), a data é a de Brasília', async () => {
+    const github = criarGithubFalso(repositorio());
+    await marcar(github, pedido(), new Date('2026-11-23T02:30:00Z'));
+    expect(transmissao(github)).toMatchObject({ aoVivo: true, data: '2026-11-22' });
+  });
+
+  it('às 0h10 de Brasília (ainda 3h10 em UTC), já é o dia novo', async () => {
+    const github = criarGithubFalso(repositorio());
+    await marcar(github, pedido(), new Date('2026-11-23T03:10:00Z'));
+    expect(transmissao(github)).toMatchObject({ aoVivo: true, data: '2026-11-23' });
+  });
+
+  it('ignora uma data enviada por quem chama', async () => {
+    const github = criarGithubFalso(repositorio());
+    const r = await marcar(github, pedido({ corpo: { data: '2030-01-01', aoVivo: false } }));
+    expect(r.status).toBe(200);
+    expect(transmissao(github)).toEqual({ aoVivo: true, data: '2026-11-22', video: SEM_VIDEO });
+  });
+
+  it('grava com o token do GitHub, e a resposta não mostra o token nem o segredo (R30)', async () => {
+    const github = criarGithubFalso(repositorio());
+    const r = await marcar(github, pedido());
+    expect(github.autorizacoes.length).toBeGreaterThan(0);
+    expect(github.autorizacoes.every((a) => a === `Bearer ${TOKEN}`)).toBe(true);
+    expect(r.corpo).not.toContain(TOKEN);
+    expect(r.corpo).not.toContain(SEGREDO);
+  });
+});
