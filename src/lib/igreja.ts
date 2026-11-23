@@ -8,6 +8,7 @@ type Unica =
   | 'cultosSecao'
   | 'visite'
   | 'assista'
+  | 'transmissao'
   | 'cresca'
   | 'agenda'
   | 'galeria'

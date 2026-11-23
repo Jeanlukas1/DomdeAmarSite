@@ -78,6 +78,11 @@ export const esquemaApiV1 = {
       avisar: z.boolean(),
     }),
   ),
+  transmissao: z.strictObject({
+    aoVivo: z.boolean(),
+    data: data.nullable(),
+    video: video.nullable(),
+  }),
   'cultos-gravados': z.array(
     z.strictObject({
       id: texto,
@@ -163,6 +168,12 @@ export interface FontesApiV1 {
     mensagem: string;
     avisar: boolean;
   }>;
+  /** transmissao.json → principal; o painel grava campo vazio como "" (a data, sem nada) */
+  transmissao: {
+    aoVivo: boolean;
+    data?: string;
+    video: { plataforma: string; endereco: string };
+  };
   /** contribua.json */
   contribuicao: {
     pix: { chave: string | null; tipo: string; titular: string; mock: boolean };
@@ -313,6 +324,27 @@ function alteracoes(fontes: FontesApiV1, alertar: Alertar): ApiV1['alteracoes'] 
   return publicadas;
 }
 
+/**
+ * O vídeo da transmissão é opcional: sem plataforma e sem endereço, sai como null. Um vídeo
+ * preenchido mas inválido também sai como null, com alerta, e o resto da transmissão é publicado
+ * (R11).
+ */
+function transmissao(t: FontesApiV1['transmissao'], alertar: Alertar): ApiV1['transmissao'] {
+  let video: ApiV1['transmissao']['video'] = null;
+  if (t.video.plataforma || t.video.endereco) {
+    const conferido = conferirVideo(t.video);
+    if ('motivo' in conferido) {
+      alertar(
+        '/api/v1: o vídeo da transmissão (src/content/transmissao.json) foi publicado como ' +
+          `null: ${conferido.motivo}.`,
+      );
+    } else {
+      video = conferido.video;
+    }
+  }
+  return { aoVivo: t.aoVivo, data: ouNull(t.data), video };
+}
+
 /** PIX ausente ou provisório sai como null: uma chave falsa poderia desviar uma oferta. */
 function contribuicao({ pix, transferencia }: FontesApiV1['contribuicao']): ApiV1['contribuicao'] {
   return {
@@ -369,6 +401,7 @@ export function montarApiV1(
     eventos: esquemaApiV1.eventos.parse(eventos(fontes.eventos)),
     'tema-da-semana': esquemaApiV1['tema-da-semana'].parse(temaDaSemana(fontes.tema)),
     alteracoes: esquemaApiV1.alteracoes.parse(alteracoes(fontes, alertar)),
+    transmissao: esquemaApiV1.transmissao.parse(transmissao(fontes.transmissao, alertar)),
     'cultos-gravados': esquemaApiV1['cultos-gravados'].parse(
       cultosGravados(fontes.cultosGravados, alertar),
     ),

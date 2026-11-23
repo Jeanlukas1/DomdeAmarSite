@@ -259,6 +259,28 @@ const cultosGravados = defineCollection({
 });
 
 /**
+ * A transmissão ao vivo (R14), cadastro único. O arquivo é contrato com o servidor do app: usa as
+ * chaves publicadas em /api/v1/transmissao (docs/DATA-MODEL.md). Só o app mostra a transmissão; o
+ * site não a usa (R23).
+ */
+const transmissao = defineCollection({
+  loader: file('src/content/transmissao.json'),
+  schema: z.object({
+    aoVivo: z.boolean().default(false),
+    /** AAAA-MM-DD; o painel omite a chave quando a data fica vazia */
+    data: z.preprocess(
+      (v) => (v === '' ? undefined : v),
+      z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
+        .optional(),
+    ),
+    /** opcional: sem plataforma e sem endereço, não há vídeo */
+    video: videoDoPainel,
+  }),
+});
+
+/**
  * Alteração de um encontro ou evento numa data (R15). O arquivo é contrato com o servidor do app:
  * usa as chaves publicadas em /api/v1/alteracoes (docs/DATA-MODEL.md). As regras de R10 (alvo,
  * data, repetição) não derrubam o build: a alteração sai da publicação com alerta.
@@ -475,6 +497,7 @@ export const collections = {
   assista,
   cultosGravados,
   alteracoes,
+  transmissao,
   cresca,
   ministerios,
   agenda,
