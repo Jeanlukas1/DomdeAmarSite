@@ -8,6 +8,7 @@ import {
   proximoEncontro,
   situacaoDaSemana,
   type Alteracao,
+  type Vez,
   type Encontro,
 } from './encontros';
 
@@ -315,3 +316,52 @@ describe('mudança de horário', () => {
     expect([r?.vez.data, r?.vez.hora, r?.vez.alteracao]).toEqual(['2026-11-22', '09:00', undefined]);
   });
 });
+
+describe('alterações na grade e no destaque', () => {
+  const resumo = (v: Vez) => `${v.data} ${v.alteracao?.situacao} ${v.hora}`;
+
+  it('o cartão do encontro mostra a vez cancelada, e a próxima vez é a da semana seguinte', () => {
+    const agora = emSaoPaulo('2026-11-14T20:00');
+    const s = situacaoDaSemana(grade, agora, [cancelado('domingo-estudo', '2026-11-15')]).find(
+      (x) => x.encontro.id === 'domingo-estudo',
+    );
+    expect({
+      alteradas: s?.alteradas.map(resumo),
+      proxima: s?.proxima?.data,
+    }).toEqual({ alteradas: ['2026-11-15 cancelado 09:00'], proxima: '2026-11-22' });
+  });
+
+  const ceia = (alteracoes: Alteracao[]) => {
+    const agora = emSaoPaulo('2026-11-07T20:00');
+    const situacao = situacaoDaSemana(grade, agora, alteracoes);
+    const s = situacao.find((x) => x.encontro.id === 'santa-ceia');
+    const r = proximoEncontro(grade, agora, alteracoes);
+    return {
+      proximo: r && `${r.vez.encontro.id}@${r.vez.data} ${r.vez.hora}`,
+      ceia: s?.mostrar,
+      alteradas: s?.alteradas.map(resumo),
+      avisos: situacao.filter((x) => x.substituidoPor).map((x) => x.encontro.id),
+    };
+  };
+
+  it('Santa Ceia em outro horário: continua substituindo o dia, no horário novo', () => {
+    expect(ceia([alterado('santa-ceia', '2026-11-08', '15:00')])).toEqual({
+      proximo: 'santa-ceia@2026-11-08 15:00',
+      ceia: true,
+      alteradas: ['2026-11-08 alterado 15:00'],
+      avisos: SUBSTITUIDOS,
+    });
+  });
+
+  it('Santa Ceia cancelada: aparece cancelada, e os encontros do domingo continuam sem acontecer', () => {
+    // o cancelamento vale para aquela ocorrência; não devolve ao dia os encontros substituídos
+    // (uma alteração neles naquele domingo nem é publicada: eles não acontecem nessa data)
+    expect(ceia([cancelado('santa-ceia', '2026-11-08')])).toEqual({
+      proximo: 'terca-oracao@2026-11-10 19:00',
+      ceia: true,
+      alteradas: ['2026-11-08 cancelado 10:00'],
+      avisos: SUBSTITUIDOS,
+    });
+  });
+});
+

@@ -201,45 +201,63 @@ export function proximoEncontro<T extends Encontro>(
 
 export interface SituacaoEncontro<T extends Encontro> {
   encontro: T;
-  /** próxima vez que acontece de fato */
+  /** próxima vez que acontece de fato (uma cancelada não conta) */
   proxima?: Vez<T>;
   /** cancelado pelo substituto do dia (ex.: domingo de Ceia), enquanto ele não termina */
   substituidoPor?: Vez<T>;
+  /** as vezes ainda por vir que têm alteração (canceladas ou alteradas), em ordem */
+  alteradas: Vez<T>[];
   /**
    * Aparece na grade agora? Encontros semanais, sempre. Os não semanais (a Ceia), só quando a
-   * próxima vez deles é o próximo encontro naquele dia da semana ("a semana da Ceia").
+   * próxima vez deles é o próximo encontro naquele dia da semana ("a semana da Ceia"). Uma vez
+   * cancelada também conta: ela aparece na data dela, marcada.
    */
   mostrar: boolean;
 }
 
 /** Situação de cada encontro para a grade da seção Cultos. */
-export function situacaoDaSemana<T extends Encontro>(encontros: T[], agora = new Date()) {
-  const { hoje, vezes, substituidas } = calendario(encontros, agora);
+export function situacaoDaSemana<T extends Encontro>(
+  encontros: T[],
+  agora = new Date(),
+  alteracoes: Alteracao[] = [],
+) {
+  const { hoje, vezes, substituidas, canceladas } = calendario(encontros, agora, alteracoes);
   const futuras = vezes.filter((v) => v.fim > hoje.minutos);
+  const comAlteracao = [...futuras.filter((v) => v.alteracao), ...canceladas]
+    .filter((v) => v.fim > hoje.minutos)
+    .sort((a, b) => a.inicio - b.inicio);
 
   const base = encontros.map((encontro) => {
     const proxima = futuras.find((v) => v.encontro === encontro);
+    const alteradas = comAlteracao.filter((v) => v.encontro === encontro);
+    const cancelada = alteradas.find((v) => v.alteracao?.situacao === 'cancelado');
+    const primeira = cancelada && (!proxima || cancelada.inicio < proxima.inicio) ? cancelada : proxima;
     const semanal = (encontro.ocorrencia ?? 'semanal') === 'semanal';
     const mostrar =
       semanal ||
-      (!!proxima &&
+      (!!primeira &&
         !futuras.some(
           (v) =>
             v.encontro !== encontro &&
-            v.diaSemana === proxima.diaSemana &&
-            v.inicio < proxima.inicio,
+            v.diaSemana === primeira.diaSemana &&
+            v.inicio < primeira.inicio,
         ));
-    return { encontro, proxima, mostrar };
+    return { encontro, proxima, alteradas, mostrar, primeira };
   });
   // vezes de substitutos que estão na grade agora (a Ceia na semana dela)
-  const visiveis = new Set(base.filter((b) => b.mostrar && b.proxima).map((b) => b.proxima));
+  const visiveis = new Set(base.filter((b) => b.mostrar && b.primeira).map((b) => b.primeira));
 
-  return base.map((b): SituacaoEncontro<T> => ({
-    ...b,
-    substituidoPor: substituidas.find((s) => s.vez.encontro === b.encontro && visiveis.has(s.por))
-      ?.por,
-  }));
+  return base.map(
+    ({ primeira: _, ...b }): SituacaoEncontro<T> => ({
+      ...b,
+      substituidoPor: substituidas.find(
+        (s) => s.vez.encontro === b.encontro && [...visiveis].some((v) => mesmaVez(v, s.por)),
+      )?.por,
+    }),
+  );
 }
+
+const mesmaVez = (a: Vez, b: Vez) => a.encontro === b.encontro && a.data === b.data;
 
 /**
  * O encontro do destaque da semana: o próximo que recebe o tema. Na semana da Ceia, o Culto da
