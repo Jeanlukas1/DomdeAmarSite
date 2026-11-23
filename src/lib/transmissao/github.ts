@@ -42,20 +42,35 @@ export function clienteGithub(repo: Repo, token: string, f: typeof fetch = fetch
       throw new FalhaDoGithub('o GitHub não respondeu');
     }
   };
-  const json = async <T>(r: Response, oQue: string): Promise<T> => {
+  /**
+   * O sha que a resposta traz, escolhido por `pegar`. Uma resposta de erro, um corpo que não é
+   * JSON ou um JSON sem o sha esperado é uma falha do GitHub.
+   */
+  type Corpo = { sha?: unknown; object?: { sha?: unknown }; tree?: { sha?: unknown } } | null;
+  const shaDe = async (r: Response, oQue: string, pegar: (c: Corpo) => unknown) => {
     if (!r.ok) throw new FalhaDoGithub(`${oQue}: o GitHub respondeu ${r.status}`);
-    return (await r.json()) as T;
+    let corpo: Corpo;
+    try {
+      corpo = (await r.json()) as Corpo;
+    } catch {
+      throw new FalhaDoGithub(`${oQue}: o GitHub respondeu um corpo que não é JSON`);
+    }
+    const sha = pegar(corpo);
+    if (typeof sha !== 'string' || !sha) {
+      throw new FalhaDoGithub(`${oQue}: o GitHub respondeu fora do formato esperado`);
+    }
+    return sha;
   };
   const enviar = (caminho: string, method: string, corpo: unknown) =>
     chamar(caminho, { method, body: JSON.stringify(corpo) });
 
   return {
     async ponta() {
-      const r = await json<{ object: { sha: string } }>(
+      return shaDe(
         await chamar('/git/ref/heads/main'),
         'ler a ponta da main',
+        (c) => c?.object?.sha,
       );
-      return r.object.sha;
     },
     async ler(commit, caminho) {
       const segmentos = caminho.split('/').map(encodeURIComponent).join('/');
@@ -67,13 +82,14 @@ export function clienteGithub(repo: Repo, token: string, f: typeof fetch = fetch
       return r.text();
     },
     async gravar(pai, arquivos, mensagem) {
-      const commitPai = await json<{ tree: { sha: string } }>(
+      const arvoreDoPai = await shaDe(
         await chamar(`/git/commits/${pai}`),
         'ler o commit da ponta',
+        (c) => c?.tree?.sha,
       );
-      const arvore = await json<{ sha: string }>(
+      const arvore = await shaDe(
         await enviar('/git/trees', 'POST', {
-          base_tree: commitPai.tree.sha,
+          base_tree: arvoreDoPai,
           tree: Object.entries(arquivos).map(([path, content]) => ({
             path,
             mode: '100644',
@@ -82,23 +98,21 @@ export function clienteGithub(repo: Repo, token: string, f: typeof fetch = fetch
           })),
         }),
         'criar a árvore',
+        (c) => c?.sha,
       );
-      const commit = await json<{ sha: string }>(
-        await enviar('/git/commits', 'POST', {
-          message: mensagem,
-          tree: arvore.sha,
-          parents: [pai],
-        }),
+      const commit = await shaDe(
+        await enviar('/git/commits', 'POST', { message: mensagem, tree: arvore, parents: [pai] }),
         'criar o commit',
+        (c) => c?.sha,
       );
       const movida = await enviar('/git/refs/heads/main', 'PATCH', {
-        sha: commit.sha,
+        sha: commit,
         force: false,
       });
       // 422: a `main` não está mais no pai (não é avanço rápido). O commit criado fica solto e
       // não entra no histórico.
       if (movida.status === 422) return false;
-      await json(movida, 'mover a main');
+      if (!movida.ok) throw new FalhaDoGithub(`mover a main: o GitHub respondeu ${movida.status}`);
       return true;
     },
   };

@@ -13,12 +13,14 @@ export interface GithubFalso {
   commitsNovos(): number;
   /** a mensagem do último commit da `main` */
   ultimaMensagem(): string;
-  /** grava direto na `main`, como o painel faria */
+  /** grava direto na `main`, como o painel faria (um texto é gravado como está) */
   gravarComoPainel(caminho: string, conteudo: unknown): void;
   /** antes de cada pedido para mover a `main`, roda isto (para simular o painel no meio) */
   antesDeMover?: () => void;
   /** a próxima chamada que bater com este prefixo ("POST /git/commits") responde 500 */
   falharEm?: string;
+  /** a próxima chamada que bater com este prefixo responde 200 com um corpo que não serve */
+  corpoInvalidoEm?: string;
   /** os cabeçalhos de autorização recebidos */
   autorizacoes: string[];
 }
@@ -59,7 +61,8 @@ export function criarGithubFalso(
     ultimaMensagem: () => commits.get(main)!.mensagem,
     gravarComoPainel(caminho, conteudo) {
       const arvore = novoSha('tree');
-      arvores.set(arvore, new Map(arquivosDe(main)).set(caminho, json(conteudo)));
+      const texto = typeof conteudo === 'string' ? conteudo : json(conteudo);
+      arvores.set(arvore, new Map(arquivosDe(main)).set(caminho, texto));
       const sha = novoSha('commit');
       commits.set(sha, { arvore, pai: main, mensagem: `Update ${caminho}` });
       main = sha;
@@ -75,6 +78,11 @@ export function criarGithubFalso(
       if (falso.falharEm && chave.startsWith(falso.falharEm)) {
         falso.falharEm = undefined;
         return resposta(500, { message: 'Server Error' });
+      }
+      if (falso.corpoInvalidoEm && chave.startsWith(falso.corpoInvalidoEm)) {
+        const formato = chave.startsWith('GET') ? '{}' : '<html>erro</html>';
+        falso.corpoInvalidoEm = undefined;
+        return new Response(formato, { status: 200 });
       }
       const corpo = init?.body ? JSON.parse(String(init.body)) : undefined;
 

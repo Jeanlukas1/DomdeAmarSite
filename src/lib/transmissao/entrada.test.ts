@@ -166,6 +166,16 @@ describe('vídeo inválido (R25)', () => {
     });
   }
 
+  it('corpo grande demais: responde 400 e não grava nada', async () => {
+    const github = criarGithubFalso(repositorio());
+    const r = await marcar(
+      github,
+      pedido({ corpo: { video: YOUTUBE, extra: 'x'.repeat(20_000) } }),
+    );
+    expect(r.status).toBe(400);
+    expect(github.commitsNovos()).toBe(0);
+  });
+
   it('o segredo é conferido antes do corpo: segredo errado com vídeo inválido dá 401', async () => {
     const github = criarGithubFalso(repositorio());
     const r = await marcar(github, pedido({ autorizacao: 'Bearer x', corpo: '{ao vivo' }));
@@ -449,6 +459,33 @@ describe('main que andou no meio (R29)', () => {
   });
 });
 
+describe('conteúdo incompleto na main (R26)', () => {
+  it('sem o título padrão em assista.json: responde 500 e não grava nem a transmissão', async () => {
+    const github = criarGithubFalso(
+      repositorio({ 'src/content/assista.json': { principal: { titulo: 'Assista' } } }),
+    );
+    // sábado, sem tema nem encontro: o título padrão seria necessário
+    const r = await marcar(
+      github,
+      pedido({ corpo: { video: YOUTUBE } }),
+      new Date('2026-11-21T13:00:00Z'),
+    );
+    expect(r.status).toBe(500);
+    expect(JSON.parse(r.corpo)).toHaveProperty('erro');
+    expect(github.commitsNovos()).toBe(0);
+    expect(transmissao(github)).toMatchObject({ aoVivo: false });
+  });
+
+  it('com um arquivo de conteúdo que não é JSON: responde 500 e não grava nada', async () => {
+    const github = criarGithubFalso(repositorio());
+    github.gravarComoPainel('src/content/cultos.json', '{quebrado');
+    const r = await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(r.status).toBe(500);
+    expect(github.commitsNovos()).toBe(1);
+    expect(transmissao(github)).toMatchObject({ aoVivo: false });
+  });
+});
+
 describe('falha do GitHub (R26)', () => {
   const etapas = [
     'GET /git/ref/heads/main',
@@ -471,6 +508,23 @@ describe('falha do GitHub (R26)', () => {
       expect(r.corpo).not.toContain(TOKEN);
     });
   }
+
+  it('o GitHub responde 200 com um corpo que não é JSON: responde 502', async () => {
+    const github = criarGithubFalso(repositorio());
+    github.corpoInvalidoEm = 'POST /git/trees';
+    const r = await marcar(github, pedido({ corpo: { video: YOUTUBE } }));
+    expect(r.status).toBe(502);
+    expect(JSON.parse(r.corpo)).toHaveProperty('erro');
+    expect(github.commitsNovos()).toBe(0);
+  });
+
+  it('o GitHub responde 200 sem o formato esperado: responde 502', async () => {
+    const github = criarGithubFalso(repositorio());
+    github.corpoInvalidoEm = 'GET /git/ref/heads/main';
+    const r = await marcar(github, pedido());
+    expect(r.status).toBe(502);
+    expect(github.commitsNovos()).toBe(0);
+  });
 
   it('a rede cai no caminho até o GitHub: responde 502, sem mostrar o token', async () => {
     const resposta = await marcarTransmissao(pedido(), DOMINGO_10H30, {

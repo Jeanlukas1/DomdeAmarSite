@@ -19,6 +19,9 @@ const ARQ = {
   assista: 'src/content/assista.json',
 } as const;
 
+/** Tamanho máximo do corpo do pedido, em bytes. */
+const LIMITE_DO_CORPO = 4096;
+
 /** Quantas vezes a gravação é refeita quando a `main` andou no meio (R29). */
 const REFAZER_ATE = 3;
 
@@ -48,7 +51,12 @@ const videoValido = (v: VideoDoPainel | undefined): Video | null => {
 
 /** O corpo do pedido: `{}` ou `{ "video": { plataforma, endereco } }`. Outras chaves são ignoradas. */
 async function lerPedido(pedido: Request): Promise<{ video: Video | null } | { erro: string }> {
+  // o corpo esperado tem poucas centenas de bytes: um corpo grande é recusado antes de ser lido
+  if (Number(pedido.headers.get('content-length') ?? 0) > LIMITE_DO_CORPO) {
+    return { erro: 'o corpo é grande demais' };
+  }
   const texto = await pedido.text();
+  if (texto.length > LIMITE_DO_CORPO) return { erro: 'o corpo é grande demais' };
   let corpo: unknown;
   try {
     corpo = texto.trim() ? JSON.parse(texto) : {};
