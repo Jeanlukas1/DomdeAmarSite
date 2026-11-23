@@ -141,7 +141,9 @@ async function gravarMarcacao(
   const arquivo = await lerJson<{ principal: TransmissaoDoPainel }>(github, pai, ARQ.transmissao);
   const nova = marcar(arquivo.principal, hoje, video);
   if (mesmo(nova, arquivo.principal)) return 'nada';
-  const arquivos = { [ARQ.transmissao]: emJson({ ...arquivo, principal: nova }) };
+  const arquivos: Record<string, string> = {
+    [ARQ.transmissao]: emJson({ ...arquivo, principal: nova }),
+  };
 
   const videoDaLive = videoValido(nova.video);
   if (videoDaLive) {

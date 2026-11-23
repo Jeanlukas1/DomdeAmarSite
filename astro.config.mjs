@@ -15,11 +15,27 @@ const SITE = 'https://domdeamar.vercel.app';
 const naVercel = Boolean(process.env.VERCEL);
 const comPainel = naVercel || process.argv.includes('dev');
 
+// A entrada da transmissão (POST /api/v1/transmissao, ADR 0002) também é sob demanda e grava na
+// `main` de produção. Ela só entra no build da Vercel: nem o dev nem o build local a registram.
+/** @type {import('astro').AstroIntegration} */
+const entradaDaTransmissao = {
+  name: 'entrada-da-transmissao',
+  hooks: {
+    'astro:config:setup': ({ injectRoute }) =>
+      injectRoute({
+        pattern: '/api/v1/transmissao',
+        entrypoint: './src/rotas/transmissao.ts',
+        prerender: false,
+      }),
+  },
+};
+
 export default defineConfig({
   site: SITE,
   integrations: [
     sitemap({ filter: (pagina) => !pagina.includes('/keystatic') }),
     ...(comPainel ? [react(), keystatic()] : []),
+    ...(naVercel ? [entradaDaTransmissao] : []),
   ],
   adapter: naVercel ? vercel() : undefined,
   vite: { plugins: [tailwindcss()] },
