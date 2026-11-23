@@ -21,7 +21,7 @@
 - [x] F4 — Conteúdo, Visite-nos, Contribua, Fale com a gente (WhatsApp), Keystatic
 - [x] F5 — Performance, SEO, acessibilidade
 - [x] F6 — Deploy (https://domdeamar.vercel.app, deploy automático, painel /keystatic em produção)
-- [ ] F7 — Extensão do site para o app (spec 001): #4 a #7 mesclados, #8 em PR, faltam #9 a #12
+- [ ] F7 — Extensão do site para o app (spec 001): #4 a #8 mesclados, #9 em PR, faltam #10 a #12
 
 ## Sessões
 
@@ -38,3 +38,4 @@
 - [2026-11-07 — sessão 09](sessoes/2026-11-07-sessao-09.md) — véu na main, Santa Ceia automática e animações sem replay
 - [2026-11-07 — sessão 10](sessoes/2026-11-07-sessao-10.md) — edições do Keystatic, Santa Ceia no 2º domingo e limpeza do worktree do véu
 - [2026-11-22 — sessão 11](sessoes/2026-11-22-sessao-11.md) — #8: o site respeita as alterações (cancelado, horário ou local alterado)
+- [2026-11-22 — sessão 12](sessoes/2026-11-22-sessao-12.md) — #9: cadastrar e publicar a transmissão
