@@ -7,6 +7,7 @@ import {
   gradeSemanal,
   proximoEncontro,
   situacaoDaSemana,
+  type Alteracao,
   type Encontro,
 } from './encontros';
 
@@ -228,5 +229,39 @@ describe('calendário dos encontros', () => {
   it('a grade semanal junta os horários de cada dia', () => {
     const dias = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
     expect(gradeSemanal(grade, dias)).toBe('Terça 19h · Domingo 9h e 18h');
+  });
+});
+
+// Alterações (R20, R21): cancelamentos e mudanças de horário ou local numa data. A regra é a do
+// app (spec 001 do app, R9, R22 e R23): o cancelado nunca é o próximo nem "acontecendo agora",
+// e continua aparecendo na data dele, marcado; o alterado vale no horário e no local novos.
+const cancelado = (alvo: string, data: string): Alteracao => ({
+  alvo,
+  data,
+  situacao: 'cancelado',
+  novaHora: null,
+  novoLocal: null,
+  mensagem: 'Culto cancelado por causa da chuva.',
+});
+const alterado = (
+  alvo: string,
+  data: string,
+  novaHora: string | null,
+  novoLocal: string | null = null,
+): Alteracao => ({
+  alvo,
+  data,
+  situacao: 'alterado',
+  novaHora,
+  novoLocal,
+  mensagem: 'Mudamos o horário nesta semana.',
+});
+
+describe('calendário com alterações', () => {
+  it('o próximo encontro cancelado dá lugar ao seguinte', () => {
+    // sábado à noite: o próximo seria o Seminário de domingo 9h
+    const agora = emSaoPaulo('2026-11-14T20:00');
+    const r = proximoEncontro(grade, agora, [cancelado('domingo-estudo', '2026-11-15')]);
+    expect(r && `${r.vez.encontro.id}@${r.vez.data}`).toBe('domingo-plenitude@2026-11-15');
   });
 });

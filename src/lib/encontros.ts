@@ -20,6 +20,22 @@ export interface Encontro {
   recebeTema?: boolean;
 }
 
+/**
+ * Cancelamento ou mudança de horário ou de local de um encontro ou evento numa data (o
+ * `alteracoes.json` publicado em /api/v1, já validado). Nos mesmos termos do app.
+ */
+export interface Alteracao {
+  /** id do encontro ou evento */
+  alvo: string;
+  /** AAAA-MM-DD */
+  data: string;
+  situacao: 'cancelado' | 'alterado';
+  /** "HH:MM" */
+  novaHora: string | null;
+  novoLocal: string | null;
+  mensagem: string;
+}
+
 /** Uma vez em que o encontro acontece. Minutos contados a partir de hoje 00:00 (São Paulo). */
 export interface Vez<T extends Encontro = Encontro> {
   encontro: T;
@@ -30,6 +46,8 @@ export interface Vez<T extends Encontro = Encontro> {
   diasAte: number;
   inicio: number;
   fim: number;
+  /** a alteração desta data, se houver */
+  alteracao?: Alteracao;
 }
 
 export type Quando = 'agora' | 'hoje' | 'amanha' | 'semana';
@@ -103,11 +121,14 @@ export function aconteceEm(encontro: Encontro, encontros: Encontro[], data: stri
 export function calendario<T extends Encontro>(
   encontros: T[],
   agora = new Date(),
+  alteracoes: Alteracao[] = [],
   dias = JANELA_DIAS,
 ) {
   const hoje = agoraEmSaoPaulo(agora);
   const vezes: Vez<T>[] = [];
   const substituidas: { vez: Vez<T>; por: Vez<T> }[] = [];
+  /** canceladas por uma alteração: não acontecem, mas continuam visíveis na data, marcadas */
+  const canceladas: Vez<T>[] = [];
 
   for (let i = 0; i < dias; i++) {
     const d = new Date(Date.UTC(hoje.ano, hoje.mes - 1, hoje.dia + i));
@@ -134,12 +155,17 @@ export function calendario<T extends Encontro>(
 
     const substituto = doDia.find((v) => v.encontro.substituiODia);
     for (const vez of doDia) {
-      if (substituto && !vez.encontro.substituiODia) substituidas.push({ vez, por: substituto });
+      if (substituto && !vez.encontro.substituiODia) {
+        substituidas.push({ vez, por: substituto });
+        continue;
+      }
+      const alteracao = alteracoes.find((a) => a.alvo === vez.encontro.id && a.data === data);
+      if (alteracao?.situacao === 'cancelado') canceladas.push({ ...vez, alteracao });
       else vezes.push(vez);
     }
   }
   vezes.sort((a, b) => a.inicio - b.inicio);
-  return { hoje, vezes, substituidas };
+  return { hoje, vezes, substituidas, canceladas };
 }
 
 const quandoDe = (vez: Vez, minutosAgora: number): Quando =>
@@ -152,8 +178,12 @@ const quandoDe = (vez: Vez, minutosAgora: number): Quando =>
         : 'semana';
 
 /** O próximo encontro que ainda não terminou (pode estar acontecendo agora). */
-export function proximoEncontro<T extends Encontro>(encontros: T[], agora = new Date()) {
-  const { hoje, vezes } = calendario(encontros, agora);
+export function proximoEncontro<T extends Encontro>(
+  encontros: T[],
+  agora = new Date(),
+  alteracoes: Alteracao[] = [],
+) {
+  const { hoje, vezes } = calendario(encontros, agora, alteracoes);
   const vez = vezes.find((v) => v.fim > hoje.minutos);
   return vez && { vez, quando: quandoDe(vez, hoje.minutos) };
 }
