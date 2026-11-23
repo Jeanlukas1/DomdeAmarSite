@@ -1,6 +1,6 @@
 # Alterações — brief (cancelado e horário ou local alterado)
 
-Status: rascunho
+Status: aprovado (2026-11-22)
 
 Ticket #8. Requisitos R20, R21 e R22 de `docs/specs/001-extensao-para-o-app.md`. Não é uma seção nova: é uma indicação que aparece em quatro lugares que já existem (o próximo culto do Hero, os cartões de Cultos, o destaque da semana e a Agenda).
 
