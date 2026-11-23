@@ -120,7 +120,13 @@ export function aconteceEm(encontro: Encontro, encontros: Encontro[], data: stri
 function comAlteracao<T extends Encontro>(vez: Vez<T>, alteracao: Alteracao): Vez<T> {
   if (!alteracao.novaHora) return { ...vez, alteracao };
   const inicio = vez.diasAte * 1440 + minutosDe(alteracao.novaHora);
-  return { ...vez, alteracao, hora: alteracao.novaHora, inicio, fim: inicio + vez.fim - vez.inicio };
+  return {
+    ...vez,
+    alteracao,
+    hora: alteracao.novaHora,
+    inicio,
+    fim: inicio + vez.fim - vez.inicio,
+  };
 }
 
 /**
@@ -231,7 +237,8 @@ export function situacaoDaSemana<T extends Encontro>(
     const proxima = futuras.find((v) => v.encontro === encontro);
     const alteradas = comAlteracao.filter((v) => v.encontro === encontro);
     const cancelada = alteradas.find((v) => v.alteracao?.situacao === 'cancelado');
-    const primeira = cancelada && (!proxima || cancelada.inicio < proxima.inicio) ? cancelada : proxima;
+    const primeira =
+      cancelada && (!proxima || cancelada.inicio < proxima.inicio) ? cancelada : proxima;
     const semanal = (encontro.ocorrencia ?? 'semanal') === 'semanal';
     const mostrar =
       semanal ||
@@ -245,19 +252,19 @@ export function situacaoDaSemana<T extends Encontro>(
     return { encontro, proxima, alteradas, mostrar, primeira };
   });
   // vezes de substitutos que estão na grade agora (a Ceia na semana dela)
-  const visiveis = new Set(base.filter((b) => b.mostrar && b.primeira).map((b) => b.primeira));
+  // (comparadas por encontro e data: a vez alterada é uma cópia da original)
+  const visiveis = base.filter((b) => b.mostrar && b.primeira).map((b) => b.primeira!);
+  const naGrade = (v: Vez<T>) =>
+    visiveis.some((x) => x.encontro === v.encontro && x.data === v.data);
 
-  return base.map(
-    ({ primeira: _, ...b }): SituacaoEncontro<T> => ({
-      ...b,
-      substituidoPor: substituidas.find(
-        (s) => s.vez.encontro === b.encontro && [...visiveis].some((v) => mesmaVez(v, s.por)),
-      )?.por,
-    }),
-  );
+  return base.map(({ encontro, proxima, alteradas, mostrar }): SituacaoEncontro<T> => ({
+    encontro,
+    proxima,
+    alteradas,
+    mostrar,
+    substituidoPor: substituidas.find((s) => s.vez.encontro === encontro && naGrade(s.por))?.por,
+  }));
 }
-
-const mesmaVez = (a: Vez, b: Vez) => a.encontro === b.encontro && a.data === b.data;
 
 /**
  * O encontro do destaque da semana: o próximo que recebe o tema. Na semana da Ceia, o Culto da
@@ -273,6 +280,24 @@ export function destaqueDaSemana<T extends Encontro>(
   const { hoje, vezes } = calendario(encontros, agora, alteracoes);
   const vez = vezes.find((v) => v.encontro.recebeTema && v.fim > hoje.minutos);
   return vez && { vez, quando: quandoDe(vez, hoje.minutos), temTema: vez.data === temaData };
+}
+
+/**
+ * Um evento (data única) com a alteração da data dele, na mesma regra dos encontros: alterado,
+ * valem a nova hora e o novo local; cancelado, continua na agenda com a alteração junto.
+ */
+export function eventoComAlteracao<
+  E extends { id: string; data: string; hora: string; local: string },
+>(evento: E, alteracoes: Alteracao[]): E & { alteracao?: Alteracao } {
+  const alteracao = alteracoes.find((a) => a.alvo === evento.id && a.data === evento.data);
+  if (!alteracao) return evento;
+  if (alteracao.situacao === 'cancelado') return { ...evento, alteracao };
+  return {
+    ...evento,
+    alteracao,
+    hora: alteracao.novaHora ?? evento.hora,
+    local: alteracao.novoLocal ?? evento.local,
+  };
 }
 
 /** "09:00" → "9h", "19:30" → "19h30" */

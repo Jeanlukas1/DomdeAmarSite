@@ -4,6 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   destaqueDaSemana,
+  eventoComAlteracao,
   gradeSemanal,
   proximoEncontro,
   situacaoDaSemana,
@@ -286,9 +287,7 @@ describe('mudança de horário', () => {
 
   it('antecipada: às 17h a Plenitude passada para as 16h já está acontecendo', () => {
     const agora = emSaoPaulo('2026-11-15T17:00');
-    const r = proximoEncontro(grade, agora, [
-      alterado('domingo-plenitude', '2026-11-15', '16:00'),
-    ]);
+    const r = proximoEncontro(grade, agora, [alterado('domingo-plenitude', '2026-11-15', '16:00')]);
     expect([r?.vez.encontro.id, r?.vez.hora, r?.quando]).toEqual([
       'domingo-plenitude',
       '16:00',
@@ -313,7 +312,11 @@ describe('mudança de horário', () => {
   it('a alteração vale só na data dela: no domingo seguinte, o horário de sempre', () => {
     const agora = emSaoPaulo('2026-11-21T20:00');
     const r = proximoEncontro(grade, agora, [alterado('domingo-estudo', '2026-11-15', '11:00')]);
-    expect([r?.vez.data, r?.vez.hora, r?.vez.alteracao]).toEqual(['2026-11-22', '09:00', undefined]);
+    expect([r?.vez.data, r?.vez.hora, r?.vez.alteracao]).toEqual([
+      '2026-11-22',
+      '09:00',
+      undefined,
+    ]);
   });
 });
 
@@ -379,3 +382,39 @@ describe('alterações na grade e no destaque', () => {
   });
 });
 
+describe('alterações de eventos e na virada do mês', () => {
+  const evento = {
+    id: 'cantata-de-natal',
+    titulo: 'Cantata de Natal',
+    data: '2026-12-20',
+    hora: '19:00',
+    local: 'Templo',
+  };
+
+  it('evento alterado: vale o horário e o local novos, com a alteração junto', () => {
+    const e = eventoComAlteracao(evento, [
+      alterado('cantata-de-natal', '2026-12-20', '20:00', 'Praça de Jaconé'),
+    ]);
+    expect([e.hora, e.local, e.alteracao?.mensagem]).toEqual([
+      '20:00',
+      'Praça de Jaconé',
+      'Mudamos o horário nesta semana.',
+    ]);
+  });
+
+  it('evento cancelado continua na agenda, marcado; alteração de outro alvo ou data não conta', () => {
+    const e = eventoComAlteracao(evento, [
+      cancelado('cantata-de-natal', '2026-12-20'),
+      alterado('cantata-de-natal', '2026-12-21', '08:00'),
+      alterado('outro-evento', '2026-12-20', '08:00'),
+    ]);
+    expect([e.hora, e.local, e.alteracao?.situacao]).toEqual(['19:00', 'Templo', 'cancelado']);
+    expect(eventoComAlteracao(evento, [cancelado('outro-evento', '2026-12-20')])).toEqual(evento);
+  });
+
+  it('virada de mês: o cancelamento da terça, 1º de dezembro, vale a partir de 30 de novembro', () => {
+    const agora = emSaoPaulo('2026-11-30T10:00');
+    const r = proximoEncontro(grade, agora, [cancelado('terca-oracao', '2026-12-01')]);
+    expect(r && `${r.vez.encontro.id}@${r.vez.data}`).toBe('domingo-estudo@2026-12-06');
+  });
+});
