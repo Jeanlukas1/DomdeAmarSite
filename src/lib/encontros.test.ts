@@ -4,9 +4,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   destaqueDaSemana,
+  eventoComAlteracao,
   gradeSemanal,
+  linhaDaAlteracao,
   proximoEncontro,
   situacaoDaSemana,
+  type Alteracao,
+  type Vez,
   type Encontro,
 } from './encontros';
 
@@ -228,5 +232,208 @@ describe('calendário dos encontros', () => {
   it('a grade semanal junta os horários de cada dia', () => {
     const dias = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
     expect(gradeSemanal(grade, dias)).toBe('Terça 19h · Domingo 9h e 18h');
+  });
+});
+
+// Alterações (R20, R21): cancelamentos e mudanças de horário ou local numa data. A regra é a do
+// app (spec 001 do app, R9, R22 e R23): o cancelado nunca é o próximo nem "acontecendo agora",
+// e continua aparecendo na data dele, marcado; o alterado vale no horário e no local novos.
+const cancelado = (alvo: string, data: string): Alteracao => ({
+  alvo,
+  data,
+  situacao: 'cancelado',
+  novaHora: null,
+  novoLocal: null,
+  mensagem: 'Culto cancelado por causa da chuva.',
+});
+const alterado = (
+  alvo: string,
+  data: string,
+  novaHora: string | null,
+  novoLocal: string | null = null,
+): Alteracao => ({
+  alvo,
+  data,
+  situacao: 'alterado',
+  novaHora,
+  novoLocal,
+  mensagem: 'Mudamos o horário nesta semana.',
+});
+
+describe('calendário com alterações', () => {
+  it('o próximo encontro cancelado dá lugar ao seguinte', () => {
+    // sábado à noite: o próximo seria o Seminário de domingo 9h
+    const agora = emSaoPaulo('2026-11-14T20:00');
+    const r = proximoEncontro(grade, agora, [cancelado('domingo-estudo', '2026-11-15')]);
+    expect(r && `${r.vez.encontro.id}@${r.vez.data}`).toBe('domingo-plenitude@2026-11-15');
+  });
+});
+
+describe('mudança de horário', () => {
+  it('adiada: às 10h o Seminário passado para as 11h ainda não começou', () => {
+    const agora = emSaoPaulo('2026-11-15T10:00');
+    const r = proximoEncontro(grade, agora, [alterado('domingo-estudo', '2026-11-15', '11:00')]);
+    expect({
+      proximo: r && `${r.vez.encontro.id}@${r.vez.data}`,
+      hora: r?.vez.hora,
+      quando: r?.quando,
+      mudou: r?.vez.alteracao?.situacao,
+    }).toEqual({
+      proximo: 'domingo-estudo@2026-11-15',
+      hora: '11:00',
+      quando: 'hoje',
+      mudou: 'alterado',
+    });
+  });
+
+  it('antecipada: às 17h a Plenitude passada para as 16h já está acontecendo', () => {
+    const agora = emSaoPaulo('2026-11-15T17:00');
+    const r = proximoEncontro(grade, agora, [alterado('domingo-plenitude', '2026-11-15', '16:00')]);
+    expect([r?.vez.encontro.id, r?.vez.hora, r?.quando]).toEqual([
+      'domingo-plenitude',
+      '16:00',
+      'agora',
+    ]);
+  });
+
+  it('passada para depois de outro encontro do dia, troca a ordem', () => {
+    const agora = emSaoPaulo('2026-11-15T08:00');
+    const r = proximoEncontro(grade, agora, [alterado('domingo-estudo', '2026-11-15', '19:00')]);
+    expect(r?.vez.encontro.id).toBe('domingo-plenitude');
+  });
+
+  it('só o local mudou: mantém o horário e leva a alteração junto', () => {
+    const agora = emSaoPaulo('2026-11-15T08:00');
+    const r = proximoEncontro(grade, agora, [
+      alterado('domingo-estudo', '2026-11-15', null, 'Praça de Jaconé'),
+    ]);
+    expect([r?.vez.hora, r?.vez.alteracao?.novoLocal]).toEqual(['09:00', 'Praça de Jaconé']);
+  });
+
+  it('a alteração vale só na data dela: no domingo seguinte, o horário de sempre', () => {
+    const agora = emSaoPaulo('2026-11-21T20:00');
+    const r = proximoEncontro(grade, agora, [alterado('domingo-estudo', '2026-11-15', '11:00')]);
+    expect([r?.vez.data, r?.vez.hora, r?.vez.alteracao]).toEqual([
+      '2026-11-22',
+      '09:00',
+      undefined,
+    ]);
+  });
+});
+
+describe('alterações na grade e no destaque', () => {
+  const resumo = (v: Vez) => `${v.data} ${v.alteracao?.situacao} ${v.hora}`;
+
+  it('o cartão do encontro mostra a vez cancelada, e a próxima vez é a da semana seguinte', () => {
+    const agora = emSaoPaulo('2026-11-14T20:00');
+    const s = situacaoDaSemana(grade, agora, [cancelado('domingo-estudo', '2026-11-15')]).find(
+      (x) => x.encontro.id === 'domingo-estudo',
+    );
+    expect({
+      alteradas: s?.alteradas.map(resumo),
+      proxima: s?.proxima?.data,
+    }).toEqual({ alteradas: ['2026-11-15 cancelado 09:00'], proxima: '2026-11-22' });
+  });
+
+  const ceia = (alteracoes: Alteracao[]) => {
+    const agora = emSaoPaulo('2026-11-07T20:00');
+    const situacao = situacaoDaSemana(grade, agora, alteracoes);
+    const s = situacao.find((x) => x.encontro.id === 'santa-ceia');
+    const r = proximoEncontro(grade, agora, alteracoes);
+    return {
+      proximo: r && `${r.vez.encontro.id}@${r.vez.data} ${r.vez.hora}`,
+      ceia: s?.mostrar,
+      alteradas: s?.alteradas.map(resumo),
+      avisos: situacao.filter((x) => x.substituidoPor).map((x) => x.encontro.id),
+    };
+  };
+
+  it('Santa Ceia em outro horário: continua substituindo o dia, no horário novo', () => {
+    expect(ceia([alterado('santa-ceia', '2026-11-08', '15:00')])).toEqual({
+      proximo: 'santa-ceia@2026-11-08 15:00',
+      ceia: true,
+      alteradas: ['2026-11-08 alterado 15:00'],
+      avisos: SUBSTITUIDOS,
+    });
+  });
+
+  it('Santa Ceia cancelada: aparece cancelada, e os encontros do domingo continuam sem acontecer', () => {
+    // o cancelamento vale para aquela ocorrência; não devolve ao dia os encontros substituídos
+    // (uma alteração neles naquele domingo nem é publicada: eles não acontecem nessa data)
+    expect(ceia([cancelado('santa-ceia', '2026-11-08')])).toEqual({
+      proximo: 'terca-oracao@2026-11-10 19:00',
+      ceia: true,
+      alteradas: ['2026-11-08 cancelado 10:00'],
+      avisos: SUBSTITUIDOS,
+    });
+  });
+
+  it('o destaque da semana pula a Plenitude cancelada e acompanha a mudança de horário', () => {
+    const agora = emSaoPaulo('2026-11-14T20:00');
+    const pulou = destaqueDaSemana(grade, '2026-11-15', agora, [
+      cancelado('domingo-plenitude', '2026-11-15'),
+    ]);
+    const mudou = destaqueDaSemana(grade, '2026-11-15', agora, [
+      alterado('domingo-plenitude', '2026-11-15', '19:30'),
+    ]);
+    expect({
+      pulou: pulou && `${pulou.vez.data} ${pulou.temTema}`,
+      mudou: mudou && `${mudou.vez.data} ${mudou.vez.hora} ${mudou.vez.alteracao?.situacao}`,
+    }).toEqual({ pulou: '2026-11-22 false', mudou: '2026-11-15 19:30 alterado' });
+  });
+});
+
+describe('alterações de eventos e na virada do mês', () => {
+  const evento = {
+    id: 'cantata-de-natal',
+    titulo: 'Cantata de Natal',
+    data: '2026-12-20',
+    hora: '19:00',
+    local: 'Templo',
+  };
+
+  it('evento alterado: vale o horário e o local novos, com a alteração junto', () => {
+    const e = eventoComAlteracao(evento, [
+      alterado('cantata-de-natal', '2026-12-20', '20:00', 'Praça de Jaconé'),
+    ]);
+    expect([e.hora, e.local, e.alteracao?.mensagem]).toEqual([
+      '20:00',
+      'Praça de Jaconé',
+      'Mudamos o horário nesta semana.',
+    ]);
+  });
+
+  it('evento cancelado continua na agenda, marcado; alteração de outro alvo ou data não conta', () => {
+    const e = eventoComAlteracao(evento, [
+      cancelado('cantata-de-natal', '2026-12-20'),
+      alterado('cantata-de-natal', '2026-12-21', '08:00'),
+      alterado('outro-evento', '2026-12-20', '08:00'),
+    ]);
+    expect([e.hora, e.local, e.alteracao?.situacao]).toEqual(['19:00', 'Templo', 'cancelado']);
+    expect(eventoComAlteracao(evento, [cancelado('outro-evento', '2026-12-20')])).toEqual(evento);
+  });
+
+  it('virada de mês: o cancelamento da terça, 1º de dezembro, vale a partir de 30 de novembro', () => {
+    const agora = emSaoPaulo('2026-11-30T10:00');
+    const r = proximoEncontro(grade, agora, [cancelado('terca-oracao', '2026-12-01')]);
+    expect(r && `${r.vez.encontro.id}@${r.vez.data}`).toBe('domingo-estudo@2026-12-06');
+  });
+});
+
+describe('linha da alteração', () => {
+  const dias = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+
+  it('diz a data e só o que mudou', () => {
+    expect([
+      linhaDaAlteracao(cancelado('domingo-estudo', '2026-11-15'), dias, 'às'),
+      linhaDaAlteracao(alterado('domingo-estudo', '2026-11-15', '11:00', 'Praça'), dias, 'às'),
+      linhaDaAlteracao(alterado('terca-oracao', '2026-12-01', null, 'Praça'), dias, 'às'),
+      linhaDaAlteracao(alterado('terca-oracao', '2026-12-01', '19:30'), dias, 'às'),
+    ]).toEqual([
+      'domingo, 15 de novembro',
+      'domingo, 15 de novembro · às 11h · Praça',
+      'terça, 1 de dezembro · Praça',
+      'terça, 1 de dezembro · às 19h30',
+    ]);
   });
 });

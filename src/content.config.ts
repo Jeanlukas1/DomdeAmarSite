@@ -424,6 +424,13 @@ const ui = defineCollection({
     }),
     /** domingo a sábado, como aparecem no site */
     diasSemana: z.array(z.string()).length(7),
+    /** marca de uma alteração (docs/secoes/alteracoes.md) */
+    alteracoes: z.object({
+      cancelado: z.string(),
+      alterado: z.string(),
+      /** fim da linha do próximo culto no Hero: "Domingo, 11h · Seminário · horário alterado" */
+      horarioAlterado: z.string(),
+    }),
     a11y: z.object({
       pularConteudo: z.string(),
       navPrincipal: z.string(),

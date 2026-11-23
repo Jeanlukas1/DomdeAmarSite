@@ -20,6 +20,22 @@ export interface Encontro {
   recebeTema?: boolean;
 }
 
+/**
+ * Cancelamento ou mudança de horário ou de local de um encontro ou evento numa data (o
+ * `alteracoes.json` publicado em /api/v1, já validado). Nos mesmos termos do app.
+ */
+export interface Alteracao {
+  /** id do encontro ou evento */
+  alvo: string;
+  /** AAAA-MM-DD */
+  data: string;
+  situacao: 'cancelado' | 'alterado';
+  /** "HH:MM" */
+  novaHora: string | null;
+  novoLocal: string | null;
+  mensagem: string;
+}
+
 /** Uma vez em que o encontro acontece. Minutos contados a partir de hoje 00:00 (São Paulo). */
 export interface Vez<T extends Encontro = Encontro> {
   encontro: T;
@@ -28,8 +44,12 @@ export interface Vez<T extends Encontro = Encontro> {
   diaSemana: number;
   /** 0 = hoje, 1 = amanhã… */
   diasAte: number;
+  /** "HH:MM" desta vez: a do encontro, ou a nova hora de uma alteração */
+  hora: string;
   inicio: number;
   fim: number;
+  /** a alteração desta data, se houver */
+  alteracao?: Alteracao;
 }
 
 export type Quando = 'agora' | 'hoje' | 'amanha' | 'semana';
@@ -65,6 +85,12 @@ export function agoraEmSaoPaulo(agora: Date) {
   };
 }
 
+/** A data de hoje no fuso da igreja, "AAAA-MM-DD". */
+export function dataEmSaoPaulo(agora: Date) {
+  const { ano, mes, dia } = agoraEmSaoPaulo(agora);
+  return `${ano}-${pad(mes)}-${pad(dia)}`;
+}
+
 const minutosDe = (hora: string) => {
   const [h, m] = hora.split(':').map(Number);
   return h * 60 + m;
@@ -96,6 +122,19 @@ export function aconteceEm(encontro: Encontro, encontros: Encontro[], data: stri
   return !!encontro.substituiODia || !encontros.some((e) => e.substituiODia && caiNoDia(e));
 }
 
+/** A vez no horário novo (a duração do encontro se mantém). */
+function comAlteracao<T extends Encontro>(vez: Vez<T>, alteracao: Alteracao): Vez<T> {
+  if (!alteracao.novaHora) return { ...vez, alteracao };
+  const inicio = vez.diasAte * 1440 + minutosDe(alteracao.novaHora);
+  return {
+    ...vez,
+    alteracao,
+    hora: alteracao.novaHora,
+    inicio,
+    fim: inicio + vez.fim - vez.inicio,
+  };
+}
+
 /**
  * Todas as vezes dos próximos `dias` dias (a partir de hoje), já com as substituições aplicadas.
  * `substituidas` guarda as que não acontecem, com quem as substituiu.
@@ -103,11 +142,14 @@ export function aconteceEm(encontro: Encontro, encontros: Encontro[], data: stri
 export function calendario<T extends Encontro>(
   encontros: T[],
   agora = new Date(),
+  alteracoes: Alteracao[] = [],
   dias = JANELA_DIAS,
 ) {
   const hoje = agoraEmSaoPaulo(agora);
   const vezes: Vez<T>[] = [];
   const substituidas: { vez: Vez<T>; por: Vez<T> }[] = [];
+  /** canceladas por uma alteração: não acontecem, mas continuam visíveis na data, marcadas */
+  const canceladas: Vez<T>[] = [];
 
   for (let i = 0; i < dias; i++) {
     const d = new Date(Date.UTC(hoje.ano, hoje.mes - 1, hoje.dia + i));
@@ -127,6 +169,7 @@ export function calendario<T extends Encontro>(
           data,
           diaSemana,
           diasAte: i,
+          hora: encontro.hora,
           inicio,
           fim: inicio + (encontro.duracaoMin ?? DURACAO_PADRAO),
         };
@@ -134,12 +177,18 @@ export function calendario<T extends Encontro>(
 
     const substituto = doDia.find((v) => v.encontro.substituiODia);
     for (const vez of doDia) {
-      if (substituto && !vez.encontro.substituiODia) substituidas.push({ vez, por: substituto });
-      else vezes.push(vez);
+      if (substituto && !vez.encontro.substituiODia) {
+        substituidas.push({ vez, por: substituto });
+        continue;
+      }
+      const alteracao = alteracoes.find((a) => a.alvo === vez.encontro.id && a.data === data);
+      if (!alteracao) vezes.push(vez);
+      else if (alteracao.situacao === 'cancelado') canceladas.push({ ...vez, alteracao });
+      else vezes.push(comAlteracao(vez, alteracao));
     }
   }
   vezes.sort((a, b) => a.inicio - b.inicio);
-  return { hoje, vezes, substituidas };
+  return { hoje, vezes, substituidas, canceladas };
 }
 
 const quandoDe = (vez: Vez, minutosAgora: number): Quando =>
@@ -152,51 +201,74 @@ const quandoDe = (vez: Vez, minutosAgora: number): Quando =>
         : 'semana';
 
 /** O próximo encontro que ainda não terminou (pode estar acontecendo agora). */
-export function proximoEncontro<T extends Encontro>(encontros: T[], agora = new Date()) {
-  const { hoje, vezes } = calendario(encontros, agora);
+export function proximoEncontro<T extends Encontro>(
+  encontros: T[],
+  agora = new Date(),
+  alteracoes: Alteracao[] = [],
+) {
+  const { hoje, vezes } = calendario(encontros, agora, alteracoes);
   const vez = vezes.find((v) => v.fim > hoje.minutos);
   return vez && { vez, quando: quandoDe(vez, hoje.minutos) };
 }
 
 export interface SituacaoEncontro<T extends Encontro> {
   encontro: T;
-  /** próxima vez que acontece de fato */
+  /** próxima vez que acontece de fato (uma cancelada não conta) */
   proxima?: Vez<T>;
   /** cancelado pelo substituto do dia (ex.: domingo de Ceia), enquanto ele não termina */
   substituidoPor?: Vez<T>;
+  /** as vezes ainda por vir que têm alteração (canceladas ou alteradas), em ordem */
+  alteradas: Vez<T>[];
   /**
    * Aparece na grade agora? Encontros semanais, sempre. Os não semanais (a Ceia), só quando a
-   * próxima vez deles é o próximo encontro naquele dia da semana ("a semana da Ceia").
+   * próxima vez deles é o próximo encontro naquele dia da semana ("a semana da Ceia"). Uma vez
+   * cancelada também conta: ela aparece na data dela, marcada.
    */
   mostrar: boolean;
 }
 
 /** Situação de cada encontro para a grade da seção Cultos. */
-export function situacaoDaSemana<T extends Encontro>(encontros: T[], agora = new Date()) {
-  const { hoje, vezes, substituidas } = calendario(encontros, agora);
+export function situacaoDaSemana<T extends Encontro>(
+  encontros: T[],
+  agora = new Date(),
+  alteracoes: Alteracao[] = [],
+) {
+  const { hoje, vezes, substituidas, canceladas } = calendario(encontros, agora, alteracoes);
   const futuras = vezes.filter((v) => v.fim > hoje.minutos);
+  const vezesAlteradas = [...futuras.filter((v) => v.alteracao), ...canceladas]
+    .filter((v) => v.fim > hoje.minutos)
+    .sort((a, b) => a.inicio - b.inicio);
 
   const base = encontros.map((encontro) => {
     const proxima = futuras.find((v) => v.encontro === encontro);
+    const alteradas = vezesAlteradas.filter((v) => v.encontro === encontro);
+    const cancelada = alteradas.find((v) => v.alteracao?.situacao === 'cancelado');
+    const primeira =
+      cancelada && (!proxima || cancelada.inicio < proxima.inicio) ? cancelada : proxima;
     const semanal = (encontro.ocorrencia ?? 'semanal') === 'semanal';
     const mostrar =
       semanal ||
-      (!!proxima &&
+      (!!primeira &&
         !futuras.some(
           (v) =>
             v.encontro !== encontro &&
-            v.diaSemana === proxima.diaSemana &&
-            v.inicio < proxima.inicio,
+            v.diaSemana === primeira.diaSemana &&
+            v.inicio < primeira.inicio,
         ));
-    return { encontro, proxima, mostrar };
+    return { encontro, proxima, alteradas, mostrar, primeira };
   });
   // vezes de substitutos que estão na grade agora (a Ceia na semana dela)
-  const visiveis = new Set(base.filter((b) => b.mostrar && b.proxima).map((b) => b.proxima));
+  // (comparadas por encontro e data: a vez alterada é uma cópia da original)
+  const visiveis = base.filter((b) => b.mostrar && b.primeira).map((b) => b.primeira!);
+  const naGrade = (v: Vez<T>) =>
+    visiveis.some((x) => x.encontro === v.encontro && x.data === v.data);
 
-  return base.map((b): SituacaoEncontro<T> => ({
-    ...b,
-    substituidoPor: substituidas.find((s) => s.vez.encontro === b.encontro && visiveis.has(s.por))
-      ?.por,
+  return base.map(({ encontro, proxima, alteradas, mostrar }): SituacaoEncontro<T> => ({
+    encontro,
+    proxima,
+    alteradas,
+    mostrar,
+    substituidoPor: substituidas.find((s) => s.vez.encontro === encontro && naGrade(s.por))?.por,
   }));
 }
 
@@ -208,10 +280,30 @@ export function destaqueDaSemana<T extends Encontro>(
   encontros: T[],
   temaData: string | undefined,
   agora = new Date(),
+  alteracoes: Alteracao[] = [],
 ) {
-  const { hoje, vezes } = calendario(encontros, agora);
+  // uma vez cancelada não é anunciada: o destaque passa para a seguinte
+  const { hoje, vezes } = calendario(encontros, agora, alteracoes);
   const vez = vezes.find((v) => v.encontro.recebeTema && v.fim > hoje.minutos);
   return vez && { vez, quando: quandoDe(vez, hoje.minutos), temTema: vez.data === temaData };
+}
+
+/**
+ * Um evento (data única) com a alteração da data dele, na mesma regra dos encontros: alterado,
+ * valem a nova hora e o novo local; cancelado, continua na agenda com a alteração junto.
+ */
+export function eventoComAlteracao<
+  E extends { id: string; data: string; hora: string; local: string },
+>(evento: E, alteracoes: Alteracao[]): E & { alteracao?: Alteracao } {
+  const alteracao = alteracoes.find((a) => a.alvo === evento.id && a.data === evento.data);
+  if (!alteracao) return evento;
+  if (alteracao.situacao === 'cancelado') return { ...evento, alteracao };
+  return {
+    ...evento,
+    alteracao,
+    hora: alteracao.novaHora ?? evento.hora,
+    local: alteracao.novoLocal ?? evento.local,
+  };
 }
 
 /** "09:00" → "9h", "19:30" → "19h30" */
@@ -240,3 +332,15 @@ export const diaEMes = (data: string) =>
   new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(
     new Date(`${data}T12:00:00Z`),
   );
+
+/**
+ * A data e só o que mudou, para a marca da alteração (docs/secoes/alteracoes.md):
+ * "domingo, 15 de novembro · às 11h · Praça de Jaconé". `dias` = nomes de domingo a sábado.
+ */
+export function linhaDaAlteracao(a: Alteracao, dias: string[], as = 'às') {
+  const diaSemana = new Date(`${a.data}T12:00:00Z`).getUTCDay();
+  const partes = [`${dias[diaSemana].toLowerCase()}, ${diaEMes(a.data)}`];
+  if (a.situacao === 'alterado' && a.novaHora) partes.push(`${as} ${horaCurta(a.novaHora)}`);
+  if (a.situacao === 'alterado' && a.novoLocal) partes.push(a.novoLocal);
+  return partes.join(' · ');
+}

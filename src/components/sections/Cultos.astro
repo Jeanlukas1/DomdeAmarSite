@@ -5,14 +5,26 @@
 //   - marca o próximo encontro (agora / hoje / amanhã);
 //   - mostra a Ceia só na semana dela (sem JS ela aparece sempre, com a regra "2º domingo do mês");
 //   - avisa nos encontros que não acontecem naquele domingo;
-//   - o destaque usa o tema só se a data dele bater com o encontro calculado.
+//   - o destaque usa o tema só se a data dele bater com o encontro calculado;
+//   - aplica as alterações publicadas (cancelado, alterado): marcas prontas no HTML para cada
+//     alteração futura, e o próximo encontro e o destaque nunca são uma vez cancelada
+//     (docs/secoes/alteracoes.md).
 import Button from '@/components/ui/Button.astro';
 import Foto from '@/components/ui/Foto.astro';
 import Icon from '@/components/ui/Icon.astro';
+import MarcaAlteracao from '@/components/ui/MarcaAlteracao.astro';
 import Ornamento from '@/components/ui/Ornamento.astro';
 import SecaoTitulo from '@/components/ui/SecaoTitulo.astro';
 import { getOrdenados, getPrincipal } from '@/lib/igreja';
-import { destaqueDaSemana, diaEMes, horaCurta } from '@/lib/encontros';
+import {
+  dataEmSaoPaulo,
+  destaqueDaSemana,
+  diaEMes,
+  horaCurta,
+  linhaDaAlteracao,
+  type Alteracao,
+} from '@/lib/encontros';
+import { getApiV1 } from '@/lib/publicacao';
 
 const s = await getPrincipal('cultosSecao');
 const cultos = await getOrdenados('cultos');
@@ -31,8 +43,18 @@ const encontros = cultos.map((c) => ({
   nomeCurto: c.nomeCurto,
 }));
 
+// as alterações dos encontros que ainda não passaram (as mesmas publicadas para o app)
+const hoje = dataEmSaoPaulo(new Date());
+const ids = new Set(cultos.map((c) => c.id));
+const alteracoes = (await getApiV1()).alteracoes
+  .filter((a) => ids.has(a.alvo) && a.data >= hoje)
+  .sort((a, b) => a.data.localeCompare(b.data));
+const linha = (a: Alteracao) => linhaDaAlteracao(a, ui.diasSemana, ui.a11y.as);
+
 // destaque no build (sem JS); o navegador recalcula para o momento da visita
-const d = destaqueDaSemana(cultos, s.semana.data);
+const d = destaqueDaSemana(cultos, s.semana.data, new Date(), alteracoes);
+// a marca do destaque existe sempre no HTML: o navegador a preenche ou esconde
+const marcaDestaque = d?.vez.alteracao ?? alteracoes[0];
 const linhaData = (data: string, diaSemana: number, hora: string) =>
   `${ui.diasSemana[diaSemana]}, ${diaEMes(data)} · ${horaCurta(hora)}`;
 ---
@@ -57,6 +79,8 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
     <ol
       data-cultos
       data-encontros={JSON.stringify(encontros)}
+      data-alteracoes={JSON.stringify(alteracoes)}
+      data-as={ui.a11y.as}
       data-quando-agora={s.quando.agora}
       data-quando-hoje={s.quando.hoje}
       data-quando-amanha={s.quando.amanha}
@@ -100,6 +124,17 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
               </span>
             </h3>
             <p data-aviso hidden class="mt-2 text-sm font-semibold text-red-700" />
+            {alteracoes
+              .filter((a) => a.alvo === c.id)
+              .map((a) => (
+                <MarcaAlteracao
+                  alteracao={a}
+                  linha={linha(a)}
+                  rotulos={ui.alteracoes}
+                  tom="cartao"
+                  class="mt-3"
+                />
+              ))}
           </div>
           <p class="col-span-2 leading-relaxed text-ink-soft group-data-[proximo]:text-blush-100/85 lg:mt-3">
             {c.descricao}
@@ -116,15 +151,15 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
         data-destaque
         data-tema-data={s.semana.data}
         data-dias={JSON.stringify(ui.diasSemana)}
+        data-as={ui.a11y.as}
+        data-rotulos={JSON.stringify(ui.alteracoes)}
         class="mt-10 flex flex-col gap-6 rounded-[2rem] border border-sand px-6 py-8 sm:px-10 md:flex-row md:items-center md:gap-10"
         data-reveal
       >
         <Ornamento class="shrink-0" />
         <div class="min-w-0 flex-1">
           <p id="cultos-destaque" class="text-sm font-semibold text-red-700">
-            <span data-destaque-data>
-              {linhaData(d.vez.data, d.vez.diaSemana, d.vez.encontro.hora)}
-            </span>
+            <span data-destaque-data>{linhaData(d.vez.data, d.vez.diaSemana, d.vez.hora)}</span>
             <span data-destaque-nome hidden={!d.temTema}>
               {' · '}
               {d.vez.encontro.nome}
@@ -137,6 +172,16 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
           >
             {d.temTema ? s.semana.tema : d.vez.encontro.nome}
           </p>
+          {marcaDestaque && (
+            <div data-destaque-alteracao hidden={!d.vez.alteracao}>
+              <MarcaAlteracao
+                alteracao={marcaDestaque}
+                linha={linha(marcaDestaque)}
+                rotulos={ui.alteracoes}
+                class="mt-3"
+              />
+            </div>
+          )}
         </div>
         <dl
           data-destaque-tema
@@ -182,8 +227,10 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
   :global(.js) .culto[data-so-na-semana]:not([data-na-semana]) {
     display: none;
   }
-  /* não acontece neste domingo: a foto recua, o texto continua legível e o aviso explica */
-  .culto[data-substituido] .culto__foto {
+  /* não acontece neste domingo (ou a próxima vez foi cancelada): a foto recua, o texto continua
+     legível e o aviso ou a marca explicam */
+  .culto[data-substituido] .culto__foto,
+  .culto[data-cancelado] .culto__foto {
     opacity: 0.4;
   }
   [hidden] {
@@ -216,11 +263,14 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
 
 <script>
   import {
+    dataEmSaoPaulo,
     destaqueDaSemana,
     diaEMes,
     horaCurta,
+    linhaDaAlteracao,
     proximoEncontro,
     situacaoDaSemana,
+    type Alteracao,
     type Encontro,
   } from '@/lib/encontros';
   import { agoraDaPagina } from '@/lib/agoraDaPagina';
@@ -230,7 +280,14 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
   const lista = document.querySelector<HTMLElement>('[data-cultos]');
   if (lista) {
     const encontros: Dados[] = JSON.parse(lista.dataset.encontros ?? '[]');
+    const alteracoes: Alteracao[] = JSON.parse(lista.dataset.alteracoes ?? '[]');
     const agora = agoraDaPagina();
+    const hoje = dataEmSaoPaulo(agora);
+
+    // as marcas de datas que já passaram somem (o HTML é do momento do build)
+    for (const m of lista.querySelectorAll<HTMLElement>('[data-alteracao-data]')) {
+      m.hidden = (m.dataset.alteracaoData ?? '') < hoje;
+    }
     const item = (id: string) => lista.querySelector<HTMLElement>(`[data-culto="${id}"]`);
     const palavra = {
       agora: lista.dataset.quandoAgora,
@@ -241,9 +298,16 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
 
     // a Ceia na semana dela + avisos nos encontros que ela substitui
     let comMensal = false;
-    for (const s of situacaoDaSemana(encontros, agora)) {
+    for (const s of situacaoDaSemana(encontros, agora, alteracoes)) {
       const el = item(s.encontro.id);
       if (!el) continue;
+      // a próxima vez deste encontro foi cancelada
+      const primeira = s.alteradas[0];
+      el.toggleAttribute(
+        'data-cancelado',
+        primeira?.alteracao?.situacao === 'cancelado' &&
+          (!s.proxima || primeira.inicio < s.proxima.inicio),
+      );
       if (el.hasAttribute('data-so-na-semana')) {
         el.toggleAttribute('data-na-semana', s.mostrar);
         comMensal ||= s.mostrar;
@@ -260,20 +324,28 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
     }
     lista.toggleAttribute('data-com-mensal', comMensal);
 
+    const box = document.querySelector<HTMLElement>('[data-destaque]');
+
     // o próximo encontro
-    const r = proximoEncontro(encontros, agora);
+    const r = proximoEncontro(encontros, agora, alteracoes);
     const alvo = r && item(r.vez.encontro.id);
     if (r && alvo) {
       alvo.toggleAttribute('data-proximo', true);
       alvo.setAttribute('aria-current', 'true');
       const rotulo = alvo.querySelector<HTMLElement>('[data-quando]');
       const texto = palavra[r.quando];
-      if (rotulo && texto) rotulo.textContent = `${rotulo.textContent} · ${texto}`;
+      // horário alterado: o rótulo já diz o novo ("Próximo encontro · Hoje · às 11h")
+      const novaHora = r.vez.alteracao?.novaHora;
+      const partes = [
+        rotulo?.textContent,
+        texto,
+        novaHora && `${lista.dataset.as ?? ''} ${horaCurta(novaHora)}`,
+      ];
+      if (rotulo) rotulo.textContent = partes.filter(Boolean).join(' · ');
     }
 
     // o destaque da semana
-    const box = document.querySelector<HTMLElement>('[data-destaque]');
-    const d = box && destaqueDaSemana(encontros, box.dataset.temaData, agora);
+    const d = box && destaqueDaSemana(encontros, box.dataset.temaData, agora, alteracoes);
     if (box && d) {
       const dias: string[] = JSON.parse(box.dataset.dias ?? '[]');
       const enc = d.vez.encontro;
@@ -284,13 +356,30 @@ const linhaData = (data: string, diaSemana: number, hora: string) =>
           : palavra[d.quando === 'agora' ? 'hoje' : d.quando];
       const q = <T extends HTMLElement>(sel: string) => box.querySelector<T>(sel)!;
       q('[data-destaque-data]').textContent =
-        `${quando}, ${diaEMes(d.vez.data)} · ${horaCurta(enc.hora)}`;
+        `${quando}, ${diaEMes(d.vez.data)} · ${horaCurta(d.vez.hora)}`;
       const nome = q('[data-destaque-nome]');
       nome.textContent = ` · ${enc.nome}`;
       nome.hidden = !d.temTema;
       const titulo = q('[data-destaque-titulo]');
       titulo.textContent = d.temTema ? (titulo.dataset.tema ?? '') : enc.nome;
       q('[data-destaque-tema]').hidden = !d.temTema;
+
+      // a marca da alteração do encontro do destaque, se houver
+      const marca = box.querySelector<HTMLElement>('[data-destaque-alteracao]');
+      const a = d.vez.alteracao;
+      if (marca) {
+        marca.hidden = !a;
+        if (a) {
+          const rotulos = JSON.parse(box.dataset.rotulos ?? '{}');
+          q('[data-alteracao-rotulo]').textContent =
+            a.situacao === 'cancelado' ? rotulos.cancelado : rotulos.alterado;
+          q('[data-alteracao-linha]').textContent = linhaDaAlteracao(a, dias, box.dataset.as);
+          q('[data-alteracao-mensagem]').textContent = a.mensagem;
+          const data = q<HTMLElement>('[data-alteracao-data]');
+          data.dataset.alteracaoData = a.data;
+          data.hidden = false;
+        }
+      }
     }
   }
 </script>

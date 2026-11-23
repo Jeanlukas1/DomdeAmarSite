@@ -1,0 +1,42 @@
+---
+// Marca de uma alteração (docs/secoes/alteracoes.md): pílula "Cancelado"/"Alterado", a data e o
+// que mudou, e a mensagem da igreja. Pronta no HTML (legível sem JS). `data-alteracao-data` deixa
+// o navegador esconder a marca depois que a data passa. A cor vem do lugar:
+//   claro: vermelho no creme/branco; escuro: creme no vinho; cartao: claro, e escuro quando o
+//   cartão de Cultos é o próximo (group-data-[proximo]).
+import type { Alteracao } from '@/lib/encontros';
+
+interface Props {
+  alteracao: Alteracao;
+  /** "domingo, 15 de novembro · às 11h" (linhaDaAlteracao) */
+  linha: string;
+  rotulos: { cancelado: string; alterado: string };
+  tom?: 'claro' | 'escuro' | 'cartao';
+  class?: string;
+}
+
+const { alteracao, linha, rotulos, tom = 'claro', class: classe } = Astro.props;
+const cor = {
+  claro: { marca: 'text-red-700', mensagem: 'text-ink-soft' },
+  escuro: { marca: 'text-cream', mensagem: 'text-blush-100/90' },
+  cartao: {
+    marca: 'text-red-700 group-data-[proximo]:text-cream',
+    mensagem: 'text-ink-soft group-data-[proximo]:text-blush-100/85',
+  },
+}[tom];
+---
+
+<div data-alteracao-data={alteracao.data} class:list={['text-sm', classe]}>
+  <p class:list={['flex flex-wrap items-center gap-x-2.5 gap-y-1 font-semibold', cor.marca]}>
+    <span
+      data-alteracao-rotulo
+      class="rounded-full border border-current/40 px-2.5 py-0.5 text-xs font-bold tracking-[0.16em] uppercase"
+    >
+      {alteracao.situacao === 'cancelado' ? rotulos.cancelado : rotulos.alterado}
+    </span>
+    <span data-alteracao-linha>{linha}</span>
+  </p>
+  <p data-alteracao-mensagem class:list={['mt-1.5 leading-relaxed', cor.mensagem]}>
+    {alteracao.mensagem}
+  </p>
+</div>
