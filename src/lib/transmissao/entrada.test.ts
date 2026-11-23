@@ -1,0 +1,107 @@
+// Ponto de teste P3 (spec 001): a entrada da transmissão (POST /api/v1/transmissao).
+// Recebe um pedido e um instante fixo, com o GitHub trocado por um dublê na fronteira (a API
+// REST), e confere a resposta e o que ficou gravado na `main`. Conteúdo de teste, nunca o real.
+import { describe, expect, it } from 'vitest';
+import { marcarTransmissao } from './entrada';
+import { criarGithubFalso, type GithubFalso } from './githubFalso';
+
+const SEGREDO = 'segredo-de-teste-123';
+const TOKEN = 'github_pat_de_teste';
+
+const FACEBOOK = { plataforma: 'facebook', endereco: 'https://www.facebook.com/igreja/videos/123' };
+const YOUTUBE = { plataforma: 'youtube', endereco: 'https://www.youtube.com/watch?v=abcdefghijk' };
+const SEM_VIDEO = { plataforma: '', endereco: '' };
+
+/** Domingo, 22/11/2026, às 10h30 em Brasília (13h30 UTC). */
+const DOMINGO_10H30 = new Date('2026-11-22T13:30:00Z');
+
+function repositorio(mudancas: Record<string, unknown> = {}) {
+  return {
+    'src/content/transmissao.json': {
+      principal: { aoVivo: false, data: '2026-11-15', video: FACEBOOK },
+    },
+    'src/content/cultos-gravados.json': {
+      itens: [
+        {
+          id: 'culto-antigo',
+          titulo: 'Culto antigo',
+          referencia: 'João 3.16',
+          data: '2026-11-15',
+          pregador: 'Pr. Teste',
+          video: FACEBOOK,
+          mock: false,
+        },
+      ],
+    },
+    'src/content/cultos-secao.json': {
+      principal: {
+        semana: {
+          data: '2026-11-29',
+          tema: 'Tema de outro dia',
+          referencia: 'Salmos 23',
+          pregador: 'Pr. Outro',
+          mock: false,
+        },
+        titulo: 'Encontros',
+      },
+    },
+    'src/content/cultos.json': {
+      itens: [
+        { id: 'domingo-noite', diaSemana: '0', hora: '18:00', nome: 'Culto da Noite' },
+        { id: 'domingo-manha', diaSemana: '0', hora: '09:00', nome: 'Culto da Manhã' },
+        { id: 'terca', diaSemana: '2', hora: '19:00', nome: 'Culto de Oração' },
+      ],
+    },
+    'src/content/eventos.json': { itens: [] },
+    'src/content/alteracoes.json': { itens: [] },
+    'src/content/assista.json': {
+      principal: { titulo: 'Assista', tituloCultoGravadoPadrao: 'Culto ao vivo' },
+    },
+    ...mudancas,
+  };
+}
+
+function pedido({
+  autorizacao = `Bearer ${SEGREDO}`,
+  corpo = {} as unknown,
+}: { autorizacao?: string | null; corpo?: unknown } = {}) {
+  const headers = new Headers({ 'Content-Type': 'application/json' });
+  if (autorizacao !== null) headers.set('Authorization', autorizacao);
+  return new Request('https://site.test/api/v1/transmissao', {
+    method: 'POST',
+    headers,
+    body: typeof corpo === 'string' ? corpo : JSON.stringify(corpo),
+  });
+}
+
+async function marcar(github: GithubFalso, req: Request, agora = DOMINGO_10H30) {
+  const resposta = await marcarTransmissao(req, agora, {
+    segredo: SEGREDO,
+    token: TOKEN,
+    repo: { owner: 'dono', name: 'site' },
+    fetch: github.fetch,
+  });
+  return { status: resposta.status, corpo: await resposta.text() };
+}
+
+const transmissao = (g: GithubFalso) =>
+  (g.ler('src/content/transmissao.json') as { principal: unknown }).principal;
+
+describe('segredo da entrada (R25)', () => {
+  it('sem segredo, responde 401 e não grava nada', async () => {
+    const github = criarGithubFalso(repositorio());
+    const r = await marcar(github, pedido({ autorizacao: null }));
+    expect(r.status).toBe(401);
+    expect(github.commitsNovos()).toBe(0);
+  });
+
+  it('com segredo errado, responde 401 e não grava nada', async () => {
+    const github = criarGithubFalso(repositorio());
+    for (const autorizacao of [`Bearer ${SEGREDO}x`, 'Bearer ', SEGREDO, `Basic ${SEGREDO}`]) {
+      const r = await marcar(github, pedido({ autorizacao }));
+      expect(r.status).toBe(401);
+    }
+    expect(github.commitsNovos()).toBe(0);
+    expect(transmissao(github)).toEqual({ aoVivo: false, data: '2026-11-15', video: FACEBOOK });
+  });
+});
