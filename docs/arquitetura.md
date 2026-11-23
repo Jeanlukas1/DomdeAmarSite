@@ -31,7 +31,7 @@ filmmaker ──(app) ──> servidor do app ──POST /api/v1/transmissao─�
                         app no celular
 ```
 
-- **Contrato publicado:** endpoints estáticos gerados no build, em `/api/v1/`, num formato próprio do app. Uma camada de tradução lê as coleções do site e monta cada arquivo, validado por um esquema do contrato. Formato em `docs/DATA-MODEL.md`; motivo em `docs/adr/0001-contrato-versionado-em-api-v1.md`.
+- **Contrato publicado:** endpoints estáticos gerados no build, em `/api/v1/`, num formato próprio do app. Uma camada de tradução lê as coleções do site e monta cada arquivo, validado por um esquema do contrato. A montagem fica em `src/lib/publicacao.ts`, que as seções do site também leem: o site aplica as mesmas alterações que o app recebe. Formato em `docs/DATA-MODEL.md`; motivo em `docs/adr/0001-contrato-versionado-em-api-v1.md`.
 - **Entrada da transmissão:** a segunda rota sob demanda do site, depois do painel. Ela recebe a marcação do servidor do app (com segredo), grava a transmissão de hoje e, quando há vídeo, o culto gravado do dia, num commit só na `main`. Motivo em `docs/adr/0002-entrada-da-transmissao-no-site.md`.
 - **Webhook:** configurado no GitHub, sem código no site. A cada push na `main`, chama o servidor do app, que lê o antes e o depois no histórico do repositório. Por isso alguns arquivos de `src/content/` também são contrato (ver `docs/DATA-MODEL.md`).
 - **Calendário:** `src/lib/` calcula as ocorrências dos encontros e aplica as alterações. O app tem uma cópia da mesma lógica, e as duas precisam dar o mesmo resultado.
