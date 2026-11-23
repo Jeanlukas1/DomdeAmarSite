@@ -24,17 +24,19 @@ Os testes automatizados usam o Vitest, só no desenvolvimento, com a mesma confi
 
 Uma mudança que toque qualquer caminho abaixo é de nível Crítico, qualquer que seja a etiqueta da issue. Use padrões glob.
 
-| Padrão                  | Motivo                                                 |
-| ----------------------- | ------------------------------------------------------ |
-| `.github/workflows/**`  | CI e deploy                                            |
-| `.claude/settings.json` | regras de permissão do processo                        |
-| `package.json`          | dependências e scripts                                 |
-| `package-lock.json`     | versões das dependências                               |
-| `astro.config.*`        | build, adapter da Vercel e rotas sob demanda           |
-| `vercel.json`           | configuração de produção                               |
-| `keystatic.config.ts`   | painel: o que o administrador cadastra                 |
-| `src/content.config.ts` | esquema do conteúdo                                    |
-| `src/pages/api/**`      | contrato publicado para o app e entrada da transmissão |
+| Padrão                   | Motivo                                               |
+| ------------------------ | ---------------------------------------------------- |
+| `.github/workflows/**`   | CI e deploy                                          |
+| `.claude/settings.json`  | regras de permissão do processo                      |
+| `package.json`           | dependências e scripts                               |
+| `package-lock.json`      | versões das dependências                             |
+| `astro.config.*`         | build, adapter da Vercel e rotas sob demanda         |
+| `vercel.json`            | configuração de produção                             |
+| `keystatic.config.ts`    | painel: o que o administrador cadastra               |
+| `src/content.config.ts`  | esquema do conteúdo                                  |
+| `src/pages/api/**`       | contrato publicado para o app                        |
+| `src/rotas/**`           | rotas sob demanda: a entrada da transmissão          |
+| `src/lib/transmissao/**` | entrada da transmissão: segredo e gravação na `main` |
 
 Os arquivos de `src/content/` listados em `docs/DATA-MODEL.md` também são contrato com o servidor do app: uma mudança no formato deles é Crítica. Uma gravação de conteúdo pelo painel não passa por este processo.
 
