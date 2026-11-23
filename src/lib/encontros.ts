@@ -55,7 +55,8 @@ export interface Vez<T extends Encontro = Encontro> {
 export type Quando = 'agora' | 'hoje' | 'amanha' | 'semana';
 
 const FUSO = 'America/Sao_Paulo';
-const DURACAO_PADRAO = 120;
+/** duração de um encontro sem `duracaoMin`, em minutos */
+export const DURACAO_PADRAO = 120;
 /** janela do cálculo: cobre qualquer "n-ésimo domingo" seguinte */
 const JANELA_DIAS = 42;
 

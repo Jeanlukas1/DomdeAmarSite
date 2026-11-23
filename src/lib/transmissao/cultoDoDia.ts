@@ -1,11 +1,8 @@
 // O culto gravado que a marcação da transmissão cria quando ela passa a ter vídeo (spec 001,
 // R28). Puro: recebe o conteúdo como está no repositório (o formato do painel) e o instante da
 // marcação.
-import { calendario, eventoComAlteracao, type Alteracao } from '@/lib/encontros';
+import { calendario, DURACAO_PADRAO, eventoComAlteracao, type Alteracao } from '@/lib/encontros';
 import type { Video } from '@/lib/video';
-
-/** Duração de um evento para a janela de transmissão: o mesmo padrão dos encontros. */
-const DURACAO_DO_EVENTO = 120;
 
 export interface ConteudoDoDia {
   /** cultos-secao.json → principal.semana */
@@ -83,7 +80,7 @@ function nomeDoEncontroDeHoje(c: ConteudoDoDia, agora: Date, hoje: string) {
       .map((e) => ({
         nome: e.titulo,
         inicio: minutosDe(e.hora),
-        fim: minutosDe(e.hora) + DURACAO_DO_EVENTO,
+        fim: minutosDe(e.hora) + DURACAO_PADRAO,
       })),
   ].sort((a, b) => a.inicio - b.inicio);
   const agoraMin = agoraLa.minutos;
